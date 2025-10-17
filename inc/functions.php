@@ -60,3 +60,18 @@ function applyJob($job_id, $name, $email, $cv_path=null) {
     $stmt = $pdo->prepare("INSERT INTO applications (job_id,name,email,cv_path) VALUES (?,?,?,?)");
     $stmt->execute([$job_id,$name,$email,$cv_path]);
 }
+
+// Lista todos os municípios (para popular o select)
+function getMunicipios() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT id, nome, estado FROM municipios ORDER BY estado ASC, nome ASC");
+    return $stmt->fetchAll();
+}
+
+// Busca um município pelo id (para montar 'Nome, UF')
+function getMunicipioById($id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT id, nome, estado FROM municipios WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}

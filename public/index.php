@@ -2,25 +2,79 @@
 require_once __DIR__.'/../inc/functions.php';
 include __DIR__.'/../templates/header.php';
 
-$query = $_GET['q'] ?? '';
-$location = $_GET['location'] ?? '';
-$type = $_GET['type'] ?? '';
-$sort = $_GET['sort'] ?? 'newest';
+// Carrega municípios para o select
+$municipios = getMunicipios();
 
-$jobs = getJobs($query,$location,$type,$sort);
+// Captura filtros
+$query        = $_GET['q']   ?? '';
+$municipio_id = $_GET['mun'] ?? '';  // <-- agora usamos 'mun' (id do município)
+$type         = $_GET['type'] ?? '';
+$sort         = $_GET['sort'] ?? 'newest';
+
+// Converte municipio_id → "Nome, UF" para o filtro de jobs
+$location = '';
+if ($municipio_id) {
+    $m = getMunicipioById($municipio_id);
+    if ($m) {
+        $location = $m['nome'] . ', ' . $m['estado'];
+    }
+}
+
+// Busca vagas aplicando os filtros (note que passamos $location)
+$jobs = getJobs($query, $location, $type, $sort);
 ?>
+
 <aside class="bg-white p-4 rounded-lg shadow-sm">
   <form method="get" class="space-y-3">
-    <input type="text" name="q" value="<?=htmlspecialchars($query)?>" placeholder="Buscar..." class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
-    <input type="text" name="location" value="<?=htmlspecialchars($location)?>" placeholder="Localidade" class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
-    <input type="text" name="type" value="<?=htmlspecialchars($type)?>" placeholder="Tipo" class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
-    <select name="sort" class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
-      <option value="newest" <?=$sort==='newest'?'selected':''?>>Mais recentes</option>
-      <option value="oldest" <?=$sort==='oldest'?'selected':''?>>Mais antigas</option>
-    </select>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Buscar</label>
+      <input
+        type="text"
+        name="q"
+        value="<?= htmlspecialchars($query) ?>"
+        class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2"
+        placeholder="título, empresa, habilidade"
+      >
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Localidade</label>
+      <select name="mun" class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
+        <option value="" disabled <?= $municipio_id ? '' : 'selected' ?>>Selecione uma localidade</option>
+        <?php foreach ($municipios as $mun): ?>
+          <option
+            value="<?= (int)$mun['id'] ?>"
+            <?= ($municipio_id == $mun['id']) ? 'selected' : '' ?>
+          >
+            <?= htmlspecialchars($mun['nome']) . ' - ' . htmlspecialchars($mun['estado']) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Tipo</label>
+      <select name="type" class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
+        <option value="" disabled <?= $type ? '' : 'selected' ?>>Selecione o tipo</option>
+        <?php foreach(['Full-time','Part-time','Contract','Internship','Remote'] as $t): ?>
+          <option value="<?= $t ?>" <?= $type === $t ? 'selected' : '' ?>><?= $t ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Ordenar</label>
+      <select name="sort" class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
+        <option value="" disabled <?= $sort ? '' : 'selected' ?>>Escolha a ordenação</option>
+        <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Mais recentes</option>
+        <option value="oldest" <?= $sort === 'oldest' ? 'selected' : '' ?>>Mais antigas</option>
+      </select>
+    </div>
+
     <button class="bg-gray-800 text-white w-full py-2 rounded-md hover:bg-gray-900 mt-2">Filtrar</button>
   </form>
 </aside>
+
 
 <section class="md:col-span-3 bg-white p-4 rounded-lg shadow-sm">
 <h2 class="text-lg font-semibold mb-4">Resultados (<?=count($jobs)?>)</h2>
