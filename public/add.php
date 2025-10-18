@@ -2,16 +2,22 @@
 require_once __DIR__ . '/../inc/functions.php';
 include __DIR__ . '/../templates/header.php';
 
-// Carrega municípios para o select
-$municipios = getMunicipios();
-$categorias = getCategorias();
-$jobmethods = getJobmethod();
+// Carrega listas
+$municipios  = getMunicipios();
+$categorias  = getCategorias();
+$jobmethods  = getJobmethod();
+$empresas    = getEmpresas();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // recebemos o ID do município
     $municipio_id = $_POST['municipio_id'] ?? '';
+    $empresa_id   = $_POST['empresa_id'] ?? '';
+    $categoria_id = $_POST['categoria_id'] ?? '';
+    $title        = $_POST['title'] ?? '';
+    $type         = $_POST['type'] ?? '';
+    $salary       = $_POST['salary'] ?? '';
+    $description  = $_POST['description'] ?? '';
 
-    // monta o campo 'location' no formato "Nome, UF"
+    // Monta o campo location (Nome, UF)
     $locationText = '';
     if ($municipio_id) {
         $m = getMunicipioById($municipio_id);
@@ -20,18 +26,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $data = [
-        'title'       => $_POST['title'] ?? '',
-        'company'     => $_POST['company'] ?? '',
-        'location'    => $locationText, // ← usamos o texto gerado a partir do município
-        'type'        => $_POST['type'] ?? '',
-        'salary'      => $_POST['salary'] ?? '',
-        'description' => $_POST['description'] ?? ''
-    ];
+    // Limpa o salário (remove R$, pontos e vírgula)
+    $salary = preg_replace('/[^\d,]/', '', $salary);
+    $salary = str_replace(',', '.', $salary);
 
-    if (!$data['title'] || !$data['company']) {
-        $error = "Informe título e empresa.";
+    if (!$title || !$empresa_id) {
+        $error = "Informe título e selecione uma empresa.";
     } else {
+        $data = [
+            'title'        => $title,
+            'company_id'   => (int)$empresa_id,
+            'categoria_id' => $categoria_id ? (int)$categoria_id : null,
+            'location'     => $locationText,
+            'type'         => $type,
+            'salary'       => $salary,
+            'description'  => $description
+        ];
+
         saveJob($data);
         header('Location: index.php');
         exit;
@@ -48,9 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <input type="text" name="title" placeholder="Título" class="p-2 border rounded" required>
-        <input type="text" name="company" placeholder="Empresa" class="p-2 border rounded" required>
 
-        <!-- Localidade via municípios -->
+        <select name="empresa_id" class="p-2 border rounded" required>
+            <option value="" disabled selected>Selecione uma empresa</option>
+            <?php foreach ($empresas as $emp): if (($emp['status'] ?? 'ativo') !== 'ativo') continue; ?>
+                <option value="<?= (int)$emp['id'] ?>">
+                    <?= htmlspecialchars($emp['nome']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
         <select name="municipio_id" class="p-2 border rounded" required>
             <option value="" disabled selected>Selecione uma localidade</option>
             <?php foreach ($municipios as $mun): ?>
@@ -69,15 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endforeach; ?>
         </select>
 
+        <!-- Novo campo: Categoria -->
         <select name="categoria_id" class="p-2 border rounded" required>
             <option value="" disabled selected>Selecione uma categoria</option>
-            <?php foreach ($categorias as $categoria): ?>
+            <?php foreach ($categorias as $categoria): if (($categoria['status'] ?? 'ativo') !== 'ativo') continue; ?>
                 <option value="<?= (int)$categoria['id'] ?>">
                     <?= htmlspecialchars($categoria['nome']) ?>
                 </option>
             <?php endforeach; ?>
         </select>
-        
+
         <input type="text" name="salary" placeholder="Salário" class="p-2 border rounded md:col-span-2">
         <textarea name="description" placeholder="Descrição" class="p-2 border rounded md:col-span-2" rows="4"></textarea>
 
@@ -87,5 +106,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const salaryInput = document.querySelector('input[name="salary"]');
+    if (!salaryInput) return;
+
+    // Máscara R$
+    salaryInput.addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, "");
+        if (!v) { e.target.value = ""; return; }
+        v = (v / 100).toFixed(2) + "";
+        v = v.replace(".", ",");
+        v = v.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        e.target.value = "R$ " + v;
+    });
+
+    // Antes de enviar, limpa o campo
+    salaryInput.form.addEventListener('submit', function() {
+        const raw = salaryInput.value;
+        const cleaned = raw.replace(/[^\d,]/g, "").replace(",", ".");
+        salaryInput.value = cleaned;
+    });
+});
+</script>
 
 <?php include __DIR__ . '/../templates/footer.php'; ?>

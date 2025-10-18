@@ -106,7 +106,7 @@ $jobs = getJobs($query, $location, $type, $sort);
             </div>
             <div class="mt-4 md:mt-0 md:text-right flex flex-col gap-2">
               <div class="text-sm text-gray-500"><?= htmlspecialchars($job['postedAt']) ?></div>
-              <div class="font-semibold"><?= htmlspecialchars($job['salary']) ?></div>
+              <div class="font-semibold">R$<?= htmlspecialchars($job['salary']) ?></div>
               <div class="flex gap-2 justify-end">
                 <button onclick="openModal(<?= $job['id'] ?>)" class="bg-green-600 text-white px-3 py-1 rounded-md text-sm">Candidatar</button>
                 <a href="edit.php?id=<?= $job['id'] ?>" class="border px-3 py-1 rounded-md text-sm">Editar</a>

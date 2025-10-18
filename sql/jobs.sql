@@ -5,12 +5,14 @@ USE jobboard;
 CREATE TABLE IF NOT EXISTS jobs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    company VARCHAR(255) NOT NULL,
+    company_id INT NOT NULL,
     location VARCHAR(255),
     type VARCHAR(50),
     salary VARCHAR(50),
     description TEXT,
-    postedAt DATE NOT NULL
+    postedAt DATE NOT NULL,
+    INDEX idx_jobs_company_id (company_id),
+    CONSTRAINT fk_jobs_empresas FOREIGN KEY (company_id) REFERENCES empresas(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela de candidaturas
@@ -92,5 +94,15 @@ INSERT INTO jobs_method (nome, status) VALUES
 ('Contract', 'ativo'),
 ('Internship', 'ativo'),
 ('Remote', 'ativo');
+
+CREATE TABLE IF NOT EXISTS empresas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    cnpj VARCHAR(18) NOT NULL UNIQUE,
+    telefone VARCHAR(20),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    status ENUM('ativo', 'inativo') DEFAULT 'ativo',
+    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
