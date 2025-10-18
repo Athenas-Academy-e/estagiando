@@ -23,7 +23,7 @@ if ($municipio_id) {
 // Busca vagas aplicando os filtros (note que passamos $location)
 $jobs = getJobs($query, $location, $type, $sort);
 ?>
-
+<main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
 <aside class="bg-white p-4 rounded-lg shadow-sm">
   <form method="get" class="space-y-3">
     <div>
