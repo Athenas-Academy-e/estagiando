@@ -5,6 +5,7 @@ include __DIR__ . '/../templates/header.php';
 // Carrega municípios para o select
 $municipios = getMunicipios();
 $categorias = getCategorias();
+$jobmethods = getJobmethod();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // recebemos o ID do município
@@ -59,12 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endforeach; ?>
         </select>
 
-        <select name="type" class="p-2 border rounded">
-            <option>Full-time</option>
-            <option>Part-time</option>
-            <option>Contract</option>
-            <option>Internship</option>
-            <option>Remote</option>
+        <select name="type" class="p-2 border rounded" required>
+            <option value="" disabled selected>Selecione o tipo</option>
+            <?php foreach ($jobmethods as $jm): if (($jm['status'] ?? 'ativo') !== 'ativo') continue; ?>
+                <option value="<?= htmlspecialchars($jm['nome']) ?>">
+                    <?= htmlspecialchars($jm['nome']) ?>
+                </option>
+            <?php endforeach; ?>
         </select>
 
         <select name="categoria_id" class="p-2 border rounded" required>

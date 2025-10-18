@@ -5,6 +5,7 @@ include __DIR__ . '/../templates/header.php';
 // Carrega municípios para o select
 $municipios = getMunicipios();
 $categorias = getCategorias();
+$trabalhometodo = getJobmethod();
 
 // Captura filtros
 $query        = $_GET['q']   ?? '';
@@ -66,8 +67,11 @@ $jobs = getJobs($query, $location, $type, $sort);
         <label class="block text-sm font-medium text-gray-700">Tipo</label>
         <select name="type" class="mt-1 w-full border-gray-200 rounded-md shadow-sm p-2">
           <option value="" disabled <?= $type ? '' : 'selected' ?>>Selecione o tipo</option>
-          <?php foreach (['Full-time', 'Part-time', 'Contract', 'Internship', 'Remote'] as $t): ?>
-            <option value="<?= $t ?>" <?= $type === $t ? 'selected' : '' ?>><?= $t ?></option>
+          <?php foreach ($trabalhometodo as $tm): if (($tm['status'] ?? 'ativo') !== 'ativo') continue; ?>
+            <?php $nomeTipo = $tm['nome']; ?>
+            <option value="<?= htmlspecialchars($nomeTipo) ?>" <?= $type === $nomeTipo ? 'selected' : '' ?>>
+              <?= htmlspecialchars($nomeTipo) ?>
+            </option>
           <?php endforeach; ?>
         </select>
       </div>

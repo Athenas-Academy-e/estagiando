@@ -77,3 +77,20 @@ INSERT INTO categorias (nome, status) VALUES
 ('Publicidade e Propaganda', 'ativo'),
 ('Turismo', 'ativo'),
 ('Gastronomia', 'ativo');
+
+-- Tabela de métodos de emprego
+CREATE TABLE IF NOT EXISTS jobs_method (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    status ENUM('ativo', 'inativo') DEFAULT 'ativo',
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO jobs_method (nome, status) VALUES
+('Full-time', 'ativo'),
+('Part-time', 'ativo'),
+('Contract', 'ativo'),
+('Internship', 'ativo'),
+('Remote', 'ativo');
+
+
