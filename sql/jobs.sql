@@ -36,12 +36,12 @@ INSERT INTO municipios (`nome`, `estado`) VALUES
 ('Petrópolis', 'RJ'),
 ('Juiz de Fora', 'MG');
 
-CREATE TABLE `permisoes` (
+CREATE TABLE `permissoes` (
   `id` int(11) NOT NULL,
   `Tipo` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `permisoes` (`id`, `Tipo`) VALUES
+INSERT INTO `permissoes` (`id`, `Tipo`) VALUES
 (1, 'Administrador'),
 (2, 'Empresa'),
 (3, 'Assinante');
