@@ -75,3 +75,10 @@ function getMunicipioById($id) {
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
+
+// Lista todas as categorias
+function getCategorias() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT id, nome FROM categorias ORDER BY nome ASC");
+    return $stmt->fetchAll();
+}

@@ -4,6 +4,7 @@ include __DIR__ . '/../templates/header.php';
 
 // Carrega municípios para o select
 $municipios = getMunicipios();
+$categorias = getCategorias();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // recebemos o ID do município
@@ -66,6 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option>Remote</option>
         </select>
 
+        <select name="categoria_id" class="p-2 border rounded" required>
+            <option value="" disabled selected>Selecione uma categoria</option>
+            <?php foreach ($categorias as $categoria): ?>
+                <option value="<?= (int)$categoria['id'] ?>">
+                    <?= htmlspecialchars($categoria['nome']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        
         <input type="text" name="salary" placeholder="Salário" class="p-2 border rounded md:col-span-2">
         <textarea name="description" placeholder="Descrição" class="p-2 border rounded md:col-span-2" rows="4"></textarea>
 

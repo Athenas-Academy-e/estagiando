@@ -33,3 +33,47 @@ CREATE TABLE IF NOT EXISTS municipios (
 INSERT INTO municipios (`nome`, `estado`) VALUES 
 ('Petrópolis', 'RJ'),
 ('Juiz de Fora', 'MG');
+
+CREATE TABLE `permisoes` (
+  `id` int(11) NOT NULL,
+  `Tipo` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `permisoes` (`id`, `Tipo`) VALUES
+(1, 'Administrador'),
+(2, 'Empresa'),
+(3, 'Assinante');
+
+CREATE TABLE IF NOT EXISTS categorias (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    status ENUM('ativo', 'inativo') DEFAULT 'ativo',
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE = InnoDB;
+
+INSERT INTO categorias (nome, status) VALUES
+('Administração', 'ativo'),
+('Recursos Humanos', 'ativo'),
+('Marketing', 'ativo'),
+('Finanças', 'ativo'),
+('Contabilidade', 'ativo'),
+('Engenharia Civil', 'ativo'),
+('Engenharia Elétrica', 'ativo'),
+('Engenharia de Produção', 'ativo'),
+('Engenharia Mecânica', 'ativo'),
+('Tecnologia da Informação', 'ativo'),
+('Desenvolvimento de Software', 'ativo'),
+('Design Gráfico', 'ativo'),
+('Educação', 'ativo'),
+('Direito', 'ativo'),
+('Saúde', 'ativo'),
+('Enfermagem', 'ativo'),
+('Psicologia', 'ativo'),
+('Arquitetura e Urbanismo', 'ativo'),
+('Comércio Exterior', 'ativo'),
+('Logística', 'ativo'),
+('Comunicação Social', 'ativo'),
+('Jornalismo', 'ativo'),
+('Publicidade e Propaganda', 'ativo'),
+('Turismo', 'ativo'),
+('Gastronomia', 'ativo');
