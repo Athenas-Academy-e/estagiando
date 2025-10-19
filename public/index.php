@@ -98,15 +98,24 @@ $jobs = getJobs($query, $location, $type, $sort);
     <?php else: ?>
       <div class="grid gap-4">
         <?php foreach ($jobs as $job): ?>
+          <?php
+          // Formata salário e data
+          $salary = 'R$ ' . number_format((float)$job['salary'], 2, ',', '.');
+          $postedAt = date('d/m/Y', strtotime($job['postedAt']));
+          ?>
           <article class="p-4 border rounded-md flex flex-col md:flex-row md:justify-between">
             <div>
               <h3 class="text-lg font-semibold"><?= htmlspecialchars($job['title']) ?></h3>
-              <p class="text-sm text-gray-600"><?= htmlspecialchars($job['company']) ?> • <?= htmlspecialchars($job['location']) ?> • <span class="font-medium"><?= htmlspecialchars($job['type']) ?></span></p>
+              <p class="text-sm text-gray-600">
+                <?= htmlspecialchars($job['company']) ?> •
+                <?= htmlspecialchars($job['location']) ?> •
+                <span class="font-medium"><?= htmlspecialchars($job['type']) ?></span>
+              </p>
               <p class="mt-2 text-gray-700 text-sm"><?= htmlspecialchars($job['description']) ?></p>
             </div>
             <div class="mt-4 md:mt-0 md:text-right flex flex-col gap-2">
-              <div class="text-sm text-gray-500"><?= htmlspecialchars($job['postedAt']) ?></div>
-              <div class="font-semibold">R$<?= htmlspecialchars($job['salary']) ?></div>
+              <div class="text-sm text-gray-500"><?= $postedAt ?></div>
+              <div class="font-semibold"><?= $salary ?></div>
               <div class="flex gap-2 justify-end">
                 <button onclick="openModal(<?= $job['id'] ?>)" class="bg-green-600 text-white px-3 py-1 rounded-md text-sm">Candidatar</button>
                 <a href="edit.php?id=<?= $job['id'] ?>" class="border px-3 py-1 rounded-md text-sm">Editar</a>
@@ -115,6 +124,7 @@ $jobs = getJobs($query, $location, $type, $sort);
             </div>
           </article>
         <?php endforeach; ?>
+
       </div>
     <?php endif; ?>
 
