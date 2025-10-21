@@ -1,13 +1,22 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
-    "./public/**/*.{html,php,js}",
-    "./templates/**/*.{html,php,js}",
-    "./inc/**/*.{html,php,js}",
-    "./*.{html,php}"
+    "./**/*.php",
+    "./src/**/*.{html,js}",
   ],
+  darkMode: "class", // ou 'media' se quiser ativar pelo sistema
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#004a99",
+        secondary: "#00b4d8",
+      },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui"],
+      },
+    },
   },
-  plugins: [],
-}
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
+};
