@@ -1,20 +1,44 @@
 <?php
-$host = '192.168.0.246';
-$db   = 'jobboard';
-$user = 'root';
-$pass = '417782';
-$charset = 'utf8mb4';
+/**
+ * Configuração global do projeto Estagiando
+ */
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-    throw new \PDOException($e->getMessage(), (int)$e->getCode());
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', dirname(__FILE__));
 }
+
+/**
+ * Detecta automaticamente o ambiente e define a URL base
+ * Exemplo:
+ * - XAMPP → http://localhost/estagiando/
+ * - BrowserSync → http://localhost:3000/
+ * - Produção → https://seudominio.com/
+ */
+$serverName = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+
+if (strpos($serverName, '3000') !== false) {
+    // Ambiente de desenvolvimento com BrowserSync
+    define('BASE_URL', '/');
+} elseif (strpos($serverName, 'localhost') !== false) {
+    // Ambiente local no XAMPP
+    define('BASE_URL', '/');
+} else {
+    // Ambiente de produção
+    define('BASE_URL', '/');
+}
+
+/**
+ * Banco de dados (ajuste conforme seu ambiente)
+ */
+define('DB_HOST', '192.168.0.246');
+define('DB_NAME', 'jobboard');
+define('DB_USER', 'root');
+define('DB_PASS', '417782');
+
+/**
+ * Caminho global para assets
+ */
+define('ASSETS_URL', BASE_URL . 'public/assets/');
+define('CSS_URL', BASE_URL . 'public/css/');
+define('JS_URL', BASE_URL . 'public/js/');

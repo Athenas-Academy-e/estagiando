@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "npx tailwindcss -i ./src/input.css -o ./public/css/output.css --watch",
+    "build": "npx tailwindcss -i ./resources/css/input.css -o ./public/assets/css/output.css --watch",
     "prod": "npx tailwindcss -i ./src/input.css -o ./public/css/output.css --minify",
     "serve": "browser-sync start --proxy \"localhost\" --files \"./**/*.php, ./public/css/*.css, ./public/js/*.js\"",
     "dev": "concurrently \"npm run build\" \"npm run serve\""

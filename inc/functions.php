@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/database.php';
 
 /**
  * Lista vagas com filtros (busca, localidade, tipo e ordenação)

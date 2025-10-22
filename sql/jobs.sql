@@ -122,3 +122,16 @@ CREATE TABLE
         nivel_de_acesso INT NOT NULL,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE
+    IF NOT EXISTS candidaturas (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        vaga_id INT NOT NULL,
+        nome VARCHAR(120) NOT NULL,
+        email VARCHAR(120) NOT NULL,
+        telefone VARCHAR(50),
+        mensagem TEXT,
+        curriculo VARCHAR(255),
+        data_envio DATETIME NOT NULL,
+        FOREIGN KEY (vaga_id) REFERENCES jobs (id) ON DELETE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
