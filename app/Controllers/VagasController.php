@@ -43,7 +43,7 @@ class VagasController
 
         require_once __DIR__ . '/../Views/partials/head.php';
         require_once __DIR__ . '/../Views/partials/header.php';
-        require_once __DIR__ . '/../Views/vagas/detalhe.php';
+        require_once __DIR__ . '/../Views/vaga_detalhes.php';
         require_once __DIR__ . '/../Views/partials/footer.php';
     }
 }

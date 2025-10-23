@@ -15,7 +15,7 @@ class Empresa
    */
   public function login($email, $senha)
   {
-    $stmt = $this->pdo->prepare("SELECT * FROM empresas WHERE email = :email AND status = 'ativa'");
+    $stmt = $this->pdo->prepare("SELECT * FROM empresas WHERE email = :email AND status = 'S'");
     $stmt->execute([':email' => $email]);
     $empresa = $stmt->fetch(PDO::FETCH_ASSOC);
 

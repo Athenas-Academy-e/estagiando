@@ -35,10 +35,10 @@ class EmpresasController
         Auth::check('empresa');
         $empresaModel = new Empresa();
         $vagas = $empresaModel->getVagas($_SESSION['usuario_id']);
-
+        
         require_once __DIR__ . '/../Views/partials/head.php';
         require_once __DIR__ . '/../Views/partials/header.php';
-        require_once __DIR__ . '/../Views/empresa/dashboard.php';
+        require_once __DIR__ . '/../Views/empresas/dashboard.php';
         require_once __DIR__ . '/../Views/partials/footer.php';
     }
 
@@ -46,7 +46,7 @@ class EmpresasController
     {
         Auth::check('empresa');
         if (!isset($_GET['vaga'])) {
-            header("Location: /empresa/dashboard");
+            header("Location: /empresas/dashboard");
             exit;
         }
 

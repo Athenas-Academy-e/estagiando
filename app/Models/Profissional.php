@@ -15,7 +15,7 @@ class Profissional
    */
   public function login($email, $senha)
   {
-    $stmt = $this->pdo->prepare("SELECT * FROM profissionais WHERE email = :email AND status = 'ativo'");
+    $stmt = $this->pdo->prepare("SELECT * FROM profissionais WHERE email = :email AND status = 'S'");
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

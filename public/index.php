@@ -17,19 +17,27 @@ spl_autoload_register(function ($class) {
 // Obter a rota (ex: /vagas, /cadastro)
 $route = $_GET['url'] ?? 'home';
 $route = trim($route, '/');
-$route = ucfirst(strtolower($route)) . 'Controller';
+$segments = explode('/', $route);
+
+// Controller e método
+$controllerName = ucfirst(strtolower($segments[0])) . 'Controller';
+$method = $segments[1] ?? 'index';
 
 // Caminho do controller
-$controllerPath = __DIR__ . '/../app/Controllers/' . $route . '.php';
+$controllerPath = __DIR__ . '/../app/Controllers/' . $controllerName . '.php';
 
+// Verifica se o controller existe
 if (file_exists($controllerPath)) {
-    $controller = new $route();
-    if (method_exists($controller, 'index')) {
-        $controller->index();
+    require_once $controllerPath;
+    $controller = new $controllerName();
+
+    // Verifica se o método existe dentro do controller
+    if (method_exists($controller, $method)) {
+        $controller->$method(); // Chama, ex: VagasController->detalhe()
     } else {
-        echo "Método index() não encontrado no controller $route.";
+        echo "Método <strong>$method()</strong> não encontrado em $controllerName.";
     }
 } else {
     http_response_code(404);
-    echo "Página não encontrada.";
+    echo "Página não encontrada: $controllerName";
 }

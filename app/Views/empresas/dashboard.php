@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-bold text-gray-800">
         Painel da Empresa - <?= htmlspecialchars($_SESSION['empresa_nome']) ?>
       </h1>
-      <a href="/empresa/logout" class="text-red-600 hover:underline">Sair</a>
+      <a href="/empresas/logout" class="text-red-600 hover:underline">Sair</a>
     </div>
 
     <?php if (empty($vagas)): ?>
@@ -20,7 +20,7 @@
             <p class="text-sm mb-3">
               <strong><?= $vaga['total_candidatos'] ?></strong> candidato(s)
             </p>
-            <a href="/empresa/candidatos?vaga=<?= $vaga['id'] ?>"
+            <a href="/empresas/candidatos?vaga=<?= $vaga['id'] ?>"
                class="text-sm text-blue-600 hover:underline">Ver candidatos →</a>
           </div>
         <?php endforeach; ?>

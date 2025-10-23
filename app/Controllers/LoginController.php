@@ -22,7 +22,7 @@ class LoginController
                 $_SESSION['usuario_tipo'] = 'empresa';
                 $_SESSION['usuario_id'] = $empresa['id'];
                 $_SESSION['usuario_nome'] = $empresa['nome'];
-                header("Location: /empresa/dashboard");
+                header("Location: /empresas/dashboard");
                 exit;
             }
 
