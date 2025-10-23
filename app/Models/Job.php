@@ -31,13 +31,15 @@ class Job
         $params = [];
 
         if (!empty($query)) {
-            $sql .= " AND (j.title LIKE :q OR j.description LIKE :q)";
+            $sql .= " AND (j.title LIKE :q OR j.description LIKE :q1)";
             $params[':q'] = "%$query%";
+            $params[':q1'] = "%$query%";
         }
 
         if (!empty($location)) {
-            $sql .= " AND (e.cidade LIKE :loc OR e.estado LIKE :loc)";
+            $sql .= " AND (e.cidade LIKE :loc OR e.estado LIKE :loc1)";
             $params[':loc'] = "%$location%";
+            $params[':loc1'] = "%$location%";
         }
 
         if (!empty($type)) {
