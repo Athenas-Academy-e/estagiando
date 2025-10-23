@@ -1,3 +1,4 @@
+<div style="min-width:1210px; min-height: 110px;" class="flex justify-center bg-red-500"><img src="/assets/banner.png" alt=""></div>
 <section class="bg-gray-50 py-16 overflow-hidden">
   <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10">
 
@@ -12,7 +13,7 @@
       </p>
 
       <!-- Formulário de pesquisa -->
-      <form action="public/" method="get"
+      <form action="/vagas" method="get"
         class="flex items-center gap-2 max-w-md mx-auto md:mx-0 opacity-0 translate-y-4 transition-all duration-700 delay-400"
         data-animate>
         <div class="flex-grow relative">
