@@ -84,9 +84,9 @@
               <div class="flex flex-col items-center text-center">
                 <img
                   src="<?= !empty($e['logo'])
-                          ? '/public/assets/logos/' . htmlspecialchars($e['logo'])
-                          : '/public/assets/img/default-company.png' ?>"
-                  alt="Logo da empresa"
+                          ? '/assets/logos/' . htmlspecialchars($e['logo'])
+                          : '/assets/default-company.png' ?>"
+                  alt="<?= htmlspecialchars($e['nome_fantasia'] ?? $e['razao_social'] ?? 'Empresa sem nome') ?>"
                   class="w-20 h-20 object-contain mb-3 rounded-full border border-gray-200 shadow-sm">
 
                 <h3 class="font-bold text-lg text-[#0a1837] mb-1">
@@ -106,7 +106,7 @@
                 <?php endif; ?>
 
                 <a
-                  href="/public/?empresa=<?= $e['id'] ?>"
+                  href="vagas/?empresa=<?= $e['id'] ?>"
                   class="inline-block text-[#97dd3a] font-semibold hover:underline mt-2">
                   <?= intval($e['total_vagas'] ?? 0) ?> vaga<?= intval($e['total_vagas'] ?? 0) == 1 ? '' : 's' ?> disponíveis
                 </a>

@@ -255,8 +255,9 @@ class Empresa
       $params = [];
 
       if (!empty($search)) {
-        $sql .= " AND (e.razao_social LIKE :search OR e.nome_fantasia LIKE :search)";
+        $sql .= " AND (e.razao_social LIKE :search OR e.nome_fantasia LIKE :search1)";
         $params[':search'] = '%' . $search . '%';
+        $params[':search1'] = '%' . $search . '%';
       }
 
       if (!empty($categoria)) {
@@ -265,8 +266,9 @@ class Empresa
       }
 
       if (!empty($local)) {
-        $sql .= " AND (e.cidade LIKE :local OR m.nome LIKE :local)";
+        $sql .= " AND (e.cidade LIKE :local OR m.nome LIKE :local1)";
         $params[':local'] = '%' . $local . '%';
+        $params[':local1'] = '%' . $local . '%';
       }
 
       $sql .= " GROUP BY e.id 

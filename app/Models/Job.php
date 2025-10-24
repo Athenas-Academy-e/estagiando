@@ -13,7 +13,7 @@ class Job
     /**
      * Lista vagas com filtros (busca, localidade, tipo e ordenação)
      */
-    public function getAll($query = '', $location = '', $type = '', $sort = 'newest')
+    public function getAll($query = '', $location = '', $type = '', $sort = 'newest', $empresaId = null)
     {
         $sql = "SELECT 
                     j.*,
@@ -45,6 +45,10 @@ class Job
         if (!empty($type)) {
             $sql .= " AND j.type = :type";
             $params[':type'] = $type;
+        }
+        if (!empty($empresaId)) {
+            $sql .= " AND e.id = :empresaId";
+            $params[':empresaId'] = $empresaId;
         }
 
         switch ($sort) {

@@ -14,8 +14,9 @@ class VagasController
         $location = $_GET['loc'] ?? '';
         $type = $_GET['type'] ?? '';
         $sort = $_GET['sort'] ?? 'newest';
+        $empresaId = $_GET['empresa'] ?? '';
 
-        $vagas = $jobModel->getAll($query, $location, $type, $sort);
+        $vagas = $jobModel->getAll($query, $location, $type, $sort,$empresaId);
         $totalVagas = count($vagas);
 
         require_once __DIR__ . '/../Views/partials/head.php';
