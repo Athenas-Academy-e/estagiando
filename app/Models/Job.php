@@ -3,17 +3,17 @@ require_once __DIR__ . '/../Core/Database.php';
 
 class Job
 {
-  private $pdo;
+    private $pdo;
 
-  public function __construct()
-  {
-    $this->pdo = Database::getInstance()->getConnection();
-  }
+    public function __construct()
+    {
+        $this->pdo = Database::getInstance()->getConnection();
+    }
 
-  /**
-   * Lista vagas com filtros (busca, localidade, tipo e ordenação)
-   */
-  public function getAll($query = '', $location = '', $type = '', $sort = 'newest')
+    /**
+     * Lista vagas com filtros (busca, localidade, tipo e ordenação)
+     */
+    public function getAll($query = '', $location = '', $type = '', $sort = 'newest')
     {
         $sql = "SELECT 
                     j.*,
@@ -134,5 +134,70 @@ class Job
     {
         $stmt = $this->pdo->prepare("DELETE FROM jobs WHERE id = :id");
         return $stmt->execute([':id' => $id]);
+    }
+    /**
+     * 🔹 Registra uma candidatura para uma vaga
+     */
+    public function applyToJob($jobId, $nome, $email, $telefone = '', $mensagem = '', $curriculo = null, $profissionalId = null){
+        $sql = "INSERT INTO candidaturas (
+                    vaga_id, profissional_id, nome, email, telefone, mensagem, curriculo, data_envio
+                )
+                VALUES (
+                    :vaga_id, :profissional_id, :nome, :email, :telefone, :mensagem, :curriculo, NOW()
+                )";
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            ':vaga_id' => $jobId,
+            ':profissional_id' => $profissionalId,
+            ':nome' => $nome,
+            ':email' => $email,
+            ':telefone' => $telefone,
+            ':mensagem' => $mensagem,
+            ':curriculo' => $curriculo
+        ]);
+    }
+
+    /**
+     * 🔹 Faz upload seguro de currículo e retorna o caminho relativo
+     */
+    public function uploadCurriculo($file){
+        if (empty($file['name']) || $file['error'] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        $uploadDir = __DIR__ . '/../../public/assets/cv/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $fileName = time() . '_' . uniqid() . '.' . $ext;
+        $targetFile = $uploadDir . $fileName;
+
+        if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+            return '/assets/cv/' . $fileName;
+        }
+
+        return null;
+    }
+
+    /**
+     * 🔹 Retorna todas as candidaturas de um profissional
+     */
+    public function getApplicationsByProfessional($profissionalId){
+        $sql = "SELECT 
+                    c.*, 
+                    j.title AS vaga_titulo, 
+                    e.nome_fantasia AS empresa_nome
+                FROM candidaturas c
+                LEFT JOIN jobs j ON j.id = c.vaga_id
+                LEFT JOIN empresas e ON e.id = j.company_id
+                WHERE c.profissional_id = :id
+                ORDER BY c.data_envio DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $profissionalId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

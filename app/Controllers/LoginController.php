@@ -7,6 +7,15 @@ class LoginController
     public function index()
     {
         session_start();
+        if (isset($_SESSION['usuario_id'])) {
+            // Já está logado, redireciona conforme o tipo
+            if ($_SESSION['usuario_tipo'] === 'empresa') {
+                header("Location: /empresas/dashboard");
+            } else {
+                header("Location: /profissional/dashboard");
+            }
+            exit;
+        }
         $erro = '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

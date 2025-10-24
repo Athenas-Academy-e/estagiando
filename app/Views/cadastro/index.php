@@ -18,6 +18,7 @@
     <!-- Formulário Profissional -->
     <form id="form-profissional" class="hidden bg-white shadow-lg rounded-2xl p-8 text-left" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="tipo" value="profissional">
+      <input type="hidden" name="status" value="S">
       <div class="steps">
         <!-- ETAPA 1 -->
         <div class="step active">

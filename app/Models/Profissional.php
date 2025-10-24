@@ -82,6 +82,7 @@ class Profissional
                 estado,
                 municipio_id,
                 foto,
+                status,
                 data_cadastro
               ) VALUES (
                 :nome,
@@ -99,6 +100,7 @@ class Profissional
                 :estado,
                 :municipio_id,
                 :foto,
+                :status,
                 NOW()
               )";
 
@@ -119,7 +121,8 @@ class Profissional
         ':cidade' => $dados['cidade'] ?? '',
         ':estado' => $dados['estado'] ?? '',
         ':municipio_id' => $municipioId,
-        ':foto' => $foto
+        ':foto' => $foto,
+        ':status' => $dados['status'] ?? '',
       ]);
 
       return true;
