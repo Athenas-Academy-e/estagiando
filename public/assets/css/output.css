@@ -873,6 +873,10 @@ select {
   display: flex;
 }
 
+.inline-flex {
+  display: inline-flex;
+}
+
 .grid {
   display: grid;
 }
@@ -1224,6 +1228,11 @@ select {
   background-color: rgb(202 138 4 / var(--tw-bg-opacity));
 }
 
+.bg-red-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
+}
+
 .object-contain {
   -o-object-fit: contain;
      object-fit: contain;
@@ -1332,6 +1341,10 @@ select {
 
 .pt-6 {
   padding-top: 1.5rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
 }
 
 .text-left {
@@ -1554,6 +1567,12 @@ select {
   transition-duration: 150ms;
 }
 
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
 .delay-200 {
   transition-delay: 200ms;
 }
@@ -1743,6 +1762,11 @@ a:hover {
 .hover\:bg-yellow-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(161 98 7 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-red-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(185 28 28 / var(--tw-bg-opacity));
 }
 
 .hover\:text-\[\#004a99\]:hover {

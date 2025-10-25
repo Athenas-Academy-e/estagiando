@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-bold text-gray-800">
         Candidatos — <?= htmlspecialchars($vaga['title']) ?>
       </h1>
-      <a href="/empresa/dashboard" class="text-blue-600 hover:underline">← Voltar</a>
+      <a href="/empresas/dashboard" class="text-blue-600 hover:underline">← Voltar</a>
     </div>
 
     <?php if (empty($candidatos)): ?>

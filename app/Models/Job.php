@@ -148,8 +148,12 @@ class Job
      */
     public function delete($id)
     {
+        $this->pdo->prepare("DELETE FROM candidaturas WHERE vaga_id = :id")
+            ->execute([':id' => $id]);
+
+        // Depois remove a vaga
         $stmt = $this->pdo->prepare("DELETE FROM jobs WHERE id = :id");
-        return $stmt->execute([':id' => $id]);
+        $stmt->execute([':id' => $id]);
     }
 
     /**
@@ -240,6 +244,33 @@ class Job
             VALUES (:title, :company_id, :categoria_id, :municipio_id, :method_id, :location, :salary, :description, CURDATE())
         ");
         $stmt->execute([
+            ':title'        => $data['title'],
+            ':company_id'   => $data['company_id'],
+            ':categoria_id' => $data['categoria_id'],
+            ':municipio_id' => $data['municipio_id'],
+            ':method_id'    => $data['method_id'],
+            ':location'     => $data['location'],
+            ':salary'       => $data['salary'],
+            ':description'  => $data['description']
+        ]);
+    }
+
+    public function update($data)
+    {
+        $sql = "UPDATE jobs SET 
+                    title = :title,
+                    company_id = :company_id,
+                    categoria_id = :categoria_id,
+                    municipio_id = :municipio_id,
+                    method_id = :method_id,
+                    location = :location,
+                    salary = :salary,
+                    description = :description
+                WHERE id = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':id'           => $data['id'],
             ':title'        => $data['title'],
             ':company_id'   => $data['company_id'],
             ':categoria_id' => $data['categoria_id'],
