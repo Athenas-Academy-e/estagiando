@@ -10,7 +10,7 @@ if (!$vaga) {
 
 <main class="bg-gray-50 min-h-screen py-12">
   <div class="max-w-4xl mx-auto px-6 bg-white shadow-md rounded-2xl p-8">
-    
+
     <!-- Título e empresa -->
     <div class="mb-6">
       <h1 class="text-3xl font-bold text-gray-800 mb-2"><?= htmlspecialchars($vaga['title']) ?></h1>
@@ -43,18 +43,24 @@ if (!$vaga) {
     <div class="flex flex-wrap justify-between items-center border-t pt-6 text-gray-600">
       <div>
         <?php if (!empty($vaga['salary'])): ?>
-          <p class="mb-1"><strong>Salário:</strong> <?= htmlspecialchars($vaga['salary']) ?></p>
+          <?php
+          // Converte o valor numérico em formato BRL
+          $salario = is_numeric($vaga['salary'])
+            ? 'R$ ' . number_format($vaga['salary'], 2, ',', '.')
+            : htmlspecialchars($vaga['salary']);
+          ?>
+          <p class="mb-1"><strong>Salário:</strong> <?= $salario ?></p>
         <?php endif; ?>
         <p><strong>Publicado em:</strong> <?= date('d/m/Y', strtotime($vaga['postedAt'])) ?></p>
       </div>
 
       <div class="mt-4 md:mt-0">
         <a href="/apply?id=<?= $vaga['id'] ?>"
-           class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+          class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-[#97dd3a] hover:text-white transition">
           Candidatar-se
         </a>
         <a href="/vagas"
-           class="ml-3 inline-block bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
+          class="ml-3 inline-block bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
           Voltar
         </a>
       </div>

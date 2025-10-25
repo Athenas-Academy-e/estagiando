@@ -5,7 +5,6 @@ class LogoutController
 {
     public function index()
     {
-        Auth::check(); // Verifica se está logado
         Auth::logout();
     }
 }

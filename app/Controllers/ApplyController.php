@@ -6,27 +6,38 @@ class ApplyController
 {
     public function index()
     {
-        $jobModel = new Job();
+        session_start();
+        $jobId = $_GET['id'] ?? null;
 
-        // Se não veio ID, redireciona
-        if (!isset($_GET['id'])) {
+        // ✅ Verifica se veio o ID da vaga
+        if (!$jobId) {
             header("Location: /vagas");
             exit;
         }
 
-        $vaga = $jobModel->getById($_GET['id']);
-        if (!$vaga) {
-            http_response_code(404);
-            echo "Vaga não encontrada.";
+        // ✅ Verifica login antes de prosseguir
+        if (empty($_SESSION['profissional_id'])) {
+            header("Location: /login?redirect=/apply?id={$jobId}");
             exit;
         }
 
-        // Se o formulário foi enviado
+        $jobModel = new Job();
+        $vaga = $jobModel->getById($jobId);
+
+        // ✅ Verifica se a vaga existe
+        if (!$vaga) {
+            http_response_code(404);
+            echo "Vaga não encontrada 😕";
+            exit;
+        }
+
+        // ✅ Se o formulário foi enviado, processa candidatura
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->store($_GET['id']);
+            $this->store($jobId);
             return;
         }
 
+        // ✅ Renderiza as views
         require_once __DIR__ . '/../Views/partials/head.php';
         require_once __DIR__ . '/../Views/partials/header.php';
         require_once __DIR__ . '/../Views/apply.php';
@@ -36,21 +47,24 @@ class ApplyController
     public function store($jobId)
     {
         session_start();
-        if ($_SESSION['profissional_id'] ?? false == false) {
-            header("Location: /login?redirect=/apply?id=$jobId");
+
+        if (empty($_SESSION['profissional_id'])) {
+            header("Location: /login?redirect=/apply?id={$jobId}");
             exit;
         }
+
         $jobModel = new Job();
 
+        // ✅ Sanitiza e coleta os dados
         $nome = trim($_POST['nome'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $telefone = trim($_POST['telefone'] ?? '');
         $mensagem = trim($_POST['mensagem'] ?? '');
         $cvPath = $jobModel->uploadCurriculo($_FILES['curriculo'] ?? []);
 
-        // 🔐 Verifica se o profissional está logado
-        $profissionalId = $_SESSION['profissional_id'] ?? null;
+        $profissionalId = $_SESSION['profissional_id'];
 
+        // ✅ Registra candidatura
         $jobModel->applyToJob(
             $jobId,
             $nome,
@@ -61,7 +75,8 @@ class ApplyController
             $profissionalId
         );
 
-        header("Location: /apply?success=1&id=$jobId");
+        // ✅ Redireciona com mensagem de sucesso
+        header("Location: /apply?id={$jobId}&success=1");
         exit;
     }
 }

@@ -7,45 +7,72 @@ class LoginController
     public function index()
     {
         session_start();
-        if (isset($_SESSION['usuario_id'])) {
-            // Já está logado, redireciona conforme o tipo
-            if ($_SESSION['usuario_tipo'] === 'empresa') {
-                header("Location: /empresas/dashboard");
-            } else {
-                header("Location: /profissional/dashboard");
+        $redirect = $_GET['redirect'] ?? '';
+
+        // ✅ Se já estiver logado E NÃO houver redirect, vai pro dashboard
+        if (isset($_SESSION['profissional_id']) || isset($_SESSION['empresa_id'])) {
+
+            // Se houver redirect (ex: /apply?id=8)
+            if (!empty($redirect)) {
+                header("Location: $redirect");
+                exit;
             }
-            exit;
+
+            // Se for empresa
+            if (isset($_SESSION['empresa_id'])) {
+                header("Location: /empresas/dashboard");
+                exit;
+            }
+
+            // Se for profissional
+            if (isset($_SESSION['profissional_id'])) {
+                header("Location: /profissional/dashboard");
+                exit;
+            }
         }
+
         $erro = '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'] ?? '';
-            $senha = $_POST['senha'] ?? '';
+            $email = trim($_POST['email'] ?? '');
+            $senha = trim($_POST['senha'] ?? '');
+            $redirect = $_POST['redirect'] ?? $redirect;
 
             $empresaModel = new Empresa();
-            $profissionalModel = new Profissional();
+            $profModel = new Profissional();
 
-            // Verifica se é empresa
+            // 🔹 Login Empresa
             $empresa = $empresaModel->login($email, $senha);
             if ($empresa) {
-                $_SESSION['usuario_tipo'] = 'empresa';
-                $_SESSION['usuario_id'] = $empresa['id'];
+                $_SESSION['empresa_id'] = $empresa['id'];
                 $_SESSION['usuario_nome'] = $empresa['nome'];
-                header("Location: /empresas/dashboard");
+                $_SESSION['usuario_tipo'] = 'empresa';
+
+                // ✅ Evita loop se a dashboard já estiver protegida
+                if (!empty($redirect)) {
+                    header("Location: $redirect");
+                } else {
+                    header("Location: /empresas/dashboard");
+                }
                 exit;
             }
 
-            // Verifica se é profissional
-            $prof = $profissionalModel->login($email, $senha);
+            // 🔹 Login Profissional
+            $prof = $profModel->login($email, $senha);
             if ($prof) {
-                $_SESSION['usuario_tipo'] = 'profissional';
-                $_SESSION['usuario_id'] = $prof['id'];
+                $_SESSION['profissional_id'] = $prof['id'];
                 $_SESSION['usuario_nome'] = $prof['nome'];
-                header("Location: /profissional/dashboard");
+                $_SESSION['usuario_tipo'] = 'profissional';
+
+                if (!empty($redirect)) {
+                    header("Location: $redirect");
+                } else {
+                    header("Location: /profissional/dashboard");
+                }
                 exit;
             }
 
-            // Caso não encontre
+            // ❌ Falha no login
             $erro = "❌ E-mail ou senha inválidos.";
         }
 

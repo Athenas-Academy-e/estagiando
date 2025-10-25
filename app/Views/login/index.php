@@ -9,6 +9,7 @@
     <?php endif; ?>
 
     <form method="POST">
+      <input type="hidden" name="redirect" value="<?= htmlspecialchars($_GET['redirect'] ?? '') ?>">
       <div class="mb-4">
         <label class="block text-sm text-gray-700 mb-1">E-mail</label>
         <input type="email" name="email" required

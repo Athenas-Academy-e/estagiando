@@ -29,9 +29,11 @@
           <label class="text-sm text-gray-600">Tipo</label>
           <select name="type" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500">
             <option value="">Todos</option>
-            <option value="presencial" <?= ($_GET['type'] ?? '') === 'presencial' ? 'selected' : '' ?>>Presencial</option>
-            <option value="remoto" <?= ($_GET['type'] ?? '') === 'remoto' ? 'selected' : '' ?>>Remoto</option>
-            <option value="híbrido" <?= ($_GET['type'] ?? '') === 'híbrido' ? 'selected' : '' ?>>Híbrido</option>
+            <?php foreach ($metodosTrabalho as $metodo): ?>
+              <option value="<?= htmlspecialchars($metodo['nome']) ?>" <?= ($_GET['type'] ?? '') === $metodo['nome'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($metodo['nome']) ?>
+              </option>
+            <?php endforeach; ?>
           </select>
         </div>
 
@@ -73,8 +75,7 @@
                   <span class="font-medium"><?= htmlspecialchars($vaga['empresa_nome'] ?? $vaga['empresa_razao'] ?? 'Empresa não informada') ?></span>
                 </p>
                 <p class="text-gray-600 text-sm mb-4">
-                  <?= htmlspecialchars($vaga['empresa_cidade'] ?? 'Local não informado') ?>
-                  <?= !empty($vaga['empresa_estado']) ? ' - ' . htmlspecialchars($vaga['empresa_estado']) : '' ?>
+                  <?= htmlspecialchars($vaga['location'] ?? 'Local não informado') ?>
                 </p>
                 <p class="text-gray-700 text-sm line-clamp-3 mb-4">
                   <?= nl2br(htmlspecialchars($vaga['description'] ?? '')) ?>

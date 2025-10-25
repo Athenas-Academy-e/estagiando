@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Middleware simples de autenticação.
  * Impede acesso a áreas restritas se o usuário não estiver logado.
@@ -13,20 +14,23 @@ class Auth
         }
     }
 
-    public static function check($requiredType = null)
+    public static function check($tipo)
     {
-        self::startSession();
+        session_start();
 
-        if (empty($_SESSION['usuario_id']) || empty($_SESSION['usuario_tipo'])) {
+        // ✅ Verifica se está logado e se o tipo é o correto
+        if ($tipo === 'profissional' && empty($_SESSION['profissional_id'])) {
             header("Location: /login");
             exit;
         }
 
-        // Se um tipo específico for exigido (empresa/profissional)
-        if ($requiredType && $_SESSION['usuario_tipo'] !== $requiredType) {
+        if ($tipo === 'empresa' && empty($_SESSION['empresa_id'])) {
             header("Location: /login");
             exit;
         }
+
+        // Tudo certo — permanece na página
+        return true;
     }
 
     public static function logout()

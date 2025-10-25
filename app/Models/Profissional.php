@@ -26,7 +26,7 @@ class Profissional
   }
 
   /**
-   * Cadastra novo profissional.
+   * Cadastra novo profissional (sem inserir município).
    */
   public function cadastrar($dados, $arquivoFoto)
   {
@@ -36,7 +36,7 @@ class Profissional
         $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
       }
 
-      // 🧠 Garante que o município exista ou cria um novo
+      // 🧠 Busca o município existente
       $stmt = $this->pdo->prepare("SELECT id FROM municipios WHERE nome = :nome AND estado = :estado LIMIT 1");
       $stmt->execute([
         ':nome' => $dados['cidade'] ?? '',
@@ -44,16 +44,8 @@ class Profissional
       ]);
       $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      if (!$municipio) {
-        $insert = $this->pdo->prepare("INSERT INTO municipios (nome, estado) VALUES (:nome, :estado)");
-        $insert->execute([
-          ':nome' => $dados['cidade'] ?? '',
-          ':estado' => $dados['estado'] ?? ''
-        ]);
-        $municipioId = $this->pdo->lastInsertId();
-      } else {
-        $municipioId = $municipio['id'];
-      }
+      // Se não encontrar, define como null
+      $municipioId = $municipio['id'] ?? null;
 
       // 📸 Upload da foto de perfil (opcional)
       $foto = null;

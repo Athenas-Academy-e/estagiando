@@ -11,7 +11,7 @@ class Job
     }
 
     /**
-     * Lista vagas com filtros (busca, localidade, tipo e ordenação)
+     * Lista vagas com filtros (busca, localidade, método e ordenação)
      */
     public function getAll($query = '', $location = '', $type = '', $sort = 'newest', $empresaId = null)
     {
@@ -22,35 +22,44 @@ class Job
                     e.logo AS empresa_logo,
                     e.cidade AS empresa_cidade,
                     e.estado AS empresa_estado,
-                    c.nome AS categoria_nome
+                    c.nome AS categoria_nome,
+                    jm.id AS method_id,
+                    jm.nome AS method_nome
                 FROM jobs j
                 LEFT JOIN empresas e ON e.id = j.company_id
                 LEFT JOIN categorias c ON c.id = j.categoria_id
+                LEFT JOIN jobs_method jm ON jm.id = j.method_id
                 WHERE 1=1";
 
         $params = [];
 
+        // 🔍 Filtro de texto
         if (!empty($query)) {
             $sql .= " AND (j.title LIKE :q OR j.description LIKE :q1)";
             $params[':q'] = "%$query%";
             $params[':q1'] = "%$query%";
         }
 
+        // 📍 Filtro de localidade
         if (!empty($location)) {
             $sql .= " AND (e.cidade LIKE :loc OR e.estado LIKE :loc1)";
             $params[':loc'] = "%$location%";
             $params[':loc1'] = "%$location%";
         }
 
+        // 💼 Filtro de método (nome)
         if (!empty($type)) {
-            $sql .= " AND j.type = :type";
-            $params[':type'] = $type;
+            $sql .= " AND jm.nome LIKE :type";
+            $params[':type'] = "%$type%";
         }
+
+        // 🏢 Filtro por empresa (caso esteja logada)
         if (!empty($empresaId)) {
             $sql .= " AND e.id = :empresaId";
             $params[':empresaId'] = $empresaId;
         }
 
+        // ⏱ Ordenação
         switch ($sort) {
             case 'oldest':
                 $sql .= " ORDER BY j.postedAt ASC";
@@ -65,7 +74,7 @@ class Job
     }
 
     /**
-     * 🔹 Retorna uma vaga específica por ID
+     * Retorna uma vaga específica por ID
      */
     public function getById($id)
     {
@@ -77,11 +86,14 @@ class Job
                     e.cidade AS empresa_cidade,
                     e.estado AS empresa_estado,
                     c.nome AS categoria_nome,
-                    m.nome AS municipio_nome
+                    m.nome AS municipio_nome,
+                    jm.id AS method_id,
+                    jm.nome AS method_nome
                 FROM jobs j
                 LEFT JOIN empresas e ON e.id = j.company_id
                 LEFT JOIN categorias c ON c.id = j.categoria_id
                 LEFT JOIN municipios m ON m.id = e.municipio_id
+                LEFT JOIN jobs_method jm ON jm.id = j.method_id
                 WHERE j.id = :id
                 LIMIT 1";
 
@@ -100,7 +112,7 @@ class Job
     }
 
     /**
-     * Conta o total de vagas (para dashboard / home)
+     * Conta o total de vagas
      */
     public function countAll()
     {
@@ -115,9 +127,9 @@ class Job
     public function create($dados)
     {
         $sql = "INSERT INTO jobs 
-                    (title, company_id, categoria_id, location, type, salary, description, postedAt)
-                    VALUES 
-                    (:title, :company_id, :categoria_id, :location, :type, :salary, :description, NOW())";
+                    (title, company_id, categoria_id, location, method_id, salary, description, postedAt)
+                VALUES 
+                    (:title, :company_id, :categoria_id, :location, :method_id, :salary, :description, NOW())";
 
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
@@ -125,24 +137,26 @@ class Job
             ':company_id' => $dados['company_id'] ?? null,
             ':categoria_id' => $dados['categoria_id'] ?? null,
             ':location' => $dados['location'] ?? '',
-            ':type' => $dados['type'] ?? '',
+            ':method_id' => $dados['method_id'] ?? null,
             ':salary' => $dados['salary'] ?? '',
             ':description' => $dados['description'] ?? '',
         ]);
     }
 
     /**
-     * Deleta uma vaga pelo ID
+     * Deleta uma vaga
      */
     public function delete($id)
     {
         $stmt = $this->pdo->prepare("DELETE FROM jobs WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
     /**
-     * 🔹 Registra uma candidatura para uma vaga
+     * Registra uma candidatura
      */
-    public function applyToJob($jobId, $nome, $email, $telefone = '', $mensagem = '', $curriculo = null, $profissionalId = null){
+    public function applyToJob($jobId, $nome, $email, $telefone = '', $mensagem = '', $curriculo = null, $profissionalId = null)
+    {
         $sql = "INSERT INTO candidaturas (
                     vaga_id, profissional_id, nome, email, telefone, mensagem, curriculo, data_envio
                 )
@@ -163,9 +177,10 @@ class Job
     }
 
     /**
-     * 🔹 Faz upload seguro de currículo e retorna o caminho relativo
+     * Upload seguro de currículo
      */
-    public function uploadCurriculo($file){
+    public function uploadCurriculo($file)
+    {
         if (empty($file['name']) || $file['error'] !== UPLOAD_ERR_OK) {
             return null;
         }
@@ -187,9 +202,10 @@ class Job
     }
 
     /**
-     * 🔹 Retorna todas as candidaturas de um profissional
+     * Retorna candidaturas de um profissional
      */
-    public function getApplicationsByProfessional($profissionalId){
+    public function getApplicationsByProfessional($profissionalId)
+    {
         $sql = "SELECT 
                     c.*, 
                     j.title AS vaga_titulo, 
@@ -202,6 +218,17 @@ class Job
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $profissionalId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Retorna os métodos de trabalho ativos
+     */
+    public function getWorkMethod()
+    {
+        $sql = "SELECT id, nome FROM jobs_method WHERE status = 'ativo' ORDER BY nome ASC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
