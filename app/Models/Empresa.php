@@ -326,4 +326,17 @@ class Empresa
       return 0;
     }
   }
+  public function getById($id)
+  {
+    $stmt = $this->pdo->prepare("SELECT * FROM empresas WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  public function getMunicipioById($id)
+  {
+    $stmt = $this->pdo->prepare("SELECT * FROM municipios WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }

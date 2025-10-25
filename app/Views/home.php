@@ -96,7 +96,7 @@
           mais de <span id="empresasCount" class="text-[#aef85f] font-bold">0</span> currículos cadastrados
         </span>
       </p>
-      <a href="/cadastro"
+      <a href="/empresas/publicar"
         class="inline-block border border-white rounded-full px-6 py-2 text-white hover:bg-white hover:text-[#1d73d3] transition-colors duration-300 font-medium">
         Anunciar Vaga
       </a>

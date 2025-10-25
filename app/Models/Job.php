@@ -231,4 +231,23 @@ class Job
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function save($data)
+    {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO jobs 
+            (title, company_id, categoria_id, municipio_id, method_id, location, salary, description, postedAt) 
+            VALUES (:title, :company_id, :categoria_id, :municipio_id, :method_id, :location, :salary, :description, CURDATE())
+        ");
+        $stmt->execute([
+            ':title'        => $data['title'],
+            ':company_id'   => $data['company_id'],
+            ':categoria_id' => $data['categoria_id'],
+            ':municipio_id' => $data['municipio_id'],
+            ':method_id'    => $data['method_id'],
+            ':location'     => $data['location'],
+            ':salary'       => $data['salary'],
+            ':description'  => $data['description']
+        ]);
+    }
 }

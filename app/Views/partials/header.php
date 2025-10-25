@@ -12,7 +12,8 @@
       </div>
       <div>
         <a href="/login" class="bg-[#97dd3a] text-white px-3 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all mx-2">Entrar</a>
-        <a href="/cadastro" class="bg-[#97dd3a] text-white px-3 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all mx-2">Publicar vaga</a>
+        <a href="/cadastro" class="bg-[#97dd3a] text-white px-3 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all mx-2">Cadastre-se</a>
+        <a href="/empresas/publicar" class="bg-[#97dd3a] text-white px-3 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all mx-2">Publicar vaga</a>
       </div>
     </div>
   </header>
