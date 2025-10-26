@@ -144,4 +144,18 @@ class Profissional
     $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
+
+  public function listarById($id)
+  {
+    $sql = "SELECT nome, email, telefone
+            FROM profissionais 
+            WHERE id=:id";
+
+    $params = [];
+    $params[':id'] = $id;
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }

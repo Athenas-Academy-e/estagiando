@@ -27,7 +27,9 @@ class VagasController
     }
 
     public function detalhe()
-    {
+    {   
+        session_start();
+
         if (!isset($_GET['id'])) {
             header("Location: /vagas");
             exit;

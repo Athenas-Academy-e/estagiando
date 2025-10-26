@@ -25,10 +25,14 @@
             <div class="text-right">
               <?php if (!empty($c['curriculo'])): ?>
                 <a href="<?= $c['curriculo'] ?>" target="_blank"
-                   class="text-blue-600 text-sm hover:underline">📄 Ver currículo</a><br>
+                  class="text-blue-600 text-sm hover:underline">📄 Ver currículo</a><br>
               <?php endif; ?>
-              <span class="text-xs text-gray-500">
-                Enviado em <?= date('d/m/Y H:i', strtotime($c['data_envio'])) ?>
+              <span class="text-xs text-gray-500 block mt-2">
+                <?php
+                $dataEnvio = new DateTime($c['data_envio'], new DateTimeZone('UTC'));
+                $dataEnvio->setTimezone(new DateTimeZone('America/Sao_Paulo'));
+                echo 'Enviado em ' . $dataEnvio->format('d/m/Y H:i');
+                ?>
               </span>
             </div>
           </div>

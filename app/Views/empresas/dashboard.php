@@ -22,6 +22,7 @@
             <div>
               <h2 class="text-lg font-semibold text-blue-700 mb-1"><?= htmlspecialchars($vaga['title']) ?></h2>
               <p class="text-sm text-gray-500 mb-4"><?= htmlspecialchars($vaga['location']) ?></p>
+              <p class="text-sm text-gray-500 mb-4"><?= htmlspecialchars(date('d/m/Y', strtotime($vaga['posted_at']))) ?></p>
             </div>
 
             <!-- Candidatos -->
@@ -58,8 +59,4 @@
       </div>
     <?php endif; ?>
   </div>
-
-  <script>
-    console.log(<?= json_encode($vagas) ?>);
-  </script>
 </main>

@@ -42,3 +42,5 @@ define('DB_PASS', '417782');
 define('ASSETS_URL', BASE_URL . 'public/assets/');
 define('CSS_URL', BASE_URL . 'public/css/');
 define('JS_URL', BASE_URL . 'public/js/');
+
+date_default_timezone_set('America/Sao_Paulo');

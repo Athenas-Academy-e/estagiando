@@ -51,12 +51,13 @@ if (!$vaga) {
           ?>
           <p class="mb-1"><strong>Salário:</strong> <?= $salario ?></p>
         <?php endif; ?>
-        <p><strong>Publicado em:</strong> <?= date('d/m/Y', strtotime($vaga['postedAt'])) ?></p>
+        <p><strong>Publicado em:</strong> <?= date('d/m/Y', strtotime($vaga['posted_at'])) ?></p>
       </div>
 
       <div class="mt-4 md:mt-0">
+        <?php $applyClass = isset($_SESSION['empresa_id']) ? 'hidden' : 'block'; ?>
         <a href="/apply?id=<?= $vaga['id'] ?>"
-          class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-[#97dd3a] hover:text-white transition">
+          class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-[#97dd3a] hover:text-white transition <?= $applyClass ?>">
           Candidatar-se
         </a>
         <a href="/vagas"
@@ -65,6 +66,8 @@ if (!$vaga) {
         </a>
       </div>
     </div>
-
   </div>
+  <script>
+    console.log(<?= json_encode($_SESSION) ?>);
+  </script>
 </main>

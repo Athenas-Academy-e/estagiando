@@ -28,19 +28,19 @@ if (!isset($vaga) || !$vaga) {
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Nome completo</label>
-        <input type="text" name="nome" required
+        <input type="text" name="nome" required value="<?= htmlspecialchars($profissional['nome'] ?? '') ?>"
                class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">E-mail</label>
-        <input type="email" name="email" required
+        <input type="email" name="email" required value="<?= htmlspecialchars($profissional['email'] ?? '') ?>"
                class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Telefone</label>
-        <input type="text" name="telefone"
+        <input type="text" name="telefone" required value="<?= htmlspecialchars($profissional['telefone'] ?? '') ?>"
                class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
       </div>
 

@@ -23,6 +23,8 @@ class ApplyController
 
         $jobModel = new Job();
         $vaga = $jobModel->getById($jobId);
+        $profissionaisModel = new Profissional();
+        $profissional = $profissionaisModel->listarById($_SESSION['profissional_id']);
 
         // ✅ Verifica se a vaga existe
         if (!$vaga) {
