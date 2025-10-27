@@ -1,4 +1,35 @@
-<div  class="flex justify-center"><a href="https://athenasacademy.com.br" target="_blank" rel="noopener noreferrer"></a><img src="/assets/banner.png" alt="" data-animate></div>
+<!-- Carrossel de publicidades -->
+<?php if (!empty($publicidades)): ?>
+<div class="relative w-full max-w-[1220px] mx-auto mt-2 rounded-xl overflow-hidden shadow-lg">
+
+    <div id="carouselPublicidade" 
+         class="flex transition-transform duration-700 ease-in-out"
+         style="width: calc(1220px * <?= count($publicidades) ?>);">
+
+        <?php foreach ($publicidades as $p): ?>
+            <a href="<?= htmlspecialchars($p['site']) ?>" 
+               target="_blank"
+               class="shrink-0">
+                <img 
+                  src="<?= htmlspecialchars($p['path']) ?>" 
+                  alt="<?= htmlspecialchars($p['nome']) ?>"
+                  class="w-[1220px] max-w-full h-auto object-contain">
+            </a>
+        <?php endforeach; ?>
+
+    </div>
+
+    <!-- Indicadores -->
+    <div class="absolute flex gap-2 bottom-3 left-1/2 transform -translate-x-1/2">
+        <?php foreach ($publicidades as $i => $p): ?>
+        <button class="w-3 h-3 rounded-full bg-white opacity-50 hover:opacity-100"
+                onclick="goToSlide(<?= $i ?>)"></button>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- Seção principal da home -->
 <section class="bg-gray-50 py-16 overflow-hidden">
   <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10">
 
@@ -182,5 +213,31 @@
       animateCount('vagasCount', totalVagas);
       animateCount('empresasCount', totalEmpresas);
     }, 400);
+
+    // --- Carrossel de publicidades ---
+    const carousel = document.getElementById("carouselPublicidade");
+    const total = carousel.children.length;
+    let current = 0;
+    let interval;
+
+    const start = () => interval = setInterval(next, 4000);
+    const stop = () => clearInterval(interval);
+
+    const next = () => {
+      current = (current + 1) % total;
+      carousel.style.transform = `translateX(-${current * 100}%)`;
+    };
+
+    window.goToSlide = (index) => {
+      current = index;
+      carousel.style.transform = `translateX(-${current * 100}%)`;
+      stop();
+      start();
+    };
+
+    carousel.addEventListener("mouseenter", stop);
+    carousel.addEventListener("mouseleave", start);
+
+    start(); // autoplay inicial
   });
 </script>

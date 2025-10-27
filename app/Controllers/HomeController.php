@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../Models/Job.php';
 require_once __DIR__ . '/../Models/Empresa.php';
+require_once __DIR__ . '/../Models/Publicidade.php';
 
 class HomeController
 {
@@ -8,6 +9,8 @@ class HomeController
     {
         $jobModel = new Job();
         $empresaModel = new Empresa();
+        $publicidadeModel = new Publicidade();
+        $publicidades = $publicidadeModel->getAtivas();
 
         // Obtém totais para exibir na home
         $totalVagas = $jobModel->countAll();

@@ -31,16 +31,9 @@ if (strpos($serverName, '3000') !== false) {
 /**
  * Banco de dados (ajuste conforme seu ambiente)
  */
-define('DB_HOST', '192.168.0.246');
-define('DB_NAME', 'jobboard');
-define('DB_USER', 'root');
-define('DB_PASS', '417782');
-
-/**
- * Caminho global para assets
- */
-define('ASSETS_URL', BASE_URL . 'public/assets/');
-define('CSS_URL', BASE_URL . 'public/css/');
-define('JS_URL', BASE_URL . 'public/js/');
+define('DB_HOST', '69.6.213.75');
+define('DB_NAME', 'hg4bea48_estagiando');
+define('DB_USER', 'hg4bea48_estagiando');
+define('DB_PASS', 'bh)JOxGTC#{&');
 
 date_default_timezone_set('America/Sao_Paulo');
