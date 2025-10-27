@@ -1,4 +1,4 @@
-<div  class="flex justify-center"><img src="/assets/banner.png" alt="" data-animate></div>
+<div  class="flex justify-center"><a href="https://athenasacademy.com.br" target="_blank" rel="noopener noreferrer"></a><img src="/assets/banner.png" alt="" data-animate></div>
 <section class="bg-gray-50 py-16 overflow-hidden">
   <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10">
 
