@@ -9,7 +9,6 @@
       <p class="mt-2 text-sm text-gray-500">
         Aqui você poderá acompanhar suas candidaturas, atualizar seus dados e visualizar novas vagas.
       </p>
-      <a href="/logout" class="inline-block mt-6 text-blue-600 hover:underline">Sair</a>
     </div>
   </div>
 </main>

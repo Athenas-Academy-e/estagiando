@@ -5,7 +5,6 @@
       <h1 class="text-2xl font-bold text-gray-800">
         Painel da Empresa - <?= htmlspecialchars($_SESSION['empresa_nome']) ?>
       </h1>
-      <a href="/logout" class="text-red-600 hover:underline font-medium">Sair</a>
     </div>
 
     <!-- Conteúdo -->

@@ -906,10 +906,6 @@ select {
   height: 100%;
 }
 
-.h-3 {
-  height: 0.75rem;
-}
-
 .max-h-56 {
   max-height: 14rem;
 }
