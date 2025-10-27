@@ -231,7 +231,7 @@ class Empresa
   /**
    * 🔢 Valida CNPJ
    */
-  private function validarCNPJ($cnpj)
+  public function validarCNPJ($cnpj)
   {
     $cnpj = preg_replace('/\D/', '', $cnpj);
     if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) return false;
@@ -370,5 +370,53 @@ class Empresa
     $stmt = $this->pdo->prepare("SELECT * FROM municipios WHERE id = :id LIMIT 1");
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  public function updateEmpresa($id, $dados)
+  {
+    $sql = "UPDATE empresas 
+      SET razao_social = :razao_social,
+          nome_fantasia = :nome_fantasia,
+          cnpj = :cnpj,
+          telefone = :telefone,
+          celular = :celular,
+          email = :email,
+          cep = :cep,
+          endereco = :endereco,
+          numero = :numero,
+          bairro = :bairro,
+          estado = :estado,
+          cidade = :cidade,
+          municipio_id = :municipio_id,
+          data_alteracao = NOW()
+      WHERE id = :id";
+
+
+    $stmt = $this->pdo->prepare($sql);
+
+    return $stmt->execute([
+      ':id'            => $id,
+      ':razao_social' => $dados['razao_social'],
+      ':nome_fantasia' => $dados['nome_fantasia'],
+      ':cnpj'          => $dados['cnpj'],
+      ':telefone'      => $dados['telefone'],
+      ':celular'       => $dados['celular'],
+      ':email'         => $dados['email'],
+      ':cep'           => $dados['cep'],
+      ':endereco'      => $dados['endereco'],
+      ':numero'        => $dados['numero'],
+      ':bairro'        => $dados['bairro'],
+      ':estado'        => $dados['estado'],
+      ':cidade'        => $dados['cidade'],
+      ':municipio_id'  => $dados['municipio_id']
+    ]);
+  }
+
+  public function emailExiste($email, $empresaId)
+  {
+    $sql = "SELECT id FROM empresas WHERE email = :email AND id != :id LIMIT 1";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([':email' => $email, ':id' => $empresaId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
   }
 }

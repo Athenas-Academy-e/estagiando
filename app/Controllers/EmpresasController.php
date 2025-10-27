@@ -273,4 +273,88 @@ class EmpresasController
         require_once __DIR__ . '/../Views/empresas/alterarlogo.php';
         require_once __DIR__ . '/../Views/partials/footer.php';
     }
+    public function editarPerfil()
+    {
+        Auth::check('empresa');
+
+        $empresaModel = new Empresa();
+        $empresa = $empresaModel->getById($_SESSION['empresa_id']);
+
+        if (!$empresa) {
+            die("Empresa não encontrada.");
+        }
+
+        $municipios = $empresaModel->getLocalidades();
+        $error = null;
+        $success = null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $razao_social = trim($_POST['razao_social'] ?? '');
+            $nome_fantasia = trim($_POST['nome_fantasia'] ?? '');
+            $cnpj = trim($_POST['cnpj'] ?? '');
+            $telefone = trim($_POST['telefone'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $municipio_id = (int)($_POST['municipio_id'] ?? 0);
+
+            if (!($razao_social || $nome_fantasia) || !$email) {
+                $error = "Nome e Email são obrigatórios!";
+            } else {
+                $empresaModel->updateEmpresa($_SESSION['empresa_id'], [
+                    'razao_social' => $razao_social,
+                    'nome_fantasia' => $nome_fantasia,
+                    'cnpj' => $cnpj,
+                    'telefone' => $telefone,
+                    'celular' => $empresa['celular'],       // mantém dados antigos
+                    'email' => $email,
+                    'cep' => $empresa['cep'],
+                    'endereco' => $empresa['endereco'],
+                    'numero' => $empresa['numero'],
+                    'bairro' => $empresa['bairro'],
+                    'estado' => $empresa['estado'],
+                    'cidade' => $empresa['cidade'],
+                    'municipio_id' => $municipio_id
+                ]);
+
+                $_SESSION['empresa_nome'] = !isset($razao_social) ? $nome_fantasia : $razao_social;
+                $success = "Dados atualizados com sucesso! ✅";
+
+                // Atualiza logo apenas se enviada
+                if (!empty($_FILES['logo']['name'])) {
+                    $novaLogoPath = $empresaModel->uploadLogo($_FILES['logo']);
+                    if ($novaLogoPath) {
+                        $empresaModel->updateLogo($_SESSION['empresa_id'], $novaLogoPath);
+                        $_SESSION['empresa_logo'] = $novaLogoPath;
+                    }
+                }
+
+                // Recarrega dados atualizados
+                $empresa = $empresaModel->getById($_SESSION['empresa_id']);
+
+                // LOG DETALHADO EM ARQUIVO
+                $logDir = __DIR__ . '/../../logs/';
+                if (!is_dir($logDir)) {
+                    mkdir($logDir, 0777, true);
+                }
+
+                $logFile = $logDir . 'empresas_updates.log';
+
+                $ip = $_SERVER['REMOTE_ADDR'] ?? 'IP não identificado';
+                $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Navegador desconhecido';
+
+                $logMsg = "[" . date('d/m/Y H:i:s') . "] "
+                    . "Empresa ID: {$_SESSION['empresa_id']} | "
+                    . "Nome: {$razao_social} | "
+                    . "IP: {$ip} | "
+                    . "Navegador: {$userAgent}"
+                    . PHP_EOL;
+
+                file_put_contents($logFile, $logMsg, FILE_APPEND);
+            }
+        }
+
+        require_once __DIR__ . '/../Views/partials/head.php';
+        require_once __DIR__ . '/../Views/partials/header.php';
+        require_once __DIR__ . '/../Views/empresas/editarperfil.php';
+        require_once __DIR__ . '/../Views/partials/footer.php';
+    }
 }

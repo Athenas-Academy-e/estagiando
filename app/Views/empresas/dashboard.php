@@ -21,7 +21,11 @@
 
       <?php if (isset($_SESSION['empresa_id'])): ?>
         <div class="flex items-center gap-3">
-
+          <a href="/empresas/editarperfil"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-300 transition-all text-sm">
+            Alterar Dados
+          </a>
+          
           <a href="/empresas/alterarlogo"
             class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-300 transition-all text-sm">
             Alterar Logo
