@@ -86,7 +86,7 @@ class Empresa
       if (!empty($arquivoLogo['name'])) {
         $ext = pathinfo($arquivoLogo['name'], PATHINFO_EXTENSION);
         $logo = uniqid('logo_') . '.' . $ext;
-        $destino = __DIR__ . '/../../public/assets/logos/' . $logo;
+        $destino = __DIR__ . '/../../public_html/assets/logos/' . $logo;
         if (!is_dir(dirname($destino))) mkdir(dirname($destino), 0777, true);
         move_uploaded_file($arquivoLogo['tmp_name'], $destino);
       }

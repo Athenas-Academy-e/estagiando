@@ -52,7 +52,7 @@ class Profissional
       if (!empty($arquivoFoto['name'])) {
         $ext = pathinfo($arquivoFoto['name'], PATHINFO_EXTENSION);
         $foto = uniqid('foto_') . '.' . $ext;
-        $destino = __DIR__ . '/../../public/assets/fotos/' . $foto;
+        $destino = __DIR__ . '/../../public_html/assets/fotos/' . $foto;
         if (!is_dir(dirname($destino))) mkdir(dirname($destino), 0777, true);
         move_uploaded_file($arquivoFoto['tmp_name'], $destino);
       }

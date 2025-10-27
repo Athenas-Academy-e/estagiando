@@ -189,7 +189,7 @@ class Job
             return null;
         }
 
-        $uploadDir = __DIR__ . '/../../public/assets/cv/';
+        $uploadDir = __DIR__ . '/../../public_html/assets/cv/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
