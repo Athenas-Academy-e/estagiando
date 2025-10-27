@@ -46,7 +46,7 @@ class LoginController
             if ($empresa) {
                 $_SESSION['empresa_id'] = $empresa['id'];
                 $_SESSION['empresa_nome'] = !empty($empresa['razao_social']) ? $empresa['nome_fantasia'] : $empresa['razao_social'];
-                $_SESSION['logo']= $empresa['logo'];
+                $_SESSION['empresa_logo']= $empresa['logo'];
                 $_SESSION['usuario_tipo'] = 'empresa';
 
                 // ✅ Evita loop se a dashboard já estiver protegida

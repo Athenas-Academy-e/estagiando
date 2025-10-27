@@ -7,6 +7,7 @@ class EmpresasController
 {
     public function index()
     {
+
         $empresaModel = new Empresa();
 
         $categorias = $empresaModel->getCategorias();
@@ -60,11 +61,6 @@ class EmpresasController
         require_once __DIR__ . '/../Views/partials/header.php';
         require_once __DIR__ . '/../Views/empresas/candidatos.php';
         require_once __DIR__ . '/../Views/partials/footer.php';
-    }
-
-    public function logout()
-    {
-        Auth::logout();
     }
 
     /**
@@ -205,9 +201,9 @@ class EmpresasController
     public function excluir()
     {
         Auth::check('empresa'); // 🔐 protege rota
-        
+
         $id = $_GET['id'] ?? null;
-       
+
         if (!$id) {
             die("ID da vaga não informado.");
         }
@@ -226,5 +222,55 @@ class EmpresasController
         // Redireciona de volta ao dashboard
         header("Location: /empresas/dashboard");
         exit;
+    }
+
+    public function alterarLogo()
+    {
+        Auth::check('empresa');
+        $empresaModel = new Empresa();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $empresa = $empresaModel->getById($_SESSION['empresa_id']);
+            $logoAtual = $empresa['logo'] ?? null;
+
+            if (isset($_POST['action']) && $_POST['action'] === 'remover') {
+                // 🧹 Remove logo antiga
+                if (!empty($logoAtual)) {
+                    $arquivoAntigo = __DIR__ . '/../../public_html' . $logoAtual;
+                    if (file_exists($arquivoAntigo)) {
+                        unlink($arquivoAntigo);
+                    }
+                    $empresaModel->updateLogo($_SESSION['empresa_id'], null);
+                    unset($_SESSION['empresa_logo']);
+                }
+                $success = "Logo removida com sucesso!";
+            }
+
+            if (!empty($_FILES['logo']['name'])) {
+                // 🖼️ Upload de nova logo
+                $novaLogoPath = $empresaModel->uploadLogo($_FILES['logo']);
+
+                if ($novaLogoPath) {
+                    // Remove antiga ao atualizar
+                    if (!empty($logoAtual)) {
+                        $arquivoAntigo = __DIR__ . '/../../public_html' . $logoAtual;
+                        if (file_exists($arquivoAntigo)) {
+                            unlink($arquivoAntigo);
+                        }
+                    }
+                    $empresaModel->updateLogo($_SESSION['empresa_id'], $novaLogoPath);
+                    $_SESSION['empresa_logo'] = $novaLogoPath;
+                    $success = "Logo atualizada com sucesso!";
+                } else {
+                    $error = "Erro ao enviar a imagem. Tente outra logo.";
+                }
+            }
+        }
+
+        require_once __DIR__ . '/../Views/partials/head.php';
+        require_once __DIR__ . '/../Views/partials/header.php';
+        require_once __DIR__ . '/../Views/empresas/alterarlogo.php';
+        require_once __DIR__ . '/../Views/partials/footer.php';
     }
 }

@@ -36,9 +36,7 @@
         <?php else: ?>
           <a href="<?php echo isset($_SESSION['empresa_id']) ? '/empresas/dashboard' : '/profissional/dashboard' ?>" class="bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">Meu Perfil</a>
 
-          <?php if (isset($_SESSION['empresa_id'])): ?>
-            <a href="/empresas/publicar" class="bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">Publicar Vaga</a>
-          <?php endif; ?>
+          
 
           <a href="/logout" class="bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">Sair</a>
         <?php endif; ?>
@@ -56,11 +54,11 @@
           <a href="/login" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Entrar</a>
           <a href="/cadastro" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Cadastre-se</a>
         <?php else: ?>
-          <a href="<?php echo isset($_SESSION['empresa_id']) ? '/empresas/dashboard' : '/profissional/dashboard' ?>" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Meu Perfil</a>
-
           <?php if (isset($_SESSION['empresa_id'])): ?>
             <a href="/empresas/publicar" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Publicar Vaga</a>
           <?php endif; ?>
+          
+          <a href="<?php echo isset($_SESSION['empresa_id']) ? '/empresas/dashboard' : '/profissional/dashboard' ?>" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Meu Perfil</a>
 
           <a href="/logout" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Sair</a>
         <?php endif; ?>

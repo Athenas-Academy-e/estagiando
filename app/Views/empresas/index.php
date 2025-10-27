@@ -84,7 +84,7 @@
               <div class="flex flex-col items-center text-center">
                 <img
                   src="<?= !empty($e['logo'])
-                          ? '/assets/logos/' . htmlspecialchars($e['logo'])
+                          ? htmlspecialchars($e['logo'])
                           : '/assets/default-company.png' ?>"
                   alt="<?= htmlspecialchars($e['nome_fantasia'] ?? $e['razao_social'] ?? 'Empresa sem nome') ?>"
                   class="w-20 h-20 object-contain mb-3 rounded-full border border-gray-200 shadow-sm">
@@ -99,7 +99,7 @@
                 </p>
 
                 <?php if (!empty($e['site'])): ?>
-                  <a href="<?= htmlspecialchars($e['site']) ?>" target="_blank"
+                  <a href="<?= htmlspecialchars($e['site']) ?>" target="_blank" 
                     class="text-sm text-blue-600 hover:underline mb-3">
                     🌐 Visitar site
                   </a>

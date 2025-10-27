@@ -182,18 +182,50 @@ class Empresa
   /**
    * 🖼️ Atualiza a logo da empresa
    */
-  private function uploadLogo($arquivo, $empresaId)
+  public function uploadLogo($arquivo)
   {
-    $dir = __DIR__ . '/../../public/assets/logos/';
+    // Verifica validade
+    if (!isset($arquivo) || $arquivo['error'] !== UPLOAD_ERR_OK) {
+      return false;
+    }
+
+    // Pasta de destino
+    $dir = __DIR__ . '/../../public_html/assets/logos/';
     if (!is_dir($dir)) mkdir($dir, 0777, true);
 
-    $nomeArquivo = time() . '_' . basename($arquivo['name']);
+    // Extensões permitidas
+    $extensoes = ['jpg', 'jpeg', 'png', 'webp'];
+    $ext = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($ext, $extensoes)) {
+      return false;
+    }
+
+    // Limite de tamanho (3MB)
+    if ($arquivo['size'] > 3 * 1024 * 1024) {
+      return false;
+    }
+
+    // Nome único
+    $hash = md5(uniqid() . time());
+    $nomeArquivo = $hash . '.' . $ext;
     $destino = $dir . $nomeArquivo;
 
+    // Move upload
     if (move_uploaded_file($arquivo['tmp_name'], $destino)) {
-      $stmt = $this->pdo->prepare("UPDATE empresas SET logo = :logo WHERE id = :id");
-      $stmt->execute([':logo' => '/assets/logos/' . $nomeArquivo, ':id' => $empresaId]);
+      return '/assets/logos/' . $nomeArquivo;
     }
+
+    return false;
+  }
+
+  public function updateLogo($empresaId, $logoPath)
+  {
+    $stmt = $this->pdo->prepare("UPDATE empresas SET logo = :logo WHERE id = :id");
+    return $stmt->execute([
+      ':logo' => $logoPath,
+      ':id' => $empresaId
+    ]);
   }
 
   /**

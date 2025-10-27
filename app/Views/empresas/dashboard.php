@@ -1,10 +1,38 @@
 <main class="bg-gray-50 min-h-screen py-12">
   <div class="max-w-6xl mx-auto px-6">
-    <!-- Cabeçalho -->
+    <!-- Saudação e Logo -->
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-2xl font-bold text-gray-800">
-        Painel da Empresa - <?= htmlspecialchars($_SESSION['empresa_nome']) ?>
-      </h1>
+      <div class="flex items-center gap-4">
+
+        <?php if (!empty($_SESSION['empresa_logo'])): ?>
+          <img src="<?= htmlspecialchars($_SESSION['empresa_logo']) ?>"
+            alt="<?= htmlspecialchars($_SESSION['empresa_nome']) ?>"
+            class="w-14 h-14 object-cover rounded-full shadow-md border border-gray-200">
+        <?php else: ?>
+          <div class="w-14 h-14 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold">
+            ?
+          </div>
+        <?php endif; ?>
+
+        <h1 class="text-2xl font-bold text-gray-800">
+          Bem-vindo(a), <?= htmlspecialchars($_SESSION['empresa_nome']) ?>
+        </h1>
+      </div>
+
+      <?php if (isset($_SESSION['empresa_id'])): ?>
+        <div class="flex items-center gap-3">
+
+          <a href="/empresas/alterarlogo"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-300 transition-all text-sm">
+            Alterar Logo
+          </a>
+
+          <a href="/empresas/publicar"
+            class="hidden lg:inline-flex bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">
+            Publicar Vaga
+          </a>
+        </div>
+      <?php endif; ?>
     </div>
 
     <!-- Conteúdo -->
@@ -16,7 +44,7 @@
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php foreach ($vagas as $vaga): ?>
           <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 flex flex-col justify-between">
-            
+
             <!-- Título e Localização -->
             <div>
               <h2 class="text-lg font-semibold text-blue-700 mb-1"><?= htmlspecialchars($vaga['title']) ?></h2>
@@ -32,21 +60,21 @@
             <!-- Ações -->
             <div class="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
               <a href="/empresas/candidatos?vaga=<?= $vaga['id'] ?>"
-                 class="text-sm text-blue-600 hover:underline">
-                 Ver candidatos →
+                class="text-sm text-blue-600 hover:underline">
+                Ver candidatos →
               </a>
 
               <div class="flex gap-2">
                 <!-- Botão Editar -->
                 <a href="/empresas/editar?id=<?= $vaga['id'] ?>"
-                   class="inline-flex items-center gap-1 bg-blue-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
-                   ✏️
+                  class="inline-flex items-center gap-1 bg-blue-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
+                  ✏️
                 </a>
 
                 <!-- Botão Excluir -->
                 <form action="/empresas/excluir?id=<?= $vaga['id'] ?>" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta vaga?');">
                   <button type="submit"
-                          class="inline-flex items-center gap-1 bg-red-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-red-700 transition">
+                    class="inline-flex items-center gap-1 bg-red-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-red-700 transition">
                     🗑️
                   </button>
                 </form>
@@ -57,5 +85,8 @@
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
+    <script>
+      console.log(<?= json_encode($_SESSION) ?>);
+    </script>
   </div>
 </main>

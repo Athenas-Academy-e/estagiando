@@ -34,7 +34,7 @@
     <textarea name="description" placeholder="Descrição" class="p-2 border rounded md:col-span-2" rows="4"></textarea>
 
     <div class="md:col-span-2 flex justify-end gap-2">
-      <a href="/jobs" class="px-3 py-2 border rounded">Cancelar</a>
+      <a href="/empresas/dashboard" class="px-3 py-2 border rounded">Cancelar</a>
       <button type="submit" class="px-3 py-2 bg-blue-600 text-white rounded">Salvar</button>
     </div>
   </form>
