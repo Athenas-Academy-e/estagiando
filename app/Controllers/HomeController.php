@@ -11,6 +11,7 @@ class HomeController
         $empresaModel = new Empresa();
         $publicidadeModel = new Publicidade();
         $publicidades = $publicidadeModel->getAtivas();
+        $areas = $jobModel->getAvailableAreas();
 
         // Obtém totais para exibir na home
         $totalVagas = $jobModel->countAll();

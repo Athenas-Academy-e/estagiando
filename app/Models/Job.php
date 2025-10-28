@@ -281,4 +281,17 @@ class Job
             ':description'  => $data['description']
         ]);
     }
+    public function getAvailableAreas()
+    {
+        $stmt = $this->pdo->query("
+        SELECT c.id, c.nome, COUNT(j.id) AS total_vagas, c.imagempath, c.status
+        FROM categorias c
+        JOIN jobs j ON j.categoria_id = c.id
+        WHERE j.status = 'S' AND c.status = 'ativo'
+        GROUP BY c.id
+        HAVING total_vagas > 0
+        ORDER BY total_vagas DESC
+    ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
