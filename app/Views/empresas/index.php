@@ -99,8 +99,14 @@
                 </p>
 
                 <?php if (!empty($e['site'])): ?>
-                  <a href="<?= htmlspecialchars($e['site']) ?>" target="_blank" 
-                    class="text-sm text-blue-600 hover:underline mb-3">
+                  <?php
+                    $siteUrl = $e['site'];
+                    // Add a scheme if missing to produce a valid href
+                    if (!preg_match('#^https?://#i', $siteUrl)) {
+                      $siteUrl = 'https://' . $siteUrl;
+                    }
+                  ?>
+                  <a href="<?= htmlspecialchars($siteUrl) ?>" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline mb-3">
                     🌐 Visitar site
                   </a>
                 <?php endif; ?>
