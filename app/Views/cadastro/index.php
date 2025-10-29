@@ -36,27 +36,27 @@
           <div class="grid md:grid-cols-3 gap-4 mb-6">
 
             <input type="text" name="nome" placeholder="Nome completo"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" id="cpf" name="cpf" placeholder="CPF"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="email" name="email" placeholder="Email"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" id="telefoneProf" name="telefone" placeholder="Telefone"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <select name="sexo"
               class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full cursor-pointer bg-white appearance-none pr-10"
               style="background-image:url('data:image/svg+xml,%3Csvg width=\'18\' height=\'18\' stroke=\'%23000\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center;">
-              <option value="" disabled>Sexo</option>
+              <option value="">Sexo</option>
               <option value="M">Masculino</option>
               <option value="F">Feminino</option>
             </select>
 
             <input type="date" name="nascimento"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
           </div>
 
           <div class="text-center mt-4">
@@ -70,22 +70,22 @@
           <div class="grid md:grid-cols-3 gap-4 mb-6">
 
             <input type="text" id="cepProf" name="cep" placeholder="CEP"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="endereco" placeholder="Endereço"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="numero" placeholder="Número"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="bairro" placeholder="Bairro"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="cidade" placeholder="Cidade"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="estado" placeholder="Estado (UF)"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
             <p class="cepStatus text-xs text-gray-500 mt-1"></p>
           </div>
 
@@ -106,7 +106,7 @@
               <div class="relative mb-4">
                 <input type="password" name="senha" placeholder="Senha"
                   class="border border-gray-700 rounded-full px-4 pr-12 h-12 text-sm text-gray-900
-                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha">
+                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha" required>
                 <span class="toggle-eye absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer select-none">👁</span>
               </div>
 
@@ -114,7 +114,7 @@
               <div class="relative mb-4">
                 <input type="password" name="senha_confirm" placeholder="Confirmar Senha"
                   class="border border-gray-700 rounded-full px-4 pr-12 h-12 text-sm text-gray-900
-                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha-confirm">
+                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha-confirm" required>
                 <span class="toggle-eye absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer select-none">👁</span>
               </div>
 
@@ -138,7 +138,7 @@
             <div class="flex flex-col items-center gap-3 md:w-64">
               <h4 class="font-semibold text-gray-700">Foto de Perfil</h4>
               <input type="file" name="foto" id="foto" accept="image/*"
-                class="block mx-auto mb-2">
+                class="block mx-2 mb-2">
               <img id="fotoPreview" class="hidden mx-auto rounded-full w-32 h-32 object-cover border-4 border-blue-200 shadow-md">
             </div>
           </div><!-- /flex layout -->
@@ -165,24 +165,24 @@
           <div class="grid md:grid-cols-3 gap-4 mb-6">
 
             <input type="text" name="razao_social" placeholder="Razão Social"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="nome_fantasia" placeholder="Nome Fantasia"
               class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
 
 
             <input type="text" id="cnpj" name="cnpj" placeholder="CNPJ"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="email" name="email" placeholder="E-mail"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" id="telefoneEmp" name="telefone1" placeholder="Telefone"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <select name="categoria"
               class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full cursor-pointer bg-white appearance-none pr-10"
-              style="background-image:url('data:image/svg+xml,%3Csvg width=\'18\' height=\'18\' stroke=\'%230000\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center;">
+              style="background-image:url('data:image/svg+xml,%3Csvg width=\'18\' height=\'18\' stroke=\'%230000\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center;" required>
               <option value="">Selecione uma categoria</option>
               <?php foreach ($categorias as $c): ?>
                 <option value="<?= htmlspecialchars($c['id']) ?>"><?= htmlspecialchars($c['nome']) ?></option>
@@ -204,21 +204,21 @@
           <div class="grid md:grid-cols-3 gap-4 mb-6">
 
             <input type="text" id="cepEmp" name="cep" placeholder="CEP"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
             <input type="text" name="endereco" placeholder="Endereço"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="numero" placeholder="Número"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="bairro" placeholder="Bairro"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="cidade" placeholder="Cidade"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
             <input type="text" name="estado" placeholder="Estado (UF)"
-              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
             <p class="cepStatus text-xs text-gray-500 mt-1"></p>
           </div>
           <div class="flex justify-between mt-4">
@@ -238,7 +238,7 @@
               <div class="relative mb-4">
                 <input type="password" name="senha" placeholder="Senha"
                   class="border border-gray-700 rounded-full px-4 pr-12 h-12 text-sm text-gray-900
-                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha">
+                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha" required>
                 <span class="toggle-eye absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer select-none">👁</span>
               </div>
 
@@ -246,7 +246,7 @@
               <div class="relative mb-4">
                 <input type="password" name="senha_confirm" placeholder="Confirmar Senha"
                   class="border border-gray-700 rounded-full px-4 pr-12 h-12 text-sm text-gray-900
-                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha-confirm">
+                  focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400 senha-confirm" required>
                 <span class="toggle-eye absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer select-none">👁</span>
               </div>
 
@@ -267,10 +267,10 @@
             </div><!-- /Senha -->
 
             <!-- LOGO -->
-            <div class="flex flex-col items-center gap-3 md:w-64">
+            <div class="flex flex-col items-center gap-3 md:w-72">
               <h4 class="font-semibold text-gray-700">Logo da Empresa</h4>
               <input type="file" name="logo" id="logo" accept="image/*"
-                class="block mx-auto mb-2">
+                class="block mx-2 mb-2">
               <img id="logoPreview" class="hidden mx-auto rounded-lg w-32 h-32 object-cover border-4 border-blue-200 shadow-md">
             </div>
           </div><!-- /flex -->
