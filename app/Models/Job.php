@@ -13,7 +13,7 @@ class Job
     /**
      * Lista vagas com filtros (busca, localidade, método e ordenação)
      */
-    public function getAll($query = '', $location = '', $type = '', $sort = 'newest', $empresaId = null)
+    public function getAll($query = '', $location = '', $type = '', $sort = 'newest', $empresaId = null, $categoriaID = '')
     {
         $sql = "SELECT 
                     j.*,
@@ -39,6 +39,13 @@ class Job
             $params[':q'] = "%$query%";
             $params[':q1'] = "%$query%";
         }
+
+        // 🔍 Filtro de texto
+        if (!empty($categoriaID)) {
+            $sql .= " AND c.id = :cat";
+            $params[':cat'] = $categoriaID;
+        }
+
 
         // 📍 Filtro de localidade
         if (!empty($location)) {

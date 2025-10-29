@@ -6,7 +6,7 @@
       style="width: calc(1220px * <?= count($publicidades) ?>);">
 
       <?php foreach ($publicidades as $p): ?>
-        <a href="<?= htmlspecialchars($p['site']) ?>" target="_blank" class="shrink-0">
+        <a href="/redirect/<?= htmlspecialchars($p['site']) ?>" target="_blank" class="shrink-0">
           <img src="<?= htmlspecialchars($p['path']) ?>" alt="<?= htmlspecialchars($p['nome']) ?>"
             class="w-[1220px] max-w-full h-auto object-contain">
         </a>
