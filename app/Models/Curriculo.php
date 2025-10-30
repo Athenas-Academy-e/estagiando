@@ -51,4 +51,10 @@ class Curriculo
     $stmt->execute([':id' => $profissional_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
+  public function buscarprofissional($profissional_id)
+  {
+    $stmt = $this->pdo->prepare("SELECT * FROM profissionais WHERE id = :id");
+    $stmt->execute([':id' => $profissional_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }

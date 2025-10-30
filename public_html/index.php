@@ -2,7 +2,17 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../app/Core/Auth.php';
 
-// 🔄 Autoload automático de controllers e models
+/**
+ * =====================================================
+ * 🚀 ROTEADOR MVC — ESTAGIANDO
+ * =====================================================
+ * Responsável por interpretar a URL e direcionar para o
+ * controller e método corretos. Também trata rotas
+ * especiais como PDF e Redirect.
+ * =====================================================
+ */
+
+// 🧩 Autoload automático de Controllers e Models
 spl_autoload_register(function ($class) {
     $paths = ['../app/Controllers/', '../app/Models/'];
     foreach ($paths as $path) {
@@ -14,38 +24,71 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// 🔍 Obter rota ex: /vagas, /cadastro, /redirect/https://...
+// 🔍 Obter rota (ex: /vagas, /cadastro, /redirect/https://...)
 $route = $_GET['url'] ?? 'home';
 $route = trim($route, '/');
 $segments = explode('/', $route);
 
-// 🧭 Nome do controller e método
+// Nome do controller e método
 $controllerName = ucfirst(strtolower($segments[0])) . 'Controller';
 $method = $segments[1] ?? 'index';
 
 // Caminho do controller
 $controllerPath = __DIR__ . '/../app/Controllers/' . $controllerName . '.php';
 
-// ✅ Tratamento especial para /redirect
+// =====================================================
+// 🧭 ROTAS ESPECIAIS
+// =====================================================
+
+// 🔁 Redirecionamentos externos (mantém o comportamento atual)
 if (strtolower($segments[0]) === 'redirect') {
     require_once __DIR__ . '/../app/Controllers/RedirectController.php';
     $controller = new RedirectController();
-    $controller->index(); // Sempre chama index()
+    $controller->index(); // sempre chama index()
     exit;
 }
 
-// 🚀 Controller normal
+// 📄 Geração de PDF
+if (strtolower($segments[0]) === 'pdf') {
+    require_once __DIR__ . '/../app/Controllers/PdfController.php';
+    $pdfController = new PdfController();
+
+    if (isset($segments[1]) && $segments[1] === 'view') {
+        $pdfController->view(); // Visualizar no navegador
+    } elseif (isset($segments[1]) && $segments[1] === 'curriculo') {
+        $pdfController->download(); // Download direto
+    } else {
+        http_response_code(404);
+        echo "<main class='text-center py-20 text-gray-600'>
+                <h1 class='text-2xl font-bold mb-2'>Página de PDF não encontrada</h1>
+                <p>Verifique a URL e tente novamente.</p>
+              </main>";
+    }
+    exit;
+}
+
+// =====================================================
+// 🚀 CONTROLLERS PADRÕES
+// =====================================================
+
 if (file_exists($controllerPath)) {
     require_once $controllerPath;
     $controller = new $controllerName();
 
-    // Verifica se o método existe
     if (method_exists($controller, $method)) {
-        $controller->$method(); // ex: VagasController->index()
+        // ✅ Chama o método do controller (ex: VagasController->index())
+        $controller->$method();
     } else {
-        echo "Método <strong>$method()</strong> não encontrado em $controllerName.";
+        http_response_code(404);
+        echo "<main class='text-center py-20 text-red-600'>
+                <h1 class='text-2xl font-bold mb-2'>Erro 404</h1>
+                <p>Método <strong>$method()</strong> não encontrado em <strong>$controllerName</strong>.</p>
+              </main>";
     }
 } else {
     http_response_code(404);
-    echo "Página não encontrada: $controllerName";
+    echo "<main class='text-center py-20 text-gray-600'>
+            <h1 class='text-2xl font-bold mb-2'>Erro 404 — Página não encontrada</h1>
+            <p>O controller <strong>$controllerName</strong> não existe.</p>
+          </main>";
 }
