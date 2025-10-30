@@ -1,3 +1,33 @@
-assets/img/home/*
-assets/img/empresas/*
-node_modules/*
+# ⚙️ Dependências
+node_modules/
+vendor/
+
+# 🧱 Build e cache
+/public/build/
+/dist/
+/.cache/
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
+
+# 📦 Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# 🖼️ Uploads e imagens (não versionar)
+public_html/assets/cv/*
+public_html/assets/img/fotos/*
+public_html/assets/img/logos/*
+
+# 🧾 Logs e backups
+*.log
+*.bak
+*.tmp
+*.swp
+
+# 🚫 Sistema
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
