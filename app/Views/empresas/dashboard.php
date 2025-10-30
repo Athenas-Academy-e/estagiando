@@ -62,11 +62,11 @@
             </p>
 
             <!-- Ações -->
-            <div class="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
+            <!-- <div class="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
               <a href="/empresas/candidatos?vaga=<?= $vaga['id'] ?>"
                 class="text-sm text-blue-600 hover:underline">
                 Ver candidatos →
-              </a>
+              </a> -->
 
               <div class="flex gap-2">
                 <!-- Botão Editar -->

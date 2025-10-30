@@ -163,7 +163,7 @@ class Empresa
     }
 
     // Pasta de destino
-    $dir = __DIR__ . '/../../public_html/assets/logos/';
+    $dir = __DIR__ . '/../../public_html/assets/img/logos/';
     if (!is_dir($dir)) mkdir($dir, 0777, true);
 
     // Extensões permitidas
@@ -186,7 +186,7 @@ class Empresa
 
     // Move upload
     if (move_uploaded_file($arquivo['tmp_name'], $destino)) {
-      return '/assets/logos/' . $nomeArquivo;
+      return '/assets/img/logos/' . $nomeArquivo;
     }
 
     return false;

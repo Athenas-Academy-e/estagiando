@@ -62,7 +62,8 @@ class LoginController
             $prof = $profModel->login($email, $senha);
             if ($prof) {
                 $_SESSION['profissional_id'] = $prof['id'];
-                $_SESSION['usuario_nome'] = $prof['nome'];
+                $_SESSION['profissional_nome'] = $prof['nome'];
+                $_SESSION['profissional_logo'] = $prof['foto'];
                 $_SESSION['usuario_tipo'] = 'profissional';
 
                 if (!empty($redirect)) {

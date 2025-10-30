@@ -16,8 +16,8 @@
         <?php foreach ($candidatos as $c): ?>
           <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
             <div>
+              <h2 class="text-base text-gray-800">Nome Completo:</h2>
               <h3 class="text-lg font-semibold text-gray-800"><?= htmlspecialchars($c['nome']) ?></h3>
-              <p class="text-sm text-gray-600"><?= htmlspecialchars($c['email']) ?> — <?= htmlspecialchars($c['telefone']) ?></p>
               <?php if (!empty($c['mensagem'])): ?>
                 <p class="mt-2 text-gray-700 text-sm"><?= nl2br(htmlspecialchars($c['mensagem'])) ?></p>
               <?php endif; ?>
@@ -31,7 +31,7 @@
                 <?php
                 $dataEnvio = new DateTime($c['data_envio'], new DateTimeZone('UTC'));
                 $dataEnvio->setTimezone(new DateTimeZone('America/Sao_Paulo'));
-                echo 'Enviado em ' . $dataEnvio->format('d/m/Y H:i');
+                echo 'Enviado em ' . $dataEnvio->format('d/m/Y');
                 ?>
               </span>
             </div>

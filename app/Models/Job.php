@@ -220,6 +220,7 @@ class Job
         $sql = "SELECT 
                     c.*, 
                     j.title AS vaga_titulo, 
+                    j.location AS location,
                     e.nome_fantasia AS empresa_nome
                 FROM candidaturas c
                 LEFT JOIN jobs j ON j.id = c.vaga_id
