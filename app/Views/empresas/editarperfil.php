@@ -105,13 +105,13 @@
       </div>
 
       <!-- Logo -->
-      <div>
+      <!-- <div>
         <label class="block text-sm font-semibold mb-1">Logo da Empresa</label>
         <input type="file" name="logo" id="logoInput" class="w-full">
         <img id="logoPreview"
           src="<?= !empty($empresa['logo']) ? htmlspecialchars($empresa['logo']) : '#' ?>"
           class="mt-3 w-24 h-24 object-cover rounded-full shadow <?= empty($empresa['logo']) ? 'hidden' : '' ?>">
-      </div>
+      </div> -->
 
       <button
         class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md shadow hover:bg-blue-700 transition-all">
