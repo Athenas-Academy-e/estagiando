@@ -14,7 +14,7 @@
           </div>
         <?php endif; ?>
 
-        <h1 class="text-2xl font-bold text-gray-800">
+        <h1 class="font-bold text-gray-800 sm:text-base md:text-xl lg:text-2xl">
           Bem-vindo(a), <?= htmlspecialchars($_SESSION['empresa_nome']) ?>
         </h1>
       </div>
@@ -32,7 +32,7 @@
           </a>
 
           <a href="/empresas/publicar"
-            class="hidden lg:inline-flex bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">
+            class="hidden md:inline-flex lg:inline-flex bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">
             Publicar Vaga
           </a>
         </div>
@@ -45,10 +45,9 @@
         Nenhuma vaga cadastrada ainda.
       </div>
     <?php else: ?>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 auto-rows-fr transition-all duration-300">
         <?php foreach ($vagas as $vaga): ?>
-          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 flex flex-col justify-between">
-
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 flex flex-col justify-between h-full min-h-[200px]">
             <!-- Título e Localização -->
             <div>
               <h2 class="text-lg font-semibold text-blue-700 mb-1"><?= htmlspecialchars($vaga['title']) ?></h2>
@@ -84,8 +83,6 @@
                 </form>
               </div>
             </div>
-
-          </div>
         <?php endforeach; ?>
       </div>
     <?php endif; ?>

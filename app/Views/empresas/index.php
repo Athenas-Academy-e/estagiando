@@ -8,7 +8,6 @@
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-gray-700">Filtre sua busca</h2>
 
-          <!-- 🔹 Botão Limpar Filtros  -->
           <button
             type="button"
             id="clearFilters"
@@ -20,7 +19,9 @@
         <!-- Segmento -->
         <div class="mb-6">
           <h3 class="font-medium text-gray-600 mb-2">Segmento</h3>
-          <form method="get" class="space-y-2">
+
+          <!-- 🔸 Radios (desktop) -->
+          <form method="get" class="space-y-2 hidden md:block">
             <?php foreach ($categorias as $cat): ?>
               <label class="flex items-center space-x-2 text-sm text-gray-700">
                 <input
@@ -34,12 +35,31 @@
               </label>
             <?php endforeach; ?>
           </form>
+
+          <!-- 🔸 Select (mobile/tablet) -->
+          <form method="get" class="block md:hidden">
+            <select
+              name="categoria"
+              onchange="this.form.submit()"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0a1837] text-sm text-gray-700">
+              <option value="">Todas as categorias</option>
+              <?php foreach ($categorias as $cat): ?>
+                <option
+                  value="<?= $cat['id'] ?>"
+                  <?= (isset($_GET['categoria']) && $_GET['categoria'] == $cat['id']) ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($cat['nome']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </form>
         </div>
 
         <!-- Localização -->
         <div>
           <h3 class="font-medium text-gray-600 mb-2">Localização</h3>
-          <form method="get" class="space-y-2 max-h-56 overflow-y-auto">
+
+          <!-- 🔸 Radios (desktop) -->
+          <form method="get" class="space-y-2 max-h-56 overflow-y-auto hidden md:block">
             <?php foreach ($locais as $l): ?>
               <label class="flex items-center space-x-2 text-sm text-gray-700">
                 <input
@@ -52,6 +72,23 @@
                 <span><?= htmlspecialchars($l['nome']) ?> - <?= htmlspecialchars($l['estado']) ?></span>
               </label>
             <?php endforeach; ?>
+          </form>
+
+          <!-- 🔸 Select (mobile/tablet) -->
+          <form method="get" class="block md:hidden">
+            <select
+              name="local"
+              onchange="this.form.submit()"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0a1837] text-sm text-gray-700">
+              <option value="">Todas as localizações</option>
+              <?php foreach ($locais as $l): ?>
+                <option
+                  value="<?= htmlspecialchars($l['nome']) ?>"
+                  <?= (isset($_GET['local']) && $_GET['local'] == $l['nome']) ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($l['nome']) ?> - <?= htmlspecialchars($l['estado']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
           </form>
         </div>
       </aside>
@@ -101,7 +138,6 @@
                 <?php if (!empty($e['site'])): ?>
                   <?php
                     $siteUrl = $e['site'];
-                    // Add a scheme if missing to produce a valid href
                     if (!preg_match('#^https?://#i', $siteUrl)) {
                       $siteUrl = 'https://' . $siteUrl;
                     }
@@ -119,27 +155,6 @@
               </div>
             </div>
           <?php endforeach; ?>
-          <!-- 🔹 Paginação -->
-          <?php if ($totalPages > 1): ?>
-            <div class="flex justify-center mt-10 space-x-2">
-              <?php if ($page > 1): ?>
-                <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>"
-                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition">← Anterior</a>
-              <?php endif; ?>
-
-              <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                <a href="?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>"
-                  class="px-4 py-2 rounded-full <?= $i === $page ? 'bg-[#0a1837] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?> transition">
-                  <?= $i ?>
-                </a>
-              <?php endfor; ?>
-
-              <?php if ($page < $totalPages): ?>
-                <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>"
-                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition">Próxima →</a>
-              <?php endif; ?>
-            </div>
-          <?php endif; ?>
 
           <?php if (empty($empresas)): ?>
             <p class="text-gray-500 text-center col-span-full py-10">
@@ -150,41 +165,21 @@
       </main>
     </div>
   </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const clearBtn = document.getElementById('clearFilters');
 
       if (clearBtn) {
         clearBtn.addEventListener('click', () => {
-          // 🔹 Limpa campo de busca
           const searchInput = document.querySelector('input[name="q"]');
           if (searchInput) searchInput.value = '';
+          document.querySelectorAll('input[type="radio"][name="categoria"], input[type="radio"][name="local"]').forEach(r => r.checked = false);
+          document.querySelectorAll('select[name="categoria"], select[name="local"]').forEach(s => s.selectedIndex = 0);
 
-          // 🔹 Desmarca todos os radios de categoria e local
-          document.querySelectorAll('input[type="radio"][name="categoria"], input[type="radio"][name="local"]').forEach(r => {
-            r.checked = false;
-          });
-
-          // 🔹 Limpa parâmetros da URL (sem recarregar)
           const newUrl = window.location.pathname;
           window.history.replaceState({}, '', newUrl);
-
-          // 🔹 Atualiza listagem sem reload total (AJAX-like)
-          // Opcional — recarrega apenas o conteúdo principal (empresas)
-          const main = document.querySelector('main');
-          if (main) {
-            main.style.opacity = '0.3';
-            fetch(newUrl)
-              .then(res => res.text())
-              .then(html => {
-                // Extrai apenas o conteúdo da nova lista
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newMain = doc.querySelector('main');
-                if (newMain) main.innerHTML = newMain.innerHTML;
-              })
-              .finally(() => main.style.opacity = '1');
-          }
+          location.reload(); // Recarrega para limpar filtros
         });
       }
     });

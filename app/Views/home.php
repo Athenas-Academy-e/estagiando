@@ -136,7 +136,7 @@
     if (carAreas) {
       let index = 0;
       const total = carAreas.children.length;
-      const visibleCards = 2;
+      const visibleCards = 1;
       const cardWidth = 250; // 220px + 1 gap
 
       const nextSlide3 = () => {
