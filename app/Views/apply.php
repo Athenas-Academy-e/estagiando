@@ -51,13 +51,13 @@ if (!isset($vaga) || !$vaga) {
                   placeholder="Fale brevemente sobre seu interesse na vaga..."></textarea>
       </div>
 
-      <div>
+      <!-- <div>
         <label class="block text-sm font-medium text-gray-700">Anexar currículo (PDF ou DOC)</label>
         <input type="file" name="curriculo" accept=".pdf,.doc,.docx"
                class="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4
                       file:rounded-lg file:border-0 file:text-sm file:font-semibold
                       file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-      </div>
+      </div> -->
 
       <div class="flex justify-end">
         <button type="submit"
