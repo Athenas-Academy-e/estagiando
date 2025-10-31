@@ -133,20 +133,38 @@ class Job
      */
     public function create($dados)
     {
+        // 🗓️ Define a data atual e adiciona +7 dias
+        $dataAtual = new DateTime();
+        $dataExpiracao = $dataAtual->add(new DateInterval('P7D'))->format('Y-m-d H:i:s');
+
+        // Caso o formulário envie uma data manualmente,
+        // ainda assim garantimos que ela não seja menor que hoje
+        if (!empty($dados['data_expiracao'])) {
+            $dataInformada = new DateTime($dados['data_expiracao']);
+            $hoje = new DateTime();
+
+            if ($dataInformada < $hoje) {
+                $dataExpiracao = $hoje->add(new DateInterval('P7D'))->format('Y-m-d H:i:s');
+            } else {
+                $dataExpiracao = $dataInformada->format('Y-m-d H:i:s');
+            }
+        }
+
         $sql = "INSERT INTO jobs 
-                    (title, company_id, categoria_id, location, method_id, salary, description, postedAt)
-                VALUES 
-                    (:title, :company_id, :categoria_id, :location, :method_id, :salary, :description, NOW())";
+                (title, company_id, categoria_id, location, method_id, salary, description, postedAt, data_expiracao)
+            VALUES 
+                (:title, :company_id, :categoria_id, :location, :method_id, :salary, :description, NOW(), :data_expiracao)";
 
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
-            ':title' => $dados['title'] ?? '',
-            ':company_id' => $dados['company_id'] ?? null,
-            ':categoria_id' => $dados['categoria_id'] ?? null,
-            ':location' => $dados['location'] ?? '',
-            ':method_id' => $dados['method_id'] ?? null,
-            ':salary' => $dados['salary'] ?? '',
-            ':description' => $dados['description'] ?? '',
+            ':title'          => $dados['title'] ?? '',
+            ':company_id'     => $dados['company_id'] ?? null,
+            ':categoria_id'   => $dados['categoria_id'] ?? null,
+            ':location'       => $dados['location'] ?? '',
+            ':method_id'      => $dados['method_id'] ?? null,
+            ':salary'         => $dados['salary'] ?? '',
+            ':description'    => $dados['description'] ?? '',
+            ':data_expiracao' => $dataExpiracao
         ]);
     }
 
@@ -246,49 +264,87 @@ class Job
 
     public function save($data)
     {
+        // 🗓️ Define a data de hoje e adiciona +7 dias por padrão
+        $hoje = new DateTime();
+        $dataExpiracao = $hoje->add(new DateInterval('P7D'))->format('Y-m-d H:i:s');
+
+        // Caso o formulário traga uma data de expiração
+        if (!empty($data['data_expiracao'])) {
+            $dataInformada = new DateTime($data['data_expiracao']);
+            $agora = new DateTime();
+
+            // Se for menor que hoje, substitui por hoje +7 dias
+            if ($dataInformada < $agora) {
+                $dataExpiracao = $agora->add(new DateInterval('P7D'))->format('Y-m-d H:i:s');
+            } else {
+                $dataExpiracao = $dataInformada->format('Y-m-d H:i:s');
+            }
+        }
+
+        // 💾 Insere a vaga
         $stmt = $this->pdo->prepare("
-            INSERT INTO jobs 
-            (title, company_id, categoria_id, municipio_id, method_id, location, salary, description, postedAt) 
-            VALUES (:title, :company_id, :categoria_id, :municipio_id, :method_id, :location, :salary, :description, CURDATE())
-        ");
-        $stmt->execute([
-            ':title'        => $data['title'],
-            ':company_id'   => $data['company_id'],
-            ':categoria_id' => $data['categoria_id'],
-            ':municipio_id' => $data['municipio_id'],
-            ':method_id'    => $data['method_id'],
-            ':location'     => $data['location'],
-            ':salary'       => $data['salary'],
-            ':description'  => $data['description']
+        INSERT INTO jobs 
+        (title, company_id, categoria_id, municipio_id, method_id, location, salary, description, postedAt, data_expiracao) 
+        VALUES (:title, :company_id, :categoria_id, :municipio_id, :method_id, :location, :salary, :description, NOW(), :data_expiracao)
+    ");
+
+        return $stmt->execute([
+            ':title'          => $data['title'],
+            ':company_id'     => $data['company_id'],
+            ':categoria_id'   => $data['categoria_id'],
+            ':municipio_id'   => $data['municipio_id'],
+            ':method_id'      => $data['method_id'],
+            ':location'       => $data['location'],
+            ':salary'         => $data['salary'],
+            ':description'    => $data['description'],
+            ':data_expiracao' => $dataExpiracao
         ]);
     }
 
     public function update($data)
     {
+        // 🗓️ Define a data de expiração segura
+        $hoje = new DateTime();
+        $dataExpiracao = $hoje->add(new DateInterval('P7D'))->format('Y-m-d H:i:s');
+
+        if (!empty($data['data_expiracao'])) {
+            $dataInformada = new DateTime($data['data_expiracao']);
+            $agora = new DateTime();
+
+            if ($dataInformada < $agora) {
+                $dataExpiracao = $agora->add(new DateInterval('P7D'))->format('Y-m-d H:i:s');
+            } else {
+                $dataExpiracao = $dataInformada->format('Y-m-d H:i:s');
+            }
+        }
+
         $sql = "UPDATE jobs SET 
-                    title = :title,
-                    company_id = :company_id,
-                    categoria_id = :categoria_id,
-                    municipio_id = :municipio_id,
-                    method_id = :method_id,
-                    location = :location,
-                    salary = :salary,
-                    description = :description
-                WHERE id = :id";
+                title = :title,
+                company_id = :company_id,
+                categoria_id = :categoria_id,
+                municipio_id = :municipio_id,
+                method_id = :method_id,
+                location = :location,
+                salary = :salary,
+                description = :description,
+                data_expiracao = :data_expiracao
+            WHERE id = :id";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':id'           => $data['id'],
-            ':title'        => $data['title'],
-            ':company_id'   => $data['company_id'],
-            ':categoria_id' => $data['categoria_id'],
-            ':municipio_id' => $data['municipio_id'],
-            ':method_id'    => $data['method_id'],
-            ':location'     => $data['location'],
-            ':salary'       => $data['salary'],
-            ':description'  => $data['description']
+        return $stmt->execute([
+            ':id'             => $data['id'],
+            ':title'          => $data['title'],
+            ':company_id'     => $data['company_id'],
+            ':categoria_id'   => $data['categoria_id'],
+            ':municipio_id'   => $data['municipio_id'],
+            ':method_id'      => $data['method_id'],
+            ':location'       => $data['location'],
+            ':salary'         => $data['salary'],
+            ':description'    => $data['description'],
+            ':data_expiracao' => $dataExpiracao
         ]);
     }
+
     public function getAvailableAreas()
     {
         $stmt = $this->pdo->query("
