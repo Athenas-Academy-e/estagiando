@@ -31,7 +31,7 @@ class Empresa
    */
   public function countAll()
   {
-    $stmt = $this->pdo->query("SELECT COUNT(*) AS total FROM candidaturas");
+    $stmt = $this->pdo->query("SELECT COUNT(*) AS total FROM candidaturas WHERE status = 'S'");
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     return $row['total'] ?? 0;
   }
@@ -44,7 +44,7 @@ class Empresa
     $sql = "SELECT j.*, 
                    (SELECT COUNT(*) FROM candidaturas c WHERE c.vaga_id = j.id) AS total_candidatos
             FROM jobs j
-            WHERE j.company_id = :empresa_id
+            WHERE j.company_id = :empresa_id AND j.status = 'S'
             ORDER BY j.postedAt DESC";
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute([':empresa_id' => $empresa_id]);
@@ -66,7 +66,7 @@ class Empresa
    */
   public function getCategorias()
   {
-    $stmt = $this->pdo->query("SELECT id, nome FROM categorias ORDER BY nome");
+    $stmt = $this->pdo->query("SELECT id, nome FROM categorias WHERE status='ativo' ORDER BY nome");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
@@ -74,45 +74,45 @@ class Empresa
    * 🏢 Cadastro de empresa com logo, hash de senha e vínculo com município
    */
   public function cadastrar($dados, $arquivoLogo)
-{
-  try {
-    // Valida CNPJ
-    if (!$this->validarCNPJ($dados['cnpj'])) {
-      throw new Exception("CNPJ inválido!");
-    }
+  {
+    try {
+      // Valida CNPJ
+      if (!$this->validarCNPJ($dados['cnpj'])) {
+        throw new Exception("CNPJ inválido!");
+      }
 
-    // Verifica duplicidade de email ou CNPJ
-    $check = $this->pdo->prepare("SELECT id FROM empresas WHERE email = :email OR cnpj = :cnpj LIMIT 1");
-    $check->execute([':email' => $dados['email'], ':cnpj' => $dados['cnpj']]);
-    if ($check->fetch(PDO::FETCH_ASSOC)) {
-      throw new Exception("E-mail ou CNPJ já cadastrado!");
-    }
+      // Verifica duplicidade de email ou CNPJ
+      $check = $this->pdo->prepare("SELECT id FROM empresas WHERE email = :email OR cnpj = :cnpj LIMIT 1");
+      $check->execute([':email' => $dados['email'], ':cnpj' => $dados['cnpj']]);
+      if ($check->fetch(PDO::FETCH_ASSOC)) {
+        throw new Exception("E-mail ou CNPJ já cadastrado!");
+      }
 
-    // Upload logo
-    $logoPath = null;
-    if (!empty($arquivoLogo['name'])) {
-      $upload = $this->uploadLogo($arquivoLogo);
-      if ($upload) $logoPath = $upload;
-    }
+      // Upload logo
+      $logoPath = null;
+      if (!empty($arquivoLogo['name'])) {
+        $upload = $this->uploadLogo($arquivoLogo);
+        if ($upload) $logoPath = $upload;
+      }
 
-    // Busca ou cria município
-    $stmt = $this->pdo->prepare("SELECT id FROM municipios WHERE nome = :nome AND estado = :estado LIMIT 1");
-    $stmt->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
-    $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
+      // Busca ou cria município
+      $stmt = $this->pdo->prepare("SELECT id FROM municipios WHERE nome = :nome AND estado = :estado LIMIT 1");
+      $stmt->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
+      $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $municipioId = $municipio ? $municipio['id'] : null;
+      $municipioId = $municipio ? $municipio['id'] : null;
 
-    if (!$municipio) {
-      $insert = $this->pdo->prepare("INSERT INTO municipios (nome, estado) VALUES (:nome, :estado)");
-      $insert->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
-      $municipioId = $this->pdo->lastInsertId();
-    }
+      if (!$municipio) {
+        $insert = $this->pdo->prepare("INSERT INTO municipios (nome, estado) VALUES (:nome, :estado)");
+        $insert->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
+        $municipioId = $this->pdo->lastInsertId();
+      }
 
-    // Hash senha
-    $senhaCripto = password_hash($dados['senha'], PASSWORD_DEFAULT);
+      // Hash senha
+      $senhaCripto = password_hash($dados['senha'], PASSWORD_DEFAULT);
 
-    // Insere registro
-    $sql = "INSERT INTO empresas (
+      // Insere registro
+      $sql = "INSERT INTO empresas (
                 razao_social, nome_fantasia, categoria_id, cnpj,
                 telefone, celular, email, site, senha,
                 cep, endereco, numero, bairro, estado, cidade,
@@ -124,33 +124,32 @@ class Empresa
                 :municipio_id, :logo, 'S', NOW()
             )";
 
-    $stmt = $this->pdo->prepare($sql);
+      $stmt = $this->pdo->prepare($sql);
 
-    return $stmt->execute([
-      ':razao_social' => $dados['razao_social'],
-      ':nome_fantasia' => $dados['nome_fantasia'],
-      ':categoria' => $dados['categoria'] ?? null,
-      ':cnpj' => $dados['cnpj'],
-      ':telefone' => $dados['telefone'] ?? '',
-      ':celular' => $dados['celular'] ?? '',
-      ':email' => $dados['email'],
-      ':site' => $dados['site'] ?? '',
-      ':senha' => $senhaCripto,
-      ':cep' => $dados['cep'],
-      ':endereco' => $dados['endereco'],
-      ':numero' => $dados['numero'],
-      ':bairro' => $dados['bairro'],
-      ':estado' => $dados['estado'],
-      ':cidade' => $dados['cidade'],
-      ':municipio_id' => $municipioId,
-      ':logo' => $logoPath
-    ]);
-
-  } catch (Exception $e) {
-    error_log("Erro cadastro empresa: " . $e->getMessage());
-    return false;
+      return $stmt->execute([
+        ':razao_social' => $dados['razao_social'],
+        ':nome_fantasia' => $dados['nome_fantasia'],
+        ':categoria' => $dados['categoria'] ?? null,
+        ':cnpj' => $dados['cnpj'],
+        ':telefone' => $dados['telefone'] ?? '',
+        ':celular' => $dados['celular'] ?? '',
+        ':email' => $dados['email'],
+        ':site' => $dados['site'] ?? '',
+        ':senha' => $senhaCripto,
+        ':cep' => $dados['cep'],
+        ':endereco' => $dados['endereco'],
+        ':numero' => $dados['numero'],
+        ':bairro' => $dados['bairro'],
+        ':estado' => $dados['estado'],
+        ':cidade' => $dados['cidade'],
+        ':municipio_id' => $municipioId,
+        ':logo' => $logoPath
+      ]);
+    } catch (Exception $e) {
+      error_log("Erro cadastro empresa: " . $e->getMessage());
+      return false;
+    }
   }
-}
 
   /**
    * 🖼️ Atualiza a logo da empresa
@@ -255,7 +254,7 @@ class Empresa
                 LEFT JOIN categorias c ON e.categoria_id = c.id
                 LEFT JOIN municipios m ON e.municipio_id = m.id
                 LEFT JOIN jobs j ON j.company_id = e.id
-                WHERE 1=1";
+                WHERE 1=1 AND e.status = 'S'";
 
       $params = [];
 
@@ -304,7 +303,7 @@ class Empresa
                 FROM empresas e
                 LEFT JOIN categorias c ON e.categoria_id = c.id
                 LEFT JOIN municipios m ON e.municipio_id = m.id
-                WHERE 1=1";
+                WHERE 1=1 AND e.status = 'S'";
       $params = [];
 
       if (!empty($search)) {
@@ -391,5 +390,23 @@ class Empresa
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute([':email' => $email, ':id' => $empresaId]);
     return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
+  }
+  public function getAll()
+  {
+    $stmt = $this->pdo->query("SELECT id,	razao_social,	nome_fantasia, cnpj,	telefone,	email, status FROM empresas ORDER BY id DESC");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function toggleStatus($id)
+  {
+    $stmt = $this->pdo->prepare("SELECT status FROM empresas WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $atual = $stmt->fetchColumn();
+
+    $novo = ($atual === 'S') ? 'N' : 'S';
+    $update = $this->pdo->prepare("UPDATE empresas SET status = :novo WHERE id = :id");
+    $update->execute([':novo' => $novo, ':id' => $id]);
+
+    return $novo;
   }
 }

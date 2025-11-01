@@ -358,4 +358,22 @@ class Job
     ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getAllAdmin()
+    {
+        $stmt = $this->pdo->query("SELECT * FROM jobs ORDER BY id DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function toggleStatus($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT status FROM jobs WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $atual = $stmt->fetchColumn();
+
+        $novo = ($atual === 'S') ? 'N' : 'S';
+        $update = $this->pdo->prepare("UPDATE jobs SET status = :novo WHERE id = :id");
+        $update->execute([':novo' => $novo, ':id' => $id]);
+
+        return $novo;
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../Models/Empresa.php';
 require_once __DIR__ . '/../Models/Profissional.php';
+require_once __DIR__ . '/../Models/Admin.php'; // ✅ novo model para admin
 
 class LoginController
 {
@@ -9,8 +10,8 @@ class LoginController
         session_start();
         $redirect = $_GET['redirect'] ?? '';
 
-        // ✅ Se já estiver logado E NÃO houver redirect, vai pro dashboard
-        if (isset($_SESSION['profissional_id']) || isset($_SESSION['empresa_id'])) {
+        // ✅ Se já estiver logado
+        if (isset($_SESSION['profissional_id']) || isset($_SESSION['empresa_id']) || isset($_SESSION['admin_id'])) {
 
             // Se houver redirect (ex: /apply?id=8)
             if (!empty($redirect)) {
@@ -18,15 +19,19 @@ class LoginController
                 exit;
             }
 
-            // Se for empresa
+            // Redirecionamentos por tipo
             if (isset($_SESSION['empresa_id'])) {
                 header("Location: /empresas/dashboard");
                 exit;
             }
 
-            // Se for profissional
             if (isset($_SESSION['profissional_id'])) {
                 header("Location: /profissional/dashboard");
+                exit;
+            }
+
+            if (isset($_SESSION['admin_id'])) {
+                header("Location: /admin/dashboard");
                 exit;
             }
         }
@@ -40,21 +45,17 @@ class LoginController
 
             $empresaModel = new Empresa();
             $profModel = new Profissional();
+            $adminModel = new Admin();
 
             // 🔹 Login Empresa
             $empresa = $empresaModel->login($email, $senha);
             if ($empresa) {
                 $_SESSION['empresa_id'] = $empresa['id'];
                 $_SESSION['empresa_nome'] = !empty($empresa['razao_social']) ? $empresa['nome_fantasia'] : $empresa['razao_social'];
-                $_SESSION['empresa_logo']= $empresa['logo'];
+                $_SESSION['empresa_logo'] = $empresa['logo'];
                 $_SESSION['usuario_tipo'] = 'empresa';
 
-                // ✅ Evita loop se a dashboard já estiver protegida
-                if (!empty($redirect)) {
-                    header("Location: $redirect");
-                } else {
-                    header("Location: /empresas/dashboard");
-                }
+                header("Location: " . (!empty($redirect) ? $redirect : "/empresas/dashboard"));
                 exit;
             }
 
@@ -66,11 +67,19 @@ class LoginController
                 $_SESSION['profissional_logo'] = $prof['foto'];
                 $_SESSION['usuario_tipo'] = 'profissional';
 
-                if (!empty($redirect)) {
-                    header("Location: $redirect");
-                } else {
-                    header("Location: /profissional/dashboard");
-                }
+                header("Location: " . (!empty($redirect) ? $redirect : "/profissional/dashboard"));
+                exit;
+            }
+
+            // 🔹 Login Administrador
+            $admin = $adminModel->login($email, $senha);
+            // var_dump($admin); exit;
+            if ($admin) {
+                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['admin_nome'] = $admin['nome'];
+                $_SESSION['usuario_tipo'] = 'admin';
+
+                header("Location: /admin/dashboard");
                 exit;
             }
 
@@ -82,13 +91,5 @@ class LoginController
         require_once __DIR__ . '/../Views/partials/header.php';
         require_once __DIR__ . '/../Views/login/index.php';
         require_once __DIR__ . '/../Views/partials/footer.php';
-    }
-
-    public function logout()
-    {
-        session_start();
-        session_destroy();
-        header("Location: /login");
-        exit;
     }
 }

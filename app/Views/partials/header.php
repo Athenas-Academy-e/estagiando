@@ -30,14 +30,11 @@
         <a href="/vagas" class="font-bold text-lg text-white hover:text-[#97dd3a]">Vagas</a>
         <a href="/empresas" class="font-bold text-lg text-white hover:text-[#97dd3a]">Empresas</a>
 
-        <?php if (!isset($_SESSION['empresa_id']) && !isset($_SESSION['profissional_id'])): ?>
+        <?php if (!isset($_SESSION['empresa_id']) && !isset($_SESSION['profissional_id']) && !isset($_SESSION['admin_id'])): ?>
           <a href="/login" class="bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">Entrar</a>
           <a href="/cadastro" class="bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">Cadastre-se</a>
         <?php else: ?>
           <a href="<?php echo isset($_SESSION['empresa_id']) ? '/empresas/dashboard' : '/profissional/dashboard' ?>" class="bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">Meu Perfil</a>
-
-          
-
           <a href="/logout" class="bg-[#97dd3a] text-white px-4 py-2 rounded-md shadow hover:bg-[#9fec3b] transition-all">Sair</a>
         <?php endif; ?>
       </nav>
@@ -50,7 +47,7 @@
         <a href="/vagas" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Vagas</a>
         <a href="/empresas" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Empresas</a>
 
-        <?php if (!isset($_SESSION['empresa_id']) && !isset($_SESSION['profissional_id'])): ?>
+        <?php if (!isset($_SESSION['empresa_id']) && !isset($_SESSION['profissional_id']) && !isset($_SESSION['admin_id'])): ?>
           <a href="/login" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Entrar</a>
           <a href="/cadastro" class="font-semibold text-white hover:bg-[#97dd3a] hover:text-white menu-link w-full text-center p-2">Cadastre-se</a>
         <?php else: ?>
