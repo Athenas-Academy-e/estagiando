@@ -66,7 +66,7 @@ class Empresa
    */
   public function getCategorias()
   {
-    $stmt = $this->pdo->query("SELECT id, nome FROM categorias WHERE status='ativo' ORDER BY nome");
+    $stmt = $this->pdo->query("SELECT id, nome FROM categorias WHERE status='S' ORDER BY nome");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
