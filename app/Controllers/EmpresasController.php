@@ -44,24 +44,7 @@ class EmpresasController
         require_once __DIR__ . '/../Views/partials/footer.php';
     }
 
-    public function candidatos()
-    {
-        Auth::check('empresa');
-        if (!isset($_GET['vaga'])) {
-            header("Location: /empresas/dashboard");
-            exit;
-        }
-
-        $empresaModel = new Empresa();
-        $jobModel = new Job();
-        $vaga = $jobModel->getById($_GET['vaga']);
-        $candidatos = $empresaModel->getCandidaturas($_GET['vaga']);
-
-        require_once __DIR__ . '/../Views/partials/head.php';
-        require_once __DIR__ . '/../Views/partials/header.php';
-        require_once __DIR__ . '/../Views/empresas/candidatos.php';
-        require_once __DIR__ . '/../Views/partials/footer.php';
-    }
+ 
 
     /**
      * Página para publicar nova vaga (somente empresas logadas)

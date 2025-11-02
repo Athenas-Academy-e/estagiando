@@ -15,7 +15,9 @@ class AdminController
         $empresaModel = new Empresa();
         $profModel = new Profissional();
         $jobModel = new Job();
+        $publicidadeModel = new Publicidade();
 
+        $totalPublicidade = $publicidadeModel->countPublicidades();
         $totalEmpresas = $empresaModel->countEmpresas();
         $totalProfissionais = count($profModel->listar());
         $totalVagas = $jobModel->countAll();
@@ -195,6 +197,18 @@ class AdminController
                 $model = new Admin();
                 $data = $model->getAll();
                 break;
+
+            case 'publicidade':
+                require_once __DIR__ . '/../Models/Publicidade.php';
+                $model = new Publicidade();
+                $data = $model->getPublicidades();
+                break;
+
+            case 'categoria':
+                require_once __DIR__ . '/../Models/Categoria.php';
+                $model = new Categoria();
+                $data = $model->getCategorias();
+                break;
         }
 
         echo json_encode($data);
@@ -211,15 +225,27 @@ class AdminController
 
         switch ($type) {
             case 'empresas':
+                require_once __DIR__ . '/../Models/Empresa.php';
                 $model = new Empresa();
                 break;
             case 'profissionais':
+                require_once __DIR__ . '/../Models/Profissional.php';
                 $model = new Profissional();
                 break;
             case 'vagas':
+                require_once __DIR__ . '/../Models/Job.php';
                 $model = new Job();
                 break;
+            case 'publicidade':
+                require_once __DIR__ . '/../Models/Publicidade.php';
+                $model = new Publicidade();
+                break;
+            case 'categoria':
+                require_once __DIR__ . '/../Models/Categoria.php';
+                $model = new Categoria();
+                break;
             case 'admins':
+                require_once __DIR__ . '/../Models/Admin.php';
                 $model = new Admin();
                 break;
             default:
@@ -230,5 +256,24 @@ class AdminController
         $status = $model->toggleStatus($id);
         echo json_encode(['success' => true, 'status' => $status]);
         exit;
+    }
+
+    public function candidatos()
+    {
+        Auth::check('admin');
+        if (!isset($_GET['vaga'])) {
+            header("Location: /admin/dashboard");
+            exit;
+        }
+
+        $empresaModel = new Empresa();
+        $jobModel = new Job();
+        $vaga = $jobModel->getById($_GET['vaga']);
+        $candidatos = $empresaModel->getCandidaturas($_GET['vaga']);
+
+        require_once __DIR__ . '/../Views/partials/head.php';
+        require_once __DIR__ . '/../Views/partials/header.php';
+        require_once __DIR__ . '/../Views/admin/candidatos.php';
+        require_once __DIR__ . '/../Views/partials/footer.php';
     }
 }

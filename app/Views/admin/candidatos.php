@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-bold text-gray-800">
         Candidatos — <?= htmlspecialchars($vaga['title']) ?>
       </h1>
-      <a href="/empresas/dashboard" class="text-blue-600 hover:underline">← Voltar</a>
+      <a href="/admin/dashboard" class="text-blue-600 hover:underline">← Voltar</a>
     </div>
 
     <?php if (empty($candidatos)): ?>
@@ -23,10 +23,8 @@
               <?php endif; ?>
             </div>
             <div class="text-right">
-              <?php if (!empty($c['curriculo'])): ?>
-                <a href="<?= $c['curriculo'] ?>" target="_blank"
+                <a href="/pdf/curriculo/<?= $c['profissional_id'] ?>" target="_blank"
                   class="text-blue-600 text-sm hover:underline">📄 Ver currículo</a><br>
-              <?php endif; ?>
               <span class="text-xs text-gray-500 block mt-2">
                 <?php
                 $dataEnvio = new DateTime($c['data_envio'], new DateTimeZone('UTC'));

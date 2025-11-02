@@ -97,6 +97,5 @@ class Admin
             'sucesso'  => $linhas > 0 ? 'Atualização realizada com sucesso!' : null
         ];
     }
-
     
 }

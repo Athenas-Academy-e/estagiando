@@ -91,7 +91,7 @@
 
     <div class="bg-[#1d73d3] text-white rounded-2xl p-8 text-center shadow-lg hover:scale-[1.02] transition-transform">
       <h2 class="text-2xl font-bold mb-2 text-white">Empresa</h2>
-      <p class="text-sm mb-6">Anuncie suas vagas e tenha acesso a <span class="text-[#aef85f] font-bold"><?= $totalEmpresas ?></span> currículos</p>
+      <p class="text-sm mb-6">Anuncie suas vagas e tenha acesso a <span class="text-[#aef85f] font-bold"><?= $totalProfissionais ?></span> currículos</p>
       <a href="/empresas/publicar" class="inline-block border text-white border-white rounded-full px-6 py-2 hover:bg-white hover:text-[#1d73d3]">Anunciar Vaga</a>
     </div>
 

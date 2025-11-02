@@ -861,6 +861,11 @@ select {
   margin-right: auto;
 }
 
+.mx-\[4px\] {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -923,18 +928,6 @@ select {
 
 .mt-auto {
   margin-top: auto;
-}
-
-.mb-12 {
-  margin-bottom: 3rem;
-}
-
-.mr-1 {
-  margin-right: 0.25rem;
-}
-
-.mr-6 {
-  margin-right: 1.5rem;
 }
 
 .line-clamp-3 {
@@ -1032,12 +1025,12 @@ select {
   max-height: 14rem;
 }
 
-.min-h-screen {
-  min-height: 100vh;
-}
-
 .min-h-\[200px\] {
   min-height: 200px;
+}
+
+.min-h-screen {
+  min-height: 100vh;
 }
 
 .w-14 {
@@ -1084,6 +1077,18 @@ select {
   width: 100%;
 }
 
+.w-screen {
+  width: 100vw;
+}
+
+.w-\[calc\(100vw-8px\)\] {
+  width: calc(100vw - 8px);
+}
+
+.w-\[calc\(100vw-10px\)\] {
+  width: calc(100vw - 10px);
+}
+
 .min-w-full {
   min-width: 100%;
 }
@@ -1116,16 +1121,16 @@ select {
   max-width: 100%;
 }
 
+.max-w-lg {
+  max-width: 32rem;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
 
 .max-w-none {
   max-width: none;
-}
-
-.max-w-lg {
-  max-width: 32rem;
 }
 
 .flex-1 {
@@ -1284,14 +1289,16 @@ select {
   gap: 1.5rem;
 }
 
-.gap-8 {
-  gap: 2rem;
-}
-
 .space-x-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.5rem * var(--tw-space-x-reverse));
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.75rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .space-x-6 > :not([hidden]) ~ :not([hidden]) {
@@ -1324,18 +1331,6 @@ select {
   margin-bottom: calc(1.25rem * var(--tw-space-y-reverse));
 }
 
-.space-x-3 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.75rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
-.space-x-4 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(1rem * var(--tw-space-x-reverse));
-  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
 .divide-y > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-y-reverse: 0;
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
@@ -1349,6 +1344,10 @@ select {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
 }
 
 .overflow-y-auto {
@@ -1651,6 +1650,11 @@ select {
   padding-bottom: 0.75rem;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .py-5 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
@@ -1659,11 +1663,6 @@ select {
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .pr-10 {
@@ -1680,10 +1679,6 @@ select {
 
 .pt-6 {
   padding-top: 1.5rem;
-}
-
-.pr-1 {
-  padding-right: 0.25rem;
 }
 
 .text-left {
@@ -1861,6 +1856,11 @@ select {
   color: rgb(21 128 61 / var(--tw-text-opacity));
 }
 
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity));
@@ -1981,12 +1981,6 @@ select {
 
 .transition-opacity {
   transition-property: opacity;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.transition-shadow {
-  transition-property: box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -2141,6 +2135,11 @@ a:hover {
   background-color: rgb(18 44 92 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-\[\#13245c\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(19 36 92 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-\[\#97dd3a\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(151 221 58 / var(--tw-bg-opacity));
@@ -2159,6 +2158,16 @@ a:hover {
 .hover\:bg-\[\#a9f84f\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(169 248 79 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-\[\#aafc4d\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(170 252 77 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-\[\#aafc4f\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(170 252 79 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-blue-600:hover {
@@ -2186,6 +2195,11 @@ a:hover {
   background-color: rgb(156 163 175 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-gray-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-green-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity));
@@ -2199,16 +2213,6 @@ a:hover {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-\[\#1e3160\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 49 96 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-\[\#aafc4f\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(170 252 79 / var(--tw-bg-opacity));
 }
 
 .hover\:text-\[\#004a99\]:hover {
@@ -2303,6 +2307,11 @@ a:hover {
   --tw-ring-color: rgb(10 24 55 / var(--tw-ring-opacity));
 }
 
+.focus\:ring-\[\#97dd3a\]:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(151 221 58 / var(--tw-ring-opacity));
+}
+
 .focus\:ring-blue-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
@@ -2316,11 +2325,6 @@ a:hover {
 .focus\:ring-green-400:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(74 222 128 / var(--tw-ring-opacity));
-}
-
-.focus\:ring-\[\#97dd3a\]:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(151 221 58 / var(--tw-ring-opacity));
 }
 
 .active\:scale-95:active {
@@ -2340,17 +2344,12 @@ a:hover {
 }
 
 @media (min-width: 640px) {
-  .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .sm\:grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-  .sm\:text-xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sm\:text-base {
@@ -2446,11 +2445,6 @@ a:hover {
     line-height: 1;
   }
 
-  .md\:text-base {
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
-
   .md\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
@@ -2464,6 +2458,10 @@ a:hover {
 
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .lg\:text-2xl {

@@ -9,6 +9,7 @@ class HomeController
     {
         $jobModel = new Job();
         $empresaModel = new Empresa();
+        $profissionalModel = new Profissional();
         $publicidadeModel = new Publicidade();
         $publicidades = $publicidadeModel->getAtivas();
         $areas = $jobModel->getAvailableAreas();
@@ -16,6 +17,7 @@ class HomeController
         // Obtém totais para exibir na home
         $totalVagas = $jobModel->countAll();
         $totalEmpresas = $empresaModel->countAll();
+        $totalProfissionais = $profissionalModel->countAll();
 
         // Inclui as views
         require_once __DIR__ . '/../Views/partials/head.php';

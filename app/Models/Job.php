@@ -256,7 +256,7 @@ class Job
      */
     public function getWorkMethod()
     {
-        $sql = "SELECT id, nome FROM jobs_method WHERE status = 'ativo' ORDER BY nome ASC";
+        $sql = "SELECT id, nome FROM jobs_method WHERE status = 'S' ORDER BY nome ASC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -351,7 +351,7 @@ class Job
         SELECT c.id, c.nome, COUNT(j.id) AS total_vagas, c.imagempath, c.status
         FROM categorias c
         JOIN jobs j ON j.categoria_id = c.id
-        WHERE j.status = 'S' AND c.status = 'ativo'
+        WHERE j.status = 'S' AND c.status = 'S'
         GROUP BY c.id
         HAVING total_vagas > 0
         ORDER BY total_vagas DESC
@@ -360,7 +360,24 @@ class Job
     }
     public function getAllAdmin()
     {
-        $stmt = $this->pdo->query("SELECT * FROM jobs ORDER BY id DESC");
+        $stmt = $this->pdo->query("SELECT 
+                    j.id,
+                    j.title AS Título,
+                    j.location AS Localidade,
+                    e.nome_fantasia AS empresa_nome,
+                    c.nome AS categoria_nome,
+                    jm.nome AS Metodo_de_Trabalho,
+                    j.postedAt AS Data_de_Publicação,
+                    j.data_expiracao AS Data_de_Expiração,
+                    j.status,
+                    (SELECT COUNT(*) FROM candidaturas ca WHERE ca.vaga_id = j.id) AS total_candidaturas
+                FROM jobs j
+                LEFT JOIN empresas e ON e.id = j.company_id
+                LEFT JOIN categorias c ON c.id = j.categoria_id
+                LEFT JOIN municipios m ON m.id = e.municipio_id
+                LEFT JOIN jobs_method jm ON jm.id = j.method_id
+                LEFT JOIN candidaturas ca ON ca.vaga_id = j.id
+                ORDER BY j.id DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

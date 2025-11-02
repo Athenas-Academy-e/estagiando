@@ -140,6 +140,14 @@ class Profissional
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
+  /**
+   * 📊 Conta o total de profissionais cadastrados
+   */
+  public function countAll()
+  {
+    $stmt = $this->pdo->query("SELECT COUNT(*) FROM profissionais WHERE `status` = 'S'");
+    return (int)$stmt->fetchColumn();
+  }
 
   /**
    * 🧩 Atualiza os dados básicos do profissional
@@ -211,17 +219,17 @@ class Profissional
 
   public function getAll()
   {
-    $stmt = $this->pdo->query("SELECT * FROM profissionais ORDER BY id DESC");
+    $stmt = $this->pdo->query("SELECT id, nome, cpf, email, telefone, `status`, data_cadastro FROM profissionais ORDER BY id DESC");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
   public function toggleStatus($id)
 {
-    $stmt = $this->pdo->prepare("SELECT status FROM profissionais WHERE id = :id");
+    $stmt = $this->pdo->prepare("SELECT `status` FROM profissionais WHERE id = :id");
     $stmt->execute([':id' => $id]);
     $atual = $stmt->fetchColumn();
 
     $novo = ($atual === 'S') ? 'N' : 'S';
-    $update = $this->pdo->prepare("UPDATE profissionais SET status = :novo WHERE id = :id");
+    $update = $this->pdo->prepare("UPDATE profissionais SET `status` = :novo WHERE id = :id");
     $update->execute([':novo' => $novo, ':id' => $id]);
 
     return $novo;

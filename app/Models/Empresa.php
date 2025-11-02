@@ -31,7 +31,7 @@ class Empresa
    */
   public function countAll()
   {
-    $stmt = $this->pdo->query("SELECT COUNT(*) AS total FROM candidaturas WHERE status = 'S'");
+    $stmt = $this->pdo->query("SELECT count(*) AS total FROM `empresas` WHERE `status`='S'");
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     return $row['total'] ?? 0;
   }
@@ -393,7 +393,7 @@ class Empresa
   }
   public function getAll()
   {
-    $stmt = $this->pdo->query("SELECT id,	razao_social,	nome_fantasia, cnpj,	telefone,	email, status FROM empresas ORDER BY id DESC");
+    $stmt = $this->pdo->query("SELECT id,	razao_social,	nome_fantasia, cnpj,	telefone,	email, `status`, data_criacao FROM empresas ORDER BY id DESC");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 

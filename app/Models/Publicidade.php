@@ -22,4 +22,29 @@ class Publicidade
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getPublicidades()
+    {
+        $stmt = $this->pdo->query("SELECT * FROM publicidades ORDER BY data_publicacao DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countPublicidades()
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) AS total FROM publicidades WHERE `status` = 'S'");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'] ?? 0;
+    }
+
+    public function toggleStatus($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT `status` FROM publicidades WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $atual = $stmt->fetchColumn();
+
+        $novo = ($atual === 'S') ? 'N' : 'S';
+        $update = $this->pdo->prepare("UPDATE publicidades SET `status` = :novo WHERE id = :id");
+        $update->execute([':novo' => $novo, ':id' => $id]);
+
+        return $novo;
+    }
 }

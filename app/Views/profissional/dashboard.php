@@ -90,8 +90,8 @@
       <div class="bg-white rounded-xl shadow p-6 mb-10">
         <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
           <h2 class="text-lg font-semibold text-gray-800">📝 Criar / Editar Currículo</h2>
-          <!-- <div class="flex gap-2">
-            <?php // if (!empty($curriculo)): 
+          <div class="flex gap-2">
+            <?php  if (!empty($curriculo)): 
             ?>
               <a href="/pdf/curriculo" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow">
                 📄 Baixar PDF
@@ -99,9 +99,9 @@
               <a href="/pdf/view" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">
                 👁️ Visualizar PDF
               </a>
-            <?php // endif; 
+            <?php  endif; 
             ?>
-          </div> -->
+          </div>
         </div>
 
         <form method="POST" class="space-y-4">

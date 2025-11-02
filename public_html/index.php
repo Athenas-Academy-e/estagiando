@@ -53,10 +53,18 @@ if (strtolower($segments[0]) === 'pdf') {
     require_once __DIR__ . '/../app/Controllers/PdfController.php';
     $pdfController = new PdfController();
 
+    // 🔹 Visualizar no navegador (profissional)
     if (isset($segments[1]) && $segments[1] === 'view') {
-        $pdfController->view(); // Visualizar no navegador
-    } elseif (isset($segments[1]) && $segments[1] === 'curriculo') {
-        $pdfController->download(); // Download direto
+        $pdfController->view();
+    }
+    // 🔹 Baixar o próprio currículo (profissional)
+    elseif (isset($segments[1]) && $segments[1] === 'curriculo' && !isset($segments[2])) {
+        $pdfController->download();
+    }
+    // 🔹 Visualizar o currículo de outro candidato (admin/empresa)
+    elseif (isset($segments[1]) && $segments[1] === 'curriculo' && isset($segments[2])) {
+        $id = (int)$segments[2];
+        $pdfController->curriculo($id, true);
     } else {
         http_response_code(404);
         echo "<main class='text-center py-20 text-gray-600'>
