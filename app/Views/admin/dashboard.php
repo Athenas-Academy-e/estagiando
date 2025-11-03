@@ -40,14 +40,50 @@
   </div>
   <div id="dataContainer" class="bg-white p-6 rounded-2xl shadow-lg text-sm text-gray-700 mx-[4px] w-[calc(100vw-8px)] ">
   </div>
+  <!-- 🔹 Modal de Edição -->
+  <!-- 🔹 Modal de Edição -->
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl shadow-lg w-full max-w-xl max-h-[90vh] flex flex-col relative">
+
+      <!-- Cabeçalho -->
+      <div class="flex justify-between items-start mb-2 p-6 border-b">
+        <h2 id="modalTitle" class="text-xl font-semibold text-[#0a1837]">Editar Registro</h2>
+        <button id="closeModal" class="text-gray-500 hover:text-red-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Conteúdo rolável -->
+      <div class="overflow-y-auto px-6 pb-6 flex-1">
+        <form id="editForm" class="space-y-4">
+          <input type="hidden" name="id" id="edit-id">
+          <input type="hidden" name="type" id="edit-type">
+
+          <!-- Campos dinâmicos -->
+          <div id="dynamicFields"></div>
+
+          <!-- Rodapé fixo -->
+          <div class="flex justify-end mt-6 gap-3 sticky bottom-0 bg-white pt-4 border-t">
+            <button type="button" id="cancelEdit" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg">Cancelar</button>
+            <button type="submit" class="bg-[#97dd3a] hover:bg-[#85c334] text-white px-4 py-2 rounded-lg">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </main>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const dataContainer = document.getElementById("dataContainer");
     const tabs = document.querySelectorAll(".tab-btn");
+    const modal = document.getElementById('editModal');
+    const closeModal = document.getElementById('closeModal');
+    const cancelEdit = document.getElementById('cancelEdit');
+    const form = document.getElementById('editForm');
+    const dynamicFields = document.getElementById('dynamicFields');
+    const modalTitle = document.getElementById('modalTitle');
     let activeType = "admins";
 
+    // === Funções base ===
     const setActive = (btn) => {
       tabs.forEach(b => {
         b.classList.remove("bg-[#0a1837]", "text-white");
@@ -57,17 +93,17 @@
       btn.classList.add("bg-[#0a1837]", "text-white");
     };
 
-    // 🗓️ Função auxiliar para formatar datas
     const formatDate = (value) => {
       if (!value) return '';
       const date = new Date(value);
-      if (isNaN(date)) return value; // se não for data válida, mantém original
+      if (isNaN(date)) return value;
       const day = String(date.getDate()).padStart(2, '0');
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
     };
 
+    // === Carregar dados da aba ===
     const loadData = (type) => {
       if (type === "admins") {
         dataContainer.innerHTML = `
@@ -90,49 +126,40 @@
           let html = `<div class="overflow-x-auto">
           <table class="min-w-full border border-gray-200 rounded-lg">
           <thead class="bg-gray-100 text-center">
-          <tr>
-          ${headers.map(h => `<th class="p-3 border-b font-semibold capitalize">${h}</th>`).join('')}
-          <th class="p-3 border-b font-semibold">Ações</th>
-          </tr>
-          </thead>
-      <tbody>
-        ${data.map(row => {
-          return `
-            <tr class="border-b hover:bg-gray-50 transition text-center">
-              ${headers.map(h => {
-                let value = row[h] ?? '';
-                if (/data|date/i.test(h) && value) value = formatDate(value);
-                return `<td class="p-3">${value}</td>`;
-              }).join('')}
-              <td class="p-3 flex flex-wrap gap-2 justify-center">
-                <button class="toggle-btn bg-yellow-500 text-white px-3 py-1 rounded shadow" 
-                        data-id="${row.id}" data-type="${type}">
-                        ${row.status === 'S' ? 'Desativar' : 'Ativar'}
-                </button>
-                <button class="delete-btn bg-red-600 text-white px-3 py-1 rounded shadow" 
-                        data-id="${row.id}" data-type="${type}">
-                        Excluir
-                </button>
-                ${type === 'vagas' ? `
-                  <a href="/admin/candidatos?vaga=${row.id}" 
-                    class="bg-blue-600 text-white px-3 py-1 rounded shadow hover:bg-blue-700 transition">
-                    Ver Candidatos
-                  </a>` : ''}
-              </td>
+            <tr>
+              ${headers.map(h => `<th class="p-3 border-b font-semibold capitalize">${h}</th>`).join('')}
+              <th class="p-3 border-b font-semibold">Ações</th>
             </tr>
-          `;
-        }).join('')}
-      </tbody>
-    </table>
-  </div>
-`;
+          </thead>
+          <tbody>
+            ${data.map(row => `
+              <tr class="border-b hover:bg-gray-50 transition text-center">
+                ${headers.map(h => {
+                  let value = row[h] ?? '';
+                  if (/data|date/i.test(h) && value) value = formatDate(value);
+                  return `<td class="p-3">${value}</td>`;
+                }).join('')}
+                <td class="p-3 flex flex-wrap gap-2 justify-center">
+                  <button class="edit-btn bg-blue-600 text-white px-3 py-1 rounded shadow" data-id="${row.id}" data-type="${type}">Editar</button>
+                  <button class="toggle-btn bg-yellow-500 text-white px-3 py-1 rounded shadow" data-id="${row.id}" data-type="${type}">
+                    ${row.status === 'S' ? 'Desativar' : 'Ativar'}
+                  </button>
+                  <button class="delete-btn bg-red-600 text-white px-3 py-1 rounded shadow" data-id="${row.id}" data-type="${type}">Excluir</button>
+                  ${type === 'vagas' ? `
+                    <a href="/admin/candidatos?vaga=${row.id}" class="bg-green-600 text-white px-3 py-1 rounded shadow hover:bg-green-700 transition">Candidatos</a>` : ''}
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
           dataContainer.innerHTML = html;
         })
         .catch(() => {
-          dataContainer.innerHTML = ` < p class = "text-center text-red-500 py-6" > Erro ao carregar dados. < /p>`;
+          dataContainer.innerHTML = `<p class="text-center text-red-500 py-6">Erro ao carregar dados.</p>`;
         });
     };
 
+    // === Tabs ===
     tabs.forEach(btn => {
       btn.addEventListener("click", () => {
         setActive(btn);
@@ -141,6 +168,7 @@
       });
     });
 
+    // === Ativar / Desativar ===
     dataContainer.addEventListener("click", e => {
       if (e.target.classList.contains("toggle-btn")) {
         const id = e.target.dataset.id;
@@ -155,6 +183,7 @@
       }
     });
 
+    // === Excluir ===
     dataContainer.addEventListener("click", e => {
       if (e.target.classList.contains("delete-btn")) {
         if (confirm("Deseja realmente excluir este registro?")) {
@@ -171,6 +200,129 @@
       }
     });
 
+    // === Editar (abrir modal e buscar dados) ===
+    dataContainer.addEventListener("click", async e => {
+      if (e.target.classList.contains("edit-btn")) {
+        const id = e.target.dataset.id;
+        const type = e.target.dataset.type;
+
+        try {
+          const res = await fetch(`/admin/getRegistroAjax?type=${type}&id=${id}`);
+          const result = await res.json();
+
+          if (!result.success) {
+            alert("Erro ao carregar os dados.");
+            return;
+          }
+
+          const data = result.data;
+          modalTitle.textContent = `✏️ Editar ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+          modal.classList.remove('hidden');
+          dynamicFields.innerHTML = '';
+
+          // Cria campos dinamicamente (inteligente)
+          for (const [key, value] of Object.entries(data)) {
+            if (['id', 'senha', 'password'].includes(key)) continue;
+
+            const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            let inputField = '';
+
+            // Detecta se é campo de imagem
+            if (/foto|logo|imagem|path/i.test(key)) {
+              inputField = `
+      <input type="file" name="${key}" accept="image/*"
+             class="w-full border rounded-lg px-3 py-2 file:mr-3 file:py-2 file:px-3 file:border-0 file:bg-[#97dd3a] file:text-white file:rounded-lg file:cursor-pointer focus:ring-2 focus:ring-[#97dd3a]">
+      ${value ? `<p class="text-xs text-gray-500 mt-1">Atual: ${value}</p>` : ''}
+    `;
+            }
+
+            // Detecta se é campo de data
+            else if (/data|nascimento|date|_em$/i.test(key)) {
+              let val = value && /^\d{4}-\d{2}-\d{2}/.test(value) ? value.split('T')[0] : value ?? '';
+              inputField = `<input type="date" name="${key}" value="${val}" 
+                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">`;
+            }
+
+            // Detecta se é campo de categoria_nome → gera <select>
+            else if (/categoria_nome/i.test(key)) {
+              inputField = `
+      <select name="categoria_id" id="select-categoria" 
+              class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
+        <option value="">Carregando categorias...</option>
+      </select>
+    `;
+
+              // Busca categorias via AJAX
+              fetch('/admin/fetchData?type=categoria')
+                .then(r => r.json())
+                .then(categorias => {
+                  const select = document.getElementById('select-categoria');
+                  select.innerHTML = categorias.map(cat => `
+          <option value="${cat.id}" ${cat.nome === value ? 'selected' : ''}>${cat.nome}</option>
+        `).join('');
+                })
+                .catch(() => {
+                  document.getElementById('select-categoria').innerHTML = '<option value="">Erro ao carregar</option>';
+                });
+            }
+
+            // Campo padrão
+            else {
+              inputField = `
+      <input type="text" name="${key}" value="${value ?? ''}" 
+             class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
+    `;
+            }
+
+            dynamicFields.innerHTML += `
+    <div>
+      <label class="block text-sm font-medium text-gray-600 mb-1">${label}</label>
+      ${inputField}
+    </div>
+  `;
+          }
+
+          document.getElementById('edit-id').value = id;
+          document.getElementById('edit-type').value = type;
+        } catch (error) {
+          alert("Erro ao buscar dados.");
+        }
+      }
+    });
+
+    // === Fechar modal ===
+    [closeModal, cancelEdit].forEach(el => el.addEventListener('click', () => modal.classList.add('hidden')));
+
+    // === Enviar edição ===
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      const response = await fetch('/admin/editarAjax', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        showToast('✅ Registro atualizado com sucesso!', 'green');
+        modal.classList.add('hidden');
+        loadData(activeType);
+      } else {
+        showToast('❌ Erro: ' + result.message, 'red');
+      }
+    });
+
+    // === Toast bonito ===
+    function showToast(msg, color) {
+      const toast = document.createElement('div');
+      toast.textContent = msg;
+      toast.className = `fixed top-5 right-5 bg-${color}-600 text-white px-5 py-3 rounded-lg shadow-lg z-[9999] animate-fadeIn`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // === Inicial ===
     loadData(activeType);
   });
 </script>

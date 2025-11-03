@@ -223,7 +223,7 @@ class Profissional
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
   public function toggleStatus($id)
-{
+  {
     $stmt = $this->pdo->prepare("SELECT `status` FROM profissionais WHERE id = :id");
     $stmt->execute([':id' => $id]);
     $atual = $stmt->fetchColumn();
@@ -233,5 +233,26 @@ class Profissional
     $update->execute([':novo' => $novo, ':id' => $id]);
 
     return $novo;
-}
+  }
+  public function updateGeneric($id, $data)
+  {
+    $columns = [];
+    foreach ($data as $key => $value) {
+      $columns[] = "$key = :$key";
+    }
+    $sql = "UPDATE profissionais SET " . implode(',', $columns) . " WHERE id = :id";
+    $stmt = $this->pdo->prepare($sql);
+    $data['id'] = $id;
+    return $stmt->execute($data);
+  }
+  public function getProfissionalDetalhado($id)
+  {
+    $sql = "SELECT p.nome, p.cpf, p.sexo, p.nascimento, p.email, p.telefone, p.cep, p.endereco, p.numero, p.bairro, p.cidade, p.estado, p.foto
+            FROM profissionais p
+            LEFT JOIN municipios c ON c.id = p.municipio_id
+            WHERE p.id = :id";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }

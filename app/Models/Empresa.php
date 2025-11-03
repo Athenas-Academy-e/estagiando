@@ -409,4 +409,26 @@ class Empresa
 
     return $novo;
   }
+  public function updateGeneric($id, $data)
+  {
+    $columns = [];
+    foreach ($data as $key => $value) {
+      $columns[] = "$key = :$key";
+    }
+    $sql = "UPDATE empresas SET " . implode(',', $columns) . " WHERE id = :id";
+    $stmt = $this->pdo->prepare($sql);
+    $data['id'] = $id;
+    return $stmt->execute($data);
+  }
+  public function getEmpresaCompleta($id)
+  {
+    $sql = "SELECT e.razao_social, e.nome_fantasia, e.cnpj, e.telefone, e.celular, e.email, e.site, e.cep, e.endereco, e.numero, e.bairro, e.cidade, e.logo, c.nome AS categoria_nome, c.id
+            FROM empresas e
+            LEFT JOIN categorias c ON c.id = e.categoria_id
+            LEFT JOIN municipios m ON m.id = e.municipio_id
+            WHERE e.id = :id";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }

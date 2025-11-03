@@ -393,4 +393,28 @@ class Job
 
         return $novo;
     }
+    public function updateGeneric($id, $data)
+    {
+        $columns = [];
+        foreach ($data as $key => $value) {
+            $columns[] = "$key = :$key";
+        }
+        $sql = "UPDATE jobs SET " . implode(',', $columns) . " WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $data['id'] = $id;
+        return $stmt->execute($data);
+    }
+    public function getVagaCompleta($id)
+    {
+        $sql = "SELECT j.title, j.salary, j.description, e.nome_fantasia AS empresa_nome, cat.nome AS categoria_nome, met.nome AS metodo_nome, m.nome AS municipio_nome
+            FROM jobs j
+            LEFT JOIN empresas e ON e.id = j.company_id
+            LEFT JOIN categorias cat ON cat.id = j.categoria_id
+            LEFT JOIN jobs_method met ON met.id = j.method_id
+            LEFT JOIN municipios m ON m.id = j.municipio_id
+            WHERE j.id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

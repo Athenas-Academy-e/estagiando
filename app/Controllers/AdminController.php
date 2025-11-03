@@ -192,6 +192,12 @@ class AdminController
                 $data = $model->getAllAdmin();
                 break;
 
+            case 'metodos_trabalho':
+                require_once __DIR__ . '/../Models/Job.php';
+                $model = new Job();
+                $data = $model->getWorkMethod();
+                break;
+
             case 'admins':
                 require_once __DIR__ . '/../Models/Admin.php';
                 $model = new Admin();
@@ -275,5 +281,110 @@ class AdminController
         require_once __DIR__ . '/../Views/partials/header.php';
         require_once __DIR__ . '/../Views/admin/candidatos.php';
         require_once __DIR__ . '/../Views/partials/footer.php';
+    }
+    public function getRegistroAjax()
+    {
+        Auth::check('admin');
+        header('Content-Type: application/json');
+
+        $type = $_GET['type'] ?? '';
+        $id = (int)($_GET['id'] ?? 0);
+
+        if (!$type || !$id) {
+            echo json_encode(['success' => false, 'message' => 'Parâmetros inválidos']);
+            exit;
+        }
+
+        try {
+            switch ($type) {
+
+                case 'empresas':
+                    require_once __DIR__ . '/../Models/Empresa.php';
+                    $model = new Empresa();
+                    $registro = $model->getEmpresaCompleta($id);
+                    break;
+
+                case 'profissionais':
+                    require_once __DIR__ . '/../Models/Profissional.php';
+                    $model = new Profissional();
+                    $registro = $model->getProfissionalDetalhado($id);
+                    break;
+
+                case 'vagas':
+                    require_once __DIR__ . '/../Models/Job.php';
+                    $model = new Job();
+                    $registro = $model->getVagaCompleta($id);
+                    break;
+
+                case 'categoria':
+                    require_once __DIR__ . '/../Models/Categoria.php';
+                    $model = new Categoria();
+                    $registro = $model->getById($id);
+                    break;
+
+                case 'publicidade':
+                    require_once __DIR__ . '/../Models/Publicidade.php';
+                    $model = new Publicidade();
+                    $registro = $model->getPublicidadeDetalhada($id);
+                    break;
+
+                default:
+                    echo json_encode(['success' => false, 'message' => 'Tipo desconhecido']);
+                    exit;
+            }
+
+            if (!$registro) {
+                echo json_encode(['success' => false, 'message' => 'Registro não encontrado']);
+                exit;
+            }
+
+            echo json_encode(['success' => true, 'data' => $registro]);
+        } catch (Throwable $e) {
+            echo json_encode(['success' => false, 'message' => 'Erro interno: ' . $e->getMessage()]);
+        }
+    }
+
+    public function editarAjax()
+    {
+        Auth::check('admin');
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Método inválido']);
+            exit;
+        }
+
+        $type = $_POST['type'] ?? '';
+        $id = (int)($_POST['id'] ?? 0);
+        unset($_POST['type'], $_POST['id']);
+
+        if (!$type || !$id) {
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
+            exit;
+        }
+
+        switch ($type) {
+            case 'empresas':
+                $model = new Empresa();
+                break;
+            case 'profissionais':
+                $model = new Profissional();
+                break;
+            case 'vagas':
+                $model = new Job();
+                break;
+            case 'categorias':
+                $model = new Categoria();
+                break;
+            case 'publicidade':
+                $model = new Publicidade();
+                break;
+            default:
+                echo json_encode(['success' => false, 'message' => 'Tipo inválido']);
+                exit;
+        }
+
+        $ok = $model->updateGeneric($id, $_POST);
+        echo json_encode(['success' => $ok]);
     }
 }
