@@ -222,29 +222,108 @@ class Profissional
     $stmt = $this->pdo->query("SELECT id, nome, cpf, email, telefone, `status`, data_cadastro FROM profissionais ORDER BY id DESC");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
+
   public function toggleStatus($id)
   {
-    $stmt = $this->pdo->prepare("SELECT `status` FROM profissionais WHERE id = :id");
+    // 1️⃣ Busca o status atual
+    $stmt = $this->pdo->prepare("SELECT status FROM profissionais WHERE id = :id LIMIT 1");
     $stmt->execute([':id' => $id]);
     $atual = $stmt->fetchColumn();
 
-    $novo = ($atual === 'S') ? 'N' : 'S';
-    $update = $this->pdo->prepare("UPDATE profissionais SET `status` = :novo WHERE id = :id");
-    $update->execute([':novo' => $novo, ':id' => $id]);
-
-    return $novo;
-  }
-  public function updateGeneric($id, $data)
-  {
-    $columns = [];
-    foreach ($data as $key => $value) {
-      $columns[] = "$key = :$key";
+    if ($atual === false || $atual === null) {
+      error_log("⚠️ toggleStatus: ID {$id} não encontrado ou status nulo");
+      return false;
     }
-    $sql = "UPDATE profissionais SET " . implode(',', $columns) . " WHERE id = :id";
+
+    // 2️⃣ Garante valor válido ('S' ou 'N')
+    $atual = strtoupper(trim($atual));
+    $novo = ($atual === 'S') ? 'N' : 'S';
+
+    // 3️⃣ Executa a atualização
+    $update = $this->pdo->prepare("
+        UPDATE profissionais 
+        SET status = :novo, atualizado_em = NOW() 
+        WHERE id = :id
+    ");
+
+    try {
+      $update->execute([':novo' => $novo, ':id' => $id]);
+      return $novo;
+    } catch (PDOException $e) {
+      error_log("❌ Erro ao atualizar status (ID {$id}): " . $e->getMessage());
+      return false;
+    }
+  }
+
+  public function updateProfissionalAdmin($id, $data, $file = null)
+  {
+    // Mapeia nomes diferentes
+    $map = [
+      'nome'         => 'nome',
+      'cpf'          => 'cpf',
+      'sexo'         => 'sexo',
+      'nascimento'   => 'nascimento',
+      'email'        => 'email',
+      'telefone'     => 'telefone',
+      'cep'          => 'cep',
+      'endereco'     => 'endereco',
+      'numero'       => 'numero',
+      'bairro'       => 'bairro',
+      'cidade'       => 'cidade',
+      'estado'       => 'estado',
+    ];
+
+    foreach ($map as $formKey => $dbCol) {
+      if (isset($data[$formKey])) {
+        if ($formKey !== $dbCol) {
+          $data[$dbCol] = $data[$formKey];
+          unset($data[$formKey]);
+        }
+      }
+    }
+
+    // Upload da foto
+    if ($file && $file['error'] === UPLOAD_ERR_OK) {
+      $uploadDir = '/assets/img/fotos/';
+      $destDir = __DIR__ . '/../../public_html' . $uploadDir;
+
+      if (!is_dir($destDir)) mkdir($destDir, 0777, true);
+
+      $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+      $fileName = 'foto_' . uniqid() . '.' . $ext;
+      $filePath = $destDir . $fileName;
+
+      if (move_uploaded_file($file['tmp_name'], $filePath)) {
+        $data['foto'] = $uploadDir . $fileName;
+      }
+    }
+
+    $cols = [];
+    foreach ($data as $key => $value) {
+      if (!is_string($key) || $key === '' || $value === '' || $value === null) continue;
+      $cols[] = "$key = :$key";
+    }
+
+    // 🧠 Verifica se há algo para atualizar
+    if (empty($cols)) {
+      error_log("⚠️ Nenhum campo enviado para atualização em profissional ID $id");
+      return false;
+    }
+
+    $sql = "UPDATE profissionais SET " . implode(', ', $cols) . ", atualizado_em = NOW() WHERE id = :id";
+    error_log("SQL GERADO: " . $sql);
+    error_log("DATA: " . print_r($data, true));
     $stmt = $this->pdo->prepare($sql);
     $data['id'] = $id;
-    return $stmt->execute($data);
+
+    try {
+      return $stmt->execute($data);
+    } catch (PDOException $e) {
+      error_log("Erro ao atualizar profissional: " . $e->getMessage());
+      return false;
+    }
   }
+
   public function getProfissionalDetalhado($id)
   {
     $sql = "SELECT p.nome, p.cpf, p.sexo, p.nascimento, p.email, p.telefone, p.cep, p.endereco, p.numero, p.bairro, p.cidade, p.estado, p.foto

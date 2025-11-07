@@ -382,28 +382,83 @@ class Job
     }
 
     public function toggleStatus($id)
-    {
-        $stmt = $this->pdo->prepare("SELECT status FROM jobs WHERE id = :id");
-        $stmt->execute([':id' => $id]);
-        $atual = $stmt->fetchColumn();
+{
+    // 🔹 Busca status e data de expiração
+    $stmt = $this->pdo->prepare("SELECT status, data_expiracao FROM jobs WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $id]);
+    $vaga = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $novo = ($atual === 'S') ? 'N' : 'S';
-        $update = $this->pdo->prepare("UPDATE jobs SET status = :novo WHERE id = :id");
-        $update->execute([':novo' => $novo, ':id' => $id]);
-
-        return $novo;
+    if (!$vaga) {
+        return ['success' => false, 'message' => 'Vaga não encontrada.'];
     }
-    public function updateGeneric($id, $data)
+
+    $statusAtual = strtoupper(trim($vaga['status']));
+    $dataExpiracao = $vaga['data_expiracao'] ? new DateTime($vaga['data_expiracao']) : null;
+    $agora = new DateTime();
+
+    // 🔒 Se a vaga já expirou, não permite reativar
+    if ($dataExpiracao && $agora > $dataExpiracao) {
+        return ['success' => false, 'message' => '⏰ Vaga expirada'];
+    }
+
+    // 🔁 Alterna status normalmente
+    $novoStatus = ($statusAtual === 'S') ? 'N' : 'S';
+
+    $update = $this->pdo->prepare("
+        UPDATE jobs 
+        SET status = :novo, posted_at = NOW() 
+        WHERE id = :id
+    ");
+
+    try {
+        $update->execute([':novo' => $novoStatus, ':id' => $id]);
+        return ['success' => true, 'message' => '✅ OK', 'status' => $novoStatus];
+    } catch (PDOException $e) {
+        error_log("❌ Erro ao atualizar status (ID {$id}): " . $e->getMessage());
+        return ['success' => false, 'message' => 'Erro interno.'];
+    }
+}
+
+
+    public function updateVaga($id, $data)
     {
-        $columns = [];
-        foreach ($data as $key => $value) {
-            $columns[] = "$key = :$key";
+        $map = [
+            'title'     => 'title',
+            'description'  => 'description',
+            'empresa'    => 'company_id',
+            'categoria_id'  => 'categoria_id',
+            'metodo'     => 'method_id',
+            'local'      => 'location',
+            'municipio'  => 'municipio_id',
+            'salario'    => 'salary',
+        ];
+
+        foreach ($map as $formKey => $dbCol) {
+            if (isset($data[$formKey])) {
+                if ($formKey !== $dbCol) {
+                    $data[$dbCol] = $data[$formKey];
+                    unset($data[$formKey]);
+                }
+            }
         }
-        $sql = "UPDATE jobs SET " . implode(',', $columns) . " WHERE id = :id";
+
+        $cols = [];
+        foreach ($data as $key => $value) {
+            $cols[] = "$key = :$key";
+        }
+
+        $sql = "UPDATE jobs SET " . implode(', ', $cols) . ", posted_at = NOW() WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $data['id'] = $id;
-        return $stmt->execute($data);
+
+        try {
+            return $stmt->execute($data);
+        } catch (PDOException $e) {
+            error_log("Erro ao atualizar vaga: " . $e->getMessage());
+            return false;
+        }
     }
+
     public function getVagaCompleta($id)
     {
         $sql = "SELECT j.title, j.salary, j.description, e.nome_fantasia AS empresa_nome, cat.nome AS categoria_nome, met.nome AS metodo_nome, m.nome AS municipio_nome

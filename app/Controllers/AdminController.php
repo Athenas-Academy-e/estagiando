@@ -180,6 +180,12 @@ class AdminController
                 $data = $model->getAll();
                 break;
 
+            case 'localidade':
+                require_once __DIR__ . '/../Models/Empresa.php';
+                $model = new Empresa();
+                $data = $model->getLocalidades();
+                break;
+
             case 'profissionais':
                 require_once __DIR__ . '/../Models/Profissional.php';
                 $model = new Profissional();
@@ -192,16 +198,10 @@ class AdminController
                 $data = $model->getAllAdmin();
                 break;
 
-            case 'metodos_trabalho':
+            case 'metodo':
                 require_once __DIR__ . '/../Models/Job.php';
                 $model = new Job();
                 $data = $model->getWorkMethod();
-                break;
-
-            case 'admins':
-                require_once __DIR__ . '/../Models/Admin.php';
-                $model = new Admin();
-                $data = $model->getAll();
                 break;
 
             case 'publicidade':
@@ -224,43 +224,62 @@ class AdminController
     public function toggleStatus()
     {
         Auth::check('admin');
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
         $type = $_POST['type'] ?? '';
         $id = (int)($_POST['id'] ?? 0);
 
-        switch ($type) {
-            case 'empresas':
-                require_once __DIR__ . '/../Models/Empresa.php';
-                $model = new Empresa();
-                break;
-            case 'profissionais':
-                require_once __DIR__ . '/../Models/Profissional.php';
-                $model = new Profissional();
-                break;
-            case 'vagas':
-                require_once __DIR__ . '/../Models/Job.php';
-                $model = new Job();
-                break;
-            case 'publicidade':
-                require_once __DIR__ . '/../Models/Publicidade.php';
-                $model = new Publicidade();
-                break;
-            case 'categoria':
-                require_once __DIR__ . '/../Models/Categoria.php';
-                $model = new Categoria();
-                break;
-            case 'admins':
-                require_once __DIR__ . '/../Models/Admin.php';
-                $model = new Admin();
-                break;
-            default:
-                echo json_encode(['error' => 'Tipo inválido']);
-                exit;
+        if (!$type || !$id) {
+            echo json_encode(['success' => false, 'message' => 'Parâmetros inválidos']);
+            exit;
         }
 
-        $status = $model->toggleStatus($id);
-        echo json_encode(['success' => true, 'status' => $status]);
+        try {
+            switch ($type) {
+                case 'empresas':
+                    require_once __DIR__ . '/../Models/Empresa.php';
+                    $model = new Empresa();
+                    break;
+                case 'profissionais':
+                    require_once __DIR__ . '/../Models/Profissional.php';
+                    $model = new Profissional();
+                    break;
+                case 'vagas':
+                    require_once __DIR__ . '/../Models/Job.php';
+                    $model = new Job();
+                    break;
+                case 'publicidade':
+                    require_once __DIR__ . '/../Models/Publicidade.php';
+                    $model = new Publicidade();
+                    break;
+                case 'categoria':
+                    require_once __DIR__ . '/../Models/Categoria.php';
+                    $model = new Categoria();
+                    break;
+                case 'admins':
+                    require_once __DIR__ . '/../Models/Admin.php';
+                    $model = new Admin();
+                    break;
+                default:
+                    echo json_encode(['success' => false, 'message' => 'Tipo inválido']);
+                    exit;
+            }
+
+            $status = $model->toggleStatus($id);
+
+            echo json_encode([
+                'success' => true,
+                'status' => $status,
+                'message' => "Status atualizado para " . ($status === 'S' ? 'ativo' : 'inativo')
+            ]);
+        } catch (Throwable $e) {
+            error_log('❌ Erro no toggleStatus: ' . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro interno: ' . $e->getMessage()
+            ]);
+        }
+
         exit;
     }
 
@@ -290,7 +309,9 @@ class AdminController
         $type = $_GET['type'] ?? '';
         $id = (int)($_GET['id'] ?? 0);
 
-        if (!$type || !$id) {
+        $tiposSemId = ['metodo'];
+
+        if (!$type || (!in_array($type, $tiposSemId) && !$id)) {
             echo json_encode(['success' => false, 'message' => 'Parâmetros inválidos']);
             exit;
         }
@@ -347,44 +368,110 @@ class AdminController
     public function editarAjax()
     {
         Auth::check('admin');
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
+        // 🧩 Verifica método HTTP
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             echo json_encode(['success' => false, 'message' => 'Método inválido']);
             exit;
         }
 
-        $type = $_POST['type'] ?? '';
-        $id = (int)($_POST['id'] ?? 0);
-        unset($_POST['type'], $_POST['id']);
+        /**
+         * =============================
+         * 🔹 Captura segura dos dados
+         * =============================
+         * - Alguns navegadores não populam $_POST ao enviar FormData
+         * - Então fazemos um fallback lendo o corpo cru
+         */
+        $dados = $_POST;
 
+        if (empty($dados)) {
+            $input = file_get_contents("php://input");
+            if ($input) {
+                parse_str($input, $dados);
+            }
+        }
+
+        // 🔹 Recupera tipo e ID
+        $type = $dados['type'] ?? ($_POST['type'] ?? '');
+        $id   = (int)($dados['id'] ?? ($_POST['id'] ?? 0));
+        unset($dados['type'], $dados['id']);
+
+        // 🔹 Validação básica
         if (!$type || !$id) {
-            echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
+            echo json_encode(['success' => false, 'message' => 'Parâmetros inválidos']);
             exit;
         }
 
-        switch ($type) {
-            case 'empresas':
-                $model = new Empresa();
-                break;
-            case 'profissionais':
-                $model = new Profissional();
-                break;
-            case 'vagas':
-                $model = new Job();
-                break;
-            case 'categorias':
-                $model = new Categoria();
-                break;
-            case 'publicidade':
-                $model = new Publicidade();
-                break;
-            default:
-                echo json_encode(['success' => false, 'message' => 'Tipo inválido']);
-                exit;
+        // 🔹 Log de debug (opcional — útil durante desenvolvimento)
+        error_log("🧠 editarAjax() - Tipo: {$type}, ID: {$id}");
+        error_log("📦 Dados recebidos: " . print_r($dados, true));
+        error_log("🖼️ Arquivos: " . print_r($_FILES, true));
+
+        try {
+            switch ($type) {
+                case 'empresas':
+                    $model = new Empresa();
+                    $ok = $model->updateEmpresaAdmin($id, $dados, $_FILES['logo'] ?? null);
+                    break;
+
+                case 'profissionais':
+                    $model = new Profissional();
+                    $ok = $model->updateProfissionalAdmin($id, $dados, $_FILES['foto'] ?? null);
+                    break;
+
+                case 'vagas':
+                    $model = new Job();
+                    $ok = $model->updateVaga($id, $dados);
+                    break;
+
+                case 'categoria':
+                    $model = new Categoria();
+                    $ok = $model->updateCategoria($id, $dados, $_FILES['imagem'] ?? null);
+                    break;
+
+                case 'publicidade':
+                    $model = new Publicidade();
+                    $ok = $model->updatePublicidade($id, $dados, $_FILES['imagem'] ?? null);
+                    break;
+
+                default:
+                    echo json_encode(['success' => false, 'message' => 'Tipo inválido']);
+                    exit;
+            }
+
+            // 🔹 Retorno final
+            echo json_encode([
+                'success' => (bool) $ok,
+                'message' => $ok
+                    ? '✅ Registro atualizado com sucesso!'
+                    : '⚠️ Nenhuma alteração realizada ou erro ao atualizar.'
+            ]);
+        } catch (Throwable $e) {
+            // 🔥 Log detalhado para depuração
+            error_log('❌ Erro no editarAjax (' . $type . '): ' . $e->getMessage());
+            error_log('📄 Trace: ' . $e->getTraceAsString());
+            error_log('📦 Dados: ' . print_r($dados, true));
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro interno ao atualizar registro. Verifique o log para mais detalhes.'
+            ]);
+        }
+    }
+    public function reativarVaga()
+    {
+        Auth::check('admin');
+        header('Content-Type: application/json');
+
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            echo json_encode(['success' => false, 'message' => 'ID inválido']);
+            return;
         }
 
-        $ok = $model->updateGeneric($id, $_POST);
-        echo json_encode(['success' => $ok]);
+        $job = new Job();
+        $stmt = $job->update(['id' => $id, 'status' => 'S', 'data_expiracao' => date('Y-m-d H:i:s', strtotime('+7 days'))]);
+        echo json_encode(['success' => true, 'message' => 'Vaga reativada por mais 7 dias']);
     }
 }

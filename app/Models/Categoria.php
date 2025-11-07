@@ -12,7 +12,7 @@ class Categoria
 
     public function getCategorias()
     {
-        $stmt = $this->pdo->query("SELECT * FROM categorias ORDER BY nome ASC");
+        $stmt = $this->pdo->query("SELECT id, nome, data_criacao,status FROM categorias ORDER BY nome ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -28,20 +28,64 @@ class Categoria
 
         return $novo;
     }
-    public function updateGeneric($id, $data)
+    public function updateCategoria($id, $data, $file = null)
     {
-        $columns = [];
-        foreach ($data as $key => $value) {
-            $columns[] = "$key = :$key";
+        // 🔹 Limpa e ajusta o nome da categoria
+        if (isset($data['nome'])) {
+            $data['nome'] = trim($data['nome']);
         }
-        $sql = "UPDATE categorias SET " . implode(',', $columns) . " WHERE id = :id";
+
+        // 🖼️ Upload da imagem (caso enviada)
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '/assets/img/areas/';
+            $destDir = __DIR__ . '/../../public_html' . $uploadDir;
+
+            // Cria diretório se não existir
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
+            }
+
+            // Extensão e nome do arquivo
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+
+            if (!in_array($ext, $permitidas)) {
+                error_log("Extensão de imagem inválida em categoria: $ext");
+            } else {
+                $fileName = 'cat_' . uniqid() . '.' . $ext;
+                $filePath = $destDir . $fileName;
+
+                // Move o arquivo e salva caminho relativo
+                if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                    $data['imagem'] = $uploadDir . $fileName;
+                }
+            }
+        }
+
+        // 🔹 Monta SQL dinamicamente (para suportar atualização de imagem e nome)
+        $cols = [];
+        foreach ($data as $key => $value) {
+            $cols[] = "$key = :$key";
+        }
+
+        $sql = "UPDATE categorias SET " . implode(', ', $cols) . " WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
+
+        // Adiciona o ID no array de parâmetros
         $data['id'] = $id;
-        return $stmt->execute($data);
+
+        try {
+            return $stmt->execute($data);
+        } catch (PDOException $e) {
+            error_log("Erro ao atualizar categoria: " . $e->getMessage());
+            return false;
+        }
     }
+
+
     public function getById($id)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM categorias WHERE id = :id");
+        $stmt = $this->pdo->prepare("SELECT nome, imagempath As caminho_da_imagem FROM categorias WHERE id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

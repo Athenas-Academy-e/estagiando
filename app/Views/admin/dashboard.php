@@ -41,7 +41,6 @@
   <div id="dataContainer" class="bg-white p-6 rounded-2xl shadow-lg text-sm text-gray-700 mx-[4px] w-[calc(100vw-8px)] ">
   </div>
   <!-- 🔹 Modal de Edição -->
-  <!-- 🔹 Modal de Edição -->
   <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
     <div class="bg-white rounded-2xl shadow-lg w-full max-w-xl max-h-[90vh] flex flex-col relative">
 
@@ -53,7 +52,7 @@
 
       <!-- Conteúdo rolável -->
       <div class="overflow-y-auto px-6 pb-6 flex-1">
-        <form id="editForm" class="space-y-4">
+        <form id="editForm" class="space-y-4" enctype="multipart/form-data">
           <input type="hidden" name="id" id="edit-id">
           <input type="hidden" name="type" id="edit-type">
 
@@ -61,7 +60,7 @@
           <div id="dynamicFields"></div>
 
           <!-- Rodapé fixo -->
-          <div class="flex justify-end mt-6 gap-3 sticky bottom-0 bg-white pt-4 border-t">
+          <div class="flex justify-end mt-6 gap-3  bg-white pt-4 border-t">
             <button type="button" id="cancelEdit" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg">Cancelar</button>
             <button type="submit" class="bg-[#97dd3a] hover:bg-[#85c334] text-white px-4 py-2 rounded-lg">Salvar</button>
           </div>
@@ -141,9 +140,27 @@
                 }).join('')}
                 <td class="p-3 flex flex-wrap gap-2 justify-center">
                   <button class="edit-btn bg-blue-600 text-white px-3 py-1 rounded shadow" data-id="${row.id}" data-type="${type}">Editar</button>
-                  <button class="toggle-btn bg-yellow-500 text-white px-3 py-1 rounded shadow" data-id="${row.id}" data-type="${type}">
-                    ${row.status === 'S' ? 'Desativar' : 'Ativar'}
-                  </button>
+                  ${
+    type === 'vagas'
+      ? (() => {
+          const expiracao = row.data_expiracao ? new Date(row.data_expiracao) : null;
+          const agora = new Date();
+          const expirada = expiracao && expiracao < agora;
+
+          if (expirada) {
+            return `<button class="reactivar-btn bg-gray-600 text-white px-3 py-1 rounded shadow" 
+                      data-id="${row.id}" data-type="${type}">
+                      Reativar Vaga
+                    </button>`;
+          } else {
+            return `<button class="toggle-btn bg-yellow-500 text-white px-3 py-1 rounded shadow" 
+                      data-id="${row.id}" data-type="${type}">
+                      ${row.status === 'S' ? 'Desativar' : 'Ativar'}
+                    </button>`;
+          }
+        })()
+      : ''
+  }
                   <button class="delete-btn bg-red-600 text-white px-3 py-1 rounded shadow" data-id="${row.id}" data-type="${type}">Excluir</button>
                   ${type === 'vagas' ? `
                     <a href="/admin/candidatos?vaga=${row.id}" class="bg-green-600 text-white px-3 py-1 rounded shadow hover:bg-green-700 transition">Candidatos</a>` : ''}
@@ -169,19 +186,63 @@
     });
 
     // === Ativar / Desativar ===
-    dataContainer.addEventListener("click", e => {
+    dataContainer.addEventListener("click", async e => {
       if (e.target.classList.contains("toggle-btn")) {
         const id = e.target.dataset.id;
         const type = e.target.dataset.type;
-        fetch("/admin/toggleStatus", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: `id=${id}&type=${type}`
-        }).then(() => loadData(activeType));
+
+        try {
+          const res = await fetch("/admin/toggleStatus", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `id=${id}&type=${type}`
+          });
+
+          const text = await res.text(); // 🧩 Ler como texto primeiro (debug seguro)
+
+          const result = JSON.parse(text); // Só parseia se for JSON válido
+
+          if (result.success) {
+            showToast(`✅ ${result.message}`, 'green');
+            loadData(activeType);
+          } else {
+            showToast(`❌ ${result.message || 'Erro ao alternar status'}`, 'red');
+          }
+        } catch (err) {
+          console.error('Erro no toggle:', err);
+          showToast('⚠️ Erro inesperado no servidor.', 'red');
+        }
       }
     });
+    // === Reativar Vaga Expirada ===
+dataContainer.addEventListener("click", async e => {
+  if (e.target.classList.contains("reactivar-btn")) {
+    const id = e.target.dataset.id;
+    const type = e.target.dataset.type;
+
+    if (confirm("Deseja reativar esta vaga expirada?")) {
+      try {
+        const res = await fetch("/admin/reactivarVaga", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `id=${id}&type=${type}`
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast("✅ Vaga reativada com sucesso!", "green");
+          loadData(activeType);
+        } else {
+          showToast(`❌ ${result.message || 'Erro ao reativar vaga'}`, "red");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("⚠️ Erro inesperado ao reativar vaga.", "red");
+      }
+    }
+  }
+});
 
     // === Excluir ===
     dataContainer.addEventListener("click", e => {
@@ -227,23 +288,23 @@
             const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
             let inputField = '';
 
-            // Detecta se é campo de imagem
-            if (/foto|logo|imagem|path/i.test(key)) {
+            // 🖼️ Campo de imagem
+            if (/foto|logo|imagem|path|caminho/i.test(key)) {
               inputField = `
-      <input type="file" name="${key}" accept="image/*"
+      <input type="file" name="${key}" accept="image/*" id="${key}"
              class="w-full border rounded-lg px-3 py-2 file:mr-3 file:py-2 file:px-3 file:border-0 file:bg-[#97dd3a] file:text-white file:rounded-lg file:cursor-pointer focus:ring-2 focus:ring-[#97dd3a]">
       ${value ? `<p class="text-xs text-gray-500 mt-1">Atual: ${value}</p>` : ''}
     `;
             }
 
-            // Detecta se é campo de data
+            // 📅 Campo de data
             else if (/data|nascimento|date|_em$/i.test(key)) {
               let val = value && /^\d{4}-\d{2}-\d{2}/.test(value) ? value.split('T')[0] : value ?? '';
-              inputField = `<input type="date" name="${key}" value="${val}" 
-                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">`;
+              inputField = `<input type="date" name="${key}" value="${val}" id="${key}"
+         class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">`;
             }
 
-            // Detecta se é campo de categoria_nome → gera <select>
+            // 🏷️ Campo de categoria
             else if (/categoria_nome/i.test(key)) {
               inputField = `
       <select name="categoria_id" id="select-categoria" 
@@ -251,8 +312,6 @@
         <option value="">Carregando categorias...</option>
       </select>
     `;
-
-              // Busca categorias via AJAX
               fetch('/admin/fetchData?type=categoria')
                 .then(r => r.json())
                 .then(categorias => {
@@ -266,17 +325,86 @@
                 });
             }
 
-            // Campo padrão
+            // 🧭 Campo de método de trabalho
+            else if (/method_nome|metodo_nome/i.test(key)) {
+              inputField = `
+      <select name="method_id" id="select-metodo" 
+              class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
+        <option value="">Carregando métodos...</option>
+      </select>
+    `;
+              fetch('/admin/fetchData?type=metodo')
+                .then(r => r.json())
+                .then(metodos => {
+                  const select = document.getElementById('select-metodo');
+                  select.innerHTML = metodos.map(m => `
+          <option value="${m.id}" ${m.nome === value ? 'selected' : ''}>${m.nome}</option>
+        `).join('');
+                })
+                .catch(() => {
+                  document.getElementById('select-metodo').innerHTML = '<option value="">Erro ao carregar</option>';
+                });
+            }
+
+            // 📍 Campo de município / localidade
+            else if (/municipio|localidade/i.test(key)) {
+              inputField = `
+      <select name="municipio_id" id="select-municipio" 
+              class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
+        <option value="">Carregando municípios...</option>
+      </select>
+    `;
+              fetch('/admin/fetchData?type=localidade')
+                .then(r => r.json())
+                .then(municipios => {
+                  const select = document.getElementById('select-municipio');
+                  select.innerHTML = municipios.map(m => `
+          <option value="${m.id}" ${m.nome === value ? 'selected' : ''}>${m.nome}</option>
+        `).join('');
+                })
+                .catch(() => {
+                  document.getElementById('select-municipio').innerHTML = '<option value="">Erro ao carregar</option>';
+                });
+            }
+
+            // 🏢 Campo de empresa (com nome_fantasia ou razão social)
+            else if (/empresa_nome|empresa|company/i.test(key)) {
+              inputField = `
+      <select name="company_id" id="select-empresa" 
+              class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
+        <option value="">Carregando empresas...</option>
+      </select>
+    `;
+              fetch('/admin/fetchData?type=empresas')
+                .then(r => r.json())
+                .then(empresas => {
+                  const select = document.getElementById('select-empresa');
+                  select.innerHTML = empresas.map(emp => {
+                    const nomeExibido = emp.nome_fantasia && emp.nome_fantasia.trim() !== '' ?
+                      emp.nome_fantasia :
+                      emp.razao_social;
+                    return `
+            <option value="${emp.id}" ${nomeExibido === value ? 'selected' : ''}>
+              ${nomeExibido}
+            </option>`;
+                  }).join('');
+                })
+                .catch(() => {
+                  document.getElementById('select-empresa').innerHTML = '<option value="">Erro ao carregar</option>';
+                });
+            }
+
+            // ✏️ Campo padrão
             else {
               inputField = `
-      <input type="text" name="${key}" value="${value ?? ''}" 
+      <input type="text" name="${key}" value="${value ?? ''}" id="${key}"
              class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
     `;
             }
 
             dynamicFields.innerHTML += `
     <div>
-      <label class="block text-sm font-medium text-gray-600 mb-1">${label}</label>
+      <label class="block text-sm font-medium text-gray-600 mb-1" for="${key}">${label}</label>
       ${inputField}
     </div>
   `;
@@ -296,7 +424,13 @@
     // === Enviar edição ===
     form.addEventListener('submit', async e => {
       e.preventDefault();
+
       const formData = new FormData(form);
+
+      // ✅ LOG temporário (remove depois)
+      for (const [key, value] of formData.entries()) {
+        console.log(`→ ${key}:`, value);
+      }
 
       const response = await fetch('/admin/editarAjax', {
         method: 'POST',
@@ -304,6 +438,7 @@
       });
 
       const result = await response.json();
+
       if (result.success) {
         showToast('✅ Registro atualizado com sucesso!', 'green');
         modal.classList.add('hidden');

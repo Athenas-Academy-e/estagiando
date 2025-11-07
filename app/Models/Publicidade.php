@@ -47,20 +47,60 @@ class Publicidade
 
         return $novo;
     }
-    public function updateGeneric($id, $data)
+
+    public function updatePublicidade($id, $data, $file = null)
     {
-        $columns = [];
-        foreach ($data as $key => $value) {
-            $columns[] = "$key = :$key";
+        $map = [
+            'titulo' => 'titulo',
+            'link'   => 'url',
+            'empresa' => 'empresa_id',
+        ];
+
+        foreach ($map as $formKey => $dbCol) {
+            if (isset($data[$formKey])) {
+                if ($formKey !== $dbCol) {
+                    $data[$dbCol] = $data[$formKey];
+                    unset($data[$formKey]);
+                }
+            }
         }
-        $sql = "UPDATE publicidades SET " . implode(',', $columns) . " WHERE id = :id";
+
+        // Upload da imagem
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '/assets/img/pubs/';
+            $destDir = __DIR__ . '/../../public_html' . $uploadDir;
+
+            if (!is_dir($destDir)) mkdir($destDir, 0777, true);
+
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $fileName = 'pub_' . uniqid() . '.' . $ext;
+            $filePath = $destDir . $fileName;
+
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                $data['imagem'] = $uploadDir . $fileName;
+            }
+        }
+
+        $cols = [];
+        foreach ($data as $key => $value) {
+            $cols[] = "$key = :$key";
+        }
+
+        $sql = "UPDATE publicidades SET " . implode(', ', $cols) . ", data_publicacao = NOW() WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $data['id'] = $id;
-        return $stmt->execute($data);
+
+        try {
+            return $stmt->execute($data);
+        } catch (PDOException $e) {
+            error_log("Erro ao atualizar publicidade: " . $e->getMessage());
+            return false;
+        }
     }
+
     public function getPublicidadeDetalhada($id)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM publicidades WHERE id = :id");
+        $stmt = $this->pdo->prepare("SELECT nome, path AS caminho, site FROM publicidades WHERE id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

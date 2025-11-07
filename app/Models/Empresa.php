@@ -409,17 +409,70 @@ class Empresa
 
     return $novo;
   }
-  public function updateGeneric($id, $data)
+  public function updateEmpresaAdmin($id, $data, $file = null)
   {
-    $columns = [];
-    foreach ($data as $key => $value) {
-      $columns[] = "$key = :$key";
+    // 🔹 Mapeia nomes do formulário → banco de dados
+    $map = [
+      'nome'          => 'nome_fantasia',
+      'razao'         => 'razao_social',
+      'celular'      => 'celular',
+      'telefone'      => 'telefone',
+      'email'         => 'email',
+      'site'          => 'site',
+      'cep'           => 'cep',
+      'endereco'      => 'endereco',
+      'numero'        => 'numero',
+      'bairro'        => 'bairro',
+      'cidade'        => 'cidade',
+      'estado'        => 'estado',
+      'categoria_id'     => 'categoria_id',
+    ];
+
+    // 🔁 Substitui chaves com base no mapa
+    foreach ($map as $formKey => $dbCol) {
+      if (isset($data[$formKey])) {
+        if ($formKey !== $dbCol) {
+          $data[$dbCol] = $data[$formKey];
+          unset($data[$formKey]);
+        }
+      }
     }
-    $sql = "UPDATE empresas SET " . implode(',', $columns) . " WHERE id = :id";
+
+    // 🖼️ Upload da logo (se houver)
+    if ($file && $file['error'] === UPLOAD_ERR_OK) {
+      $uploadDir = '/assets/img/logos/';
+      $destDir = __DIR__ . '/../../public_html' . $uploadDir;
+
+      if (!is_dir($destDir)) mkdir($destDir, 0777, true);
+
+      $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+      $fileName = 'logo_' . uniqid() . '.' . $ext;
+      $filePath = $destDir . $fileName;
+
+      if (move_uploaded_file($file['tmp_name'], $filePath)) {
+        $data['logo'] = $uploadDir . $fileName;
+      }
+    }
+
+    // 🔹 Atualiza no banco
+    $cols = [];
+    foreach ($data as $key => $value) {
+      $cols[] = "$key = :$key";
+    }
+
+    $sql = "UPDATE empresas SET " . implode(', ', $cols) . ", data_alteracao = NOW() WHERE id = :id";
     $stmt = $this->pdo->prepare($sql);
     $data['id'] = $id;
-    return $stmt->execute($data);
+
+    try {
+      return $stmt->execute($data);
+    } catch (PDOException $e) {
+      error_log("Erro ao atualizar empresa: " . $e->getMessage());
+      return false;
+    }
   }
+
+
   public function getEmpresaCompleta($id)
   {
     $sql = "SELECT e.razao_social, e.nome_fantasia, e.cnpj, e.telefone, e.celular, e.email, e.site, e.cep, e.endereco, e.numero, e.bairro, e.cidade, e.logo, c.nome AS categoria_nome, c.id
