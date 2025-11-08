@@ -86,8 +86,5 @@
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
-    <script>
-      console.log(<?= json_encode($_SESSION) ?>);
-    </script>
   </div>
 </main>

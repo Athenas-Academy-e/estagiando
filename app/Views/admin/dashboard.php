@@ -427,11 +427,6 @@ dataContainer.addEventListener("click", async e => {
 
       const formData = new FormData(form);
 
-      // ✅ LOG temporário (remove depois)
-      for (const [key, value] of formData.entries()) {
-        console.log(`→ ${key}:`, value);
-      }
-
       const response = await fetch('/admin/editarAjax', {
         method: 'POST',
         body: formData

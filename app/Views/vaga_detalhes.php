@@ -67,7 +67,4 @@ if (!$vaga) {
       </div>
     </div>
   </div>
-  <script>
-    console.log(<?= json_encode($_SESSION) ?>);
-  </script>
 </main>
