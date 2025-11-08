@@ -23,7 +23,16 @@ class Database
         try {
             $this->pdo = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
-            die('Erro na conexão com o banco de dados: ' . $e->getMessage());
+
+            // 🔹 Log interno (opcional)
+            error_log("Erro de conexão ao banco: " . $e->getMessage());
+
+            // 🔹 Exibe erro no console do navegador
+            echo "<script>console.error('Erro na conexão com o banco de dados: " . addslashes($e->getMessage()) . "');</script>";
+
+            // 🔹 Redireciona para página 500 (ajuste o caminho conforme seu projeto)
+            header("Location: /500");
+            exit;
         }
     }
 
@@ -40,5 +49,22 @@ class Database
     public function getConnection()
     {
         return $this->pdo;
+    }
+
+    // 🔸 Testa conexão e redireciona se estiver OK
+    public static function testConnection()
+    {
+        try {
+            $pdo = self::getInstance()->getConnection();
+            if ($pdo) {
+                header("Location: /");
+                exit;
+            }
+        } catch (Exception $e) {
+            // Mesmo comportamento do erro de conexão
+            echo "<script>console.error('Falha ao testar conexão: " . addslashes($e->getMessage()) . "');</script>";
+            header("Location: /500");
+            exit;
+        }
     }
 }

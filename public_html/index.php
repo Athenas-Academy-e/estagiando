@@ -24,6 +24,10 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// ⚠️ Carrega o controlador de erros (sempre disponível)
+require_once __DIR__ . '/../app/Controllers/ErrorController.php';
+$errorController = new ErrorController();
+
 // 🔍 Obter rota (ex: /vagas, /cadastro, /redirect/https://...)
 $route = $_GET['url'] ?? 'home';
 $route = trim($route, '/');
@@ -37,14 +41,35 @@ $method = $segments[1] ?? 'index';
 $controllerPath = __DIR__ . '/../app/Controllers/' . $controllerName . '.php';
 
 // =====================================================
+// ⚠️ ROTA DIRETA DE ERROS (ex: /404, /403, /500, /401)
+// =====================================================
+if (is_numeric($segments[0]) && in_array($segments[0], ['401', '403', '404', '500'])) {
+    switch ($segments[0]) {
+        case '401':
+            $errorController->unauthorized();
+            break;
+        case '403':
+            $errorController->forbidden();
+            break;
+        case '404':
+            $errorController->notFound();
+            break;
+        case '500':
+            $errorController->serverError();
+            break;
+    }
+    exit;
+}
+
+// =====================================================
 // 🧭 ROTAS ESPECIAIS
 // =====================================================
 
-// 🔁 Redirecionamentos externos (mantém o comportamento atual)
+// 🔁 Redirecionamentos externos
 if (strtolower($segments[0]) === 'redirect') {
     require_once __DIR__ . '/../app/Controllers/RedirectController.php';
     $controller = new RedirectController();
-    $controller->index(); // sempre chama index()
+    $controller->index();
     exit;
 }
 
@@ -53,24 +78,15 @@ if (strtolower($segments[0]) === 'pdf') {
     require_once __DIR__ . '/../app/Controllers/PdfController.php';
     $pdfController = new PdfController();
 
-    // 🔹 Visualizar no navegador (profissional)
     if (isset($segments[1]) && $segments[1] === 'view') {
         $pdfController->view();
-    }
-    // 🔹 Baixar o próprio currículo (profissional)
-    elseif (isset($segments[1]) && $segments[1] === 'curriculo' && !isset($segments[2])) {
+    } elseif (isset($segments[1]) && $segments[1] === 'curriculo' && !isset($segments[2])) {
         $pdfController->download();
-    }
-    // 🔹 Visualizar o currículo de outro candidato (admin/empresa)
-    elseif (isset($segments[1]) && $segments[1] === 'curriculo' && isset($segments[2])) {
+    } elseif (isset($segments[1]) && $segments[1] === 'curriculo' && isset($segments[2])) {
         $id = (int)$segments[2];
         $pdfController->curriculo($id, true);
     } else {
-        http_response_code(404);
-        echo "<main class='text-center py-20 text-gray-600'>
-                <h1 class='text-2xl font-bold mb-2'>Página de PDF não encontrada</h1>
-                <p>Verifique a URL e tente novamente.</p>
-              </main>";
+        $errorController->notFound();
     }
     exit;
 }
@@ -78,25 +94,24 @@ if (strtolower($segments[0]) === 'pdf') {
 // =====================================================
 // 🚀 CONTROLLERS PADRÕES
 // =====================================================
+try {
+    if (file_exists($controllerPath)) {
+        require_once $controllerPath;
+        $controller = new $controllerName();
 
-if (file_exists($controllerPath)) {
-    require_once $controllerPath;
-    $controller = new $controllerName();
-
-    if (method_exists($controller, $method)) {
-        // ✅ Chama o método do controller (ex: VagasController->index())
-        $controller->$method();
+        if (method_exists($controller, $method)) {
+            // ✅ Chama o método do controller
+            $controller->$method();
+        } else {
+            // Método não encontrado
+            $errorController->notFound();
+        }
     } else {
-        http_response_code(404);
-        echo "<main class='text-center py-20 text-red-600'>
-                <h1 class='text-2xl font-bold mb-2'>Erro 404</h1>
-                <p>Método <strong>$method()</strong> não encontrado em <strong>$controllerName</strong>.</p>
-              </main>";
+        // Controller não encontrado
+        $errorController->notFound();
     }
-} else {
-    http_response_code(404);
-    echo "<main class='text-center py-20 text-gray-600'>
-            <h1 class='text-2xl font-bold mb-2'>Erro 404 — Página não encontrada</h1>
-            <p>O controller <strong>$controllerName</strong> não existe.</p>
-          </main>";
+} catch (Exception $e) {
+    // ⚠️ Qualquer erro interno → página 500
+    error_log($e->getMessage());
+    $errorController->serverError();
 }
