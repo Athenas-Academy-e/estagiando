@@ -1,6 +1,7 @@
 # ⚙️ Dependências
 node_modules/
 vendor/
+sql/*.sql
 
 # 🧱 Build e cache
 /public/build/
@@ -32,4 +33,4 @@ public_html/assets/img/logos/*
 Thumbs.db
 .idea/
 .vscode/
-config.php
+/config.php
