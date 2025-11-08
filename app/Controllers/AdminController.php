@@ -7,6 +7,13 @@ require_once __DIR__ . '/../Models/Job.php';
 
 class AdminController
 {
+    public function index()
+    {
+        Auth::check('admin');
+        header("Location: /admin/dashboard");
+        exit;
+    }
+    
     // 🏠 Dashboard principal
     public function dashboard()
     {
