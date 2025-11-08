@@ -47,35 +47,44 @@
       </form>
     </div>
 
-    <!-- Carrossel das Áreas (fixo e retangular, sem indicadores) -->
-    <!-- Carrossel de 3 cards -->
+    <!-- Carrossel das Áreas -->
     <div class="md:w-full relative overflow-hidden" style="max-width: 720px; height: 300px;">
       <div id="carouselAreas"
         class="flex transition-transform duration-700 ease-in-out gap-2"
-        style="width: calc(240px * <?= count($areas) ?>);">
+        style="width: calc(240px * <?= !empty($areas) ? count($areas) : 1 ?>);">
 
-        <?php foreach ($areas as $area): ?>
-          <a href="/vagas?categoria=<?= $area['id'] ?>"
-            class="relative w-[240px] h-[300px] flex-shrink-0 overflow-hidden group rotate-[1deg] shadow-lg">
+        <?php if (!empty($areas)): ?>
+          <?php foreach ($areas as $area): ?>
+            <a href="/vagas?categoria=<?= $area['id'] ?>"
+              class="relative w-[240px] h-[300px] flex-shrink-0 overflow-hidden group rotate-[1deg] shadow-lg">
 
-            <img src="<?= strtolower($area['imagempath']) ?>"
-              alt="<?= htmlspecialchars($area['nome']) ?>"
-              class="w-full h-full object-cover transition-all duration-500 grayscale group-hover:grayscale-0">
+              <img src="<?= strtolower($area['imagempath']) ?>"
+                alt="<?= htmlspecialchars($area['nome']) ?>"
+                class="w-full h-full object-cover transition-all duration-500 grayscale group-hover:grayscale-0">
 
-            <div class="absolute bottom-4 left-4 bg-[#ffffcc] px-4 py-2 shadow-md transform -rotate-2 group-hover:rotate-0 transition duration-500 rounded-md grayscale group-hover:grayscale-0">
-              <span class="block text-sm font-bold text-[#ff6600] capitalize leading-none ">Vaga aberta</span>
-              <span class="font-bold text-sm text-[#191ba5] capitalize"><?= htmlspecialchars($area['nome']) ?></span>
+              <div
+                class="absolute bottom-4 left-4 bg-[#ffffcc] px-4 py-2 shadow-md transform -rotate-2 group-hover:rotate-0 transition duration-500 rounded-md grayscale group-hover:grayscale-0">
+                <span class="block text-sm font-bold text-[#ff6600] capitalize leading-none ">Vagas abertas</span>
+                <span class="font-bold text-sm text-[#191ba5] capitalize"><?= htmlspecialchars($area['nome']) ?></span>
+              </div>
+
+            </a>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <!-- 🔹 Imagem padrão quando não há áreas -->
+          <div class="relative w-[240px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
+            <img src="/assets/default_areas.jpg" alt="Área padrão"
+              class="w-full h-full object-cover grayscale">
+            <div
+              class="absolute bottom-4 left-4 bg-[#ffffcc] px-4 py-2 shadow-md transform -rotate-2 rounded-md">
+              <span class="block text-sm font-bold text-[#ff6600] leading-none">Sem vagas disponíveis</span>
+              <span class="font-bold text-sm text-[#191ba5]">Em breve novas oportunidades</span>
             </div>
-
-          </a>
-        <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
 
       </div>
     </div>
-
-
-
-
   </div>
 </section>
 

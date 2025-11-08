@@ -25,7 +25,7 @@
             class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-300 transition-all text-sm">
             Alterar Dados
           </a>
-          
+
           <a href="/empresas/alterarlogo"
             class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-300 transition-all text-sm">
             Alterar Logo
@@ -60,29 +60,22 @@
               <strong><?= $vaga['total_candidatos'] ?></strong> candidato(s)
             </p>
 
-            <!-- Ações -->
-            <!-- <div class="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
-              <a href="/empresas/candidatos?vaga=<?= $vaga['id'] ?>"
-                class="text-sm text-blue-600 hover:underline">
-                Ver candidatos →
-              </a> -->
+            <div class="flex gap-2">
+              <!-- Botão Editar -->
+              <a href="/empresas/editar?id=<?= $vaga['id'] ?>"
+                class="inline-flex items-center gap-1 bg-blue-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
+                ✏️
+              </a>
 
-              <div class="flex gap-2">
-                <!-- Botão Editar -->
-                <a href="/empresas/editar?id=<?= $vaga['id'] ?>"
-                  class="inline-flex items-center gap-1 bg-blue-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
-                  ✏️
-                </a>
-
-                <!-- Botão Excluir -->
-                <form action="/empresas/excluir?id=<?= $vaga['id'] ?>" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta vaga?');">
-                  <button type="submit"
-                    class="inline-flex items-center gap-1 bg-red-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-red-700 transition">
-                    🗑️
-                  </button>
-                </form>
-              </div>
+              <!-- Botão Excluir -->
+              <form action="/empresas/excluir?id=<?= $vaga['id'] ?>" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta vaga?');">
+                <button type="submit"
+                  class="inline-flex items-center gap-1 bg-red-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-red-700 transition">
+                  🗑️
+                </button>
+              </form>
             </div>
+          </div>
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
