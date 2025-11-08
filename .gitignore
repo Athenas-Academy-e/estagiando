@@ -15,6 +15,7 @@ vendor/
 .env.local
 .env.*.local
 
+
 # 🖼️ Uploads e imagens (não versionar)
 public_html/assets/cv/*
 public_html/assets/img/fotos/*
@@ -31,3 +32,4 @@ public_html/assets/img/logos/*
 Thumbs.db
 .idea/
 .vscode/
+config.php
