@@ -13,7 +13,7 @@
           class="w-full flex-shrink-0 block">
           <img src="<?= htmlspecialchars($p['path']) ?>"
             alt="<?= htmlspecialchars($p['nome']) ?>"
-            class="w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[450px] object-contain sm:object-cover">
+            class="w-full sm:scale-75 md:scale-50 lg:scale-100 object-contain sm:object-cover">
         </a>
       <?php endforeach; ?>
     </div>
