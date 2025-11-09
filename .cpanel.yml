@@ -1,0 +1,23 @@
+---
+deployment:
+  tasks:
+    # ✅ Define o caminho do deploy no servidor
+    - export DEPLOYPATH=/home/hg4bea48/public_html/
+
+    # ✅ Exibe no log que o deploy começou
+    - echo "🚀 Iniciando deploy para $DEPLOYPATH"
+
+    # ✅ Remove arquivos temporários e caches anteriores (opcional)
+    - /bin/rm -rf ${DEPLOYPATH}tmp/*
+    - /bin/rm -rf ${DEPLOYPATH}cache/*
+
+    # ✅ Copia todos os arquivos do repositório para o diretório público
+    # ❗ Não sobrescreve config.php se ele já existir no servidor
+    - /usr/bin/rsync -avz --exclude 'config.php' --exclude '.git/' --exclude '.gitignore' ./ $DEPLOYPATH
+
+    # ✅ Ajusta permissões de pastas e arquivos (segurança)
+    - /bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
+    - /bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
+
+    # ✅ Mensagem de sucesso
+    - echo "✅ Deploy concluído com sucesso!"
