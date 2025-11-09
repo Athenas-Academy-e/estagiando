@@ -484,4 +484,21 @@ class Empresa
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
+  
+  public function listarComCategoriaMunicipio()
+  {
+    $sql = "SELECT 
+                e.id, e.nome_fantasia, e.logo, e.site,
+                c.nome AS categoria_nome,
+                m.nome AS cidade
+            FROM empresas e
+            LEFT JOIN categorias c ON c.id = e.categoria_id
+            LEFT JOIN municipios m ON m.id = e.municipio_id
+            WHERE e.status = 'S'
+            ORDER BY RAND()
+            LIMIT 6";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 }

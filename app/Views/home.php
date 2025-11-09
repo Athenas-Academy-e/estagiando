@@ -1,28 +1,35 @@
 <!-- Carrossel Publicidades -->
 <?php if (!empty($publicidades)): ?>
-  <div class="relative w-full max-w-[1220px] mx-auto mt-2 rounded-xl overflow-hidden shadow-lg">
+  <div class="relative w-full max-w-7xl mx-auto mt-4 rounded-xl overflow-hidden shadow-lg">
+
+    <!-- Contêiner das imagens -->
     <div id="carouselPublicidade"
-      class="flex transition-transform duration-700 ease-in-out"
-      style="width: calc(1220px * <?= count($publicidades) ?>);">
+      class="flex transition-transform duration-700 ease-in-out touch-pan-x"
+      style="width: <?= count($publicidades) * 100 ?>%;">
 
       <?php foreach ($publicidades as $p): ?>
-        <a href="/redirect/<?= htmlspecialchars($p['site']) ?>" target="_blank" class="shrink-0">
-          <img src="<?= htmlspecialchars($p['path']) ?>" alt="<?= htmlspecialchars($p['nome']) ?>"
-            class="w-[1220px] max-w-full h-auto object-contain">
+        <a href="/redirect/<?= htmlspecialchars($p['site']) ?>"
+          target="_blank"
+          class="w-full flex-shrink-0 block">
+          <img src="<?= htmlspecialchars($p['path']) ?>"
+            alt="<?= htmlspecialchars($p['nome']) ?>"
+            class="w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[450px] object-contain sm:object-cover">
         </a>
       <?php endforeach; ?>
-
     </div>
 
     <!-- Indicadores -->
-    <div class="absolute flex gap-2 bottom-3 left-1/2 transform -translate-x-1/2">
+    <div class="absolute flex gap-2 bottom-3 left-1/2 transform -translate-x-1/2 z-10">
       <?php foreach ($publicidades as $i => $p): ?>
-        <button class="w-3 h-3 rounded-full bg-white opacity-50 hover:opacity-100"
+        <button
+          class="indicator w-3 h-3 rounded-full bg-white opacity-40 hover:opacity-100 transition"
           onclick="goToSlide(<?= $i ?>)"></button>
       <?php endforeach; ?>
     </div>
+
   </div>
 <?php endif; ?>
+
 
 <!-- Seção principal -->
 <section class="bg-gray-50 py-16">
@@ -106,6 +113,55 @@
 
   </div>
 </section>
+<!-- Seção Empresas Parceiras -->
+<!-- Seção Empresas Parceiras -->
+<section class="bg-[#0a1837] text-white py-16 mt-10">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <h2 class="text-3xl font-bold text-center mb-10 text-white">Empresas Parceiras</h2>
+
+    <?php if (!empty($empresasParceiras)): ?>
+      <?php $temMuitas = count($empresasParceiras) > 6; ?>
+
+      <div class="relative overflow-hidden">
+        <!-- Grid de Cards -->
+        <div id="empresaGrid"
+          class="<?= $temMuitas ? 'flex flex-nowrap gap-8' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8' ?> transition-transform duration-700 ease-in-out"
+          style="<?= $temMuitas ? 'width: max-content;' : '' ?>">
+          <?php foreach ($empresasParceiras as $e): ?>
+            <div class="bg-[#1d73d3] p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[320px] flex-shrink-0">
+              <div class="flex items-center gap-4">
+                <img src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
+                  alt="<?= htmlspecialchars($e['nome_fantasia']) ?>"
+                  class="w-16 h-16 object-cover rounded-full border border-gray-700">
+                <div>
+                  <h3 class="font-semibold text-lg"><?= htmlspecialchars($e['nome_fantasia']) ?></h3>
+                  <p class="text-gray-200 text-sm"><?= htmlspecialchars($e['categoria_nome'] ?? 'Sem categoria') ?></p>
+                  <p class="text-gray-400 text-xs"><?= htmlspecialchars($e['cidade'] ?? '') ?></p>
+                </div>
+              </div>
+              <?php if (!empty($e['site'])): ?>
+                <?php
+                $siteUrl = $e['site'];
+                if (!preg_match('#^https?://#i', $siteUrl)) {
+                  $siteUrl = 'https://' . $siteUrl;
+                }
+                ?>
+                <a href="<?= htmlspecialchars($siteUrl) ?>" target="_blank"
+                  class="block mt-4 text-[#97dd3a] text-sm hover:text-[#aafc4d] transition">
+                  Visitar site →
+                </a>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    <?php else: ?>
+      <p class="text-center text-gray-400">Nenhuma empresa parceira cadastrada no momento.</p>
+    <?php endif; ?>
+
+  </div>
+</section>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -156,20 +212,99 @@
       setInterval(nextSlide3, 5000);
     }
 
-    /* === Carrossel Publicidades === */
+    /* === Carrossel Publicidades Responsivo + Touch === */
     const carPublicidade = document.getElementById("carouselPublicidade");
+
     if (carPublicidade) {
       let slideIndex = 0;
       const totalSlides = carPublicidade.children.length;
+      let isDragging = false;
+      let startX = 0;
+      let scrollLeft = 0;
+
+      const goToSlide = (index) => {
+        slideIndex = index;
+        const width = carPublicidade.clientWidth;
+        carPublicidade.style.transform = `translateX(-${slideIndex * width}px)`;
+        updateIndicators();
+      };
 
       const nextSlide = () => {
         slideIndex = (slideIndex + 1) % totalSlides;
-        const w = carPublicidade.children[0].clientWidth;
-        carPublicidade.style.transform = `translateX(-${slideIndex * w}px)`;
+        goToSlide(slideIndex);
       };
 
-      setInterval(nextSlide, 5000);
-    }
+      const updateIndicators = () => {
+        const indicators = document.querySelectorAll(".indicator");
+        indicators.forEach((dot, i) => {
+          dot.style.opacity = i === slideIndex ? "1" : "0.4";
+          dot.style.transform = i === slideIndex ? "scale(1.2)" : "scale(1)";
+        });
+      };
 
+      // 🔹 Auto play
+      let autoPlay = setInterval(nextSlide, 5000);
+
+      // 🔹 Pausa ao passar o mouse
+      carPublicidade.addEventListener("mouseenter", () => clearInterval(autoPlay));
+      carPublicidade.addEventListener("mouseleave", () => (autoPlay = setInterval(nextSlide, 5000)));
+
+      // 🔹 Responsivo no resize
+      window.addEventListener("resize", () => goToSlide(slideIndex));
+
+      // 🔹 Touch swipe (celular e tablet)
+      carPublicidade.addEventListener("touchstart", (e) => {
+        clearInterval(autoPlay);
+        isDragging = true;
+        startX = e.touches[0].pageX;
+      });
+
+      carPublicidade.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        const x = e.touches[0].pageX;
+        const walk = x - startX;
+        carPublicidade.style.transform = `translateX(${walk - slideIndex * carPublicidade.clientWidth}px)`;
+      });
+
+      carPublicidade.addEventListener("touchend", (e) => {
+        isDragging = false;
+        const x = e.changedTouches[0].pageX;
+        const diff = startX - x;
+        if (Math.abs(diff) > 50) {
+          // muda de slide
+          if (diff > 0) slideIndex = (slideIndex + 1) % totalSlides;
+          else slideIndex = (slideIndex - 1 + totalSlides) % totalSlides;
+        }
+        goToSlide(slideIndex);
+        autoPlay = setInterval(nextSlide, 5000);
+      });
+
+      // inicializa
+      goToSlide(0);
+    }
   });
+
+  /* === Carrossel de Empresas Parceiras === */
+  const empresaGrid = document.getElementById("empresaGrid");
+  if (empresaGrid && empresaGrid.children.length > 6) {
+    let scroll = 0;
+    const speed = 0.6; // velocidade da rotação (px/frame)
+    const pause = 20; // intervalo em milissegundos
+    const maxScroll = empresaGrid.scrollWidth / 2;
+
+    const rotate = () => {
+      scroll += speed;
+      if (scroll >= maxScroll) scroll = 0;
+      empresaGrid.scrollTo({
+        left: scroll,
+        behavior: "smooth"
+      });
+    };
+
+    let loop = setInterval(rotate, pause);
+
+    // 🔹 Pausa a rotação quando o mouse passa por cima
+    empresaGrid.addEventListener("mouseenter", () => clearInterval(loop));
+    empresaGrid.addEventListener("mouseleave", () => (loop = setInterval(rotate, pause)));
+  }
 </script>
