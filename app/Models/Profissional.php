@@ -75,7 +75,7 @@ class Profissional
         ':sexo' => $dados['sexo'] ?? '',
         ':nascimento' => $dados['nascimento'] ?? null,
         ':email' => $dados['email'] ?? '',
-        ':telefone' => $dados['telefone'] ?? '',
+        ':telefone' => $dados['telefone1'] ?? '',
         ':senha' => $dados['senha'] ?? '',
         ':cep' => $dados['cep'] ?? '',
         ':endereco' => $dados['endereco'] ?? '',
