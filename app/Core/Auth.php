@@ -7,6 +7,7 @@
 
 class Auth
 {
+    /** 🧩 Inicia a sessão com segurança (apenas uma vez) */
     public static function startSession()
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -14,29 +15,57 @@ class Auth
         }
     }
 
+    /**
+     * 🔒 Verifica se o usuário está logado conforme o tipo
+     * @param string $tipo ('admin', 'empresa', 'profissional')
+     */
     public static function check($tipo)
     {
-        session_start();
+        self::startSession();
 
-        // ✅ Verifica se está logado e se o tipo é o correto
-        if ($tipo === 'profissional' && empty($_SESSION['profissional_id'])) {
-            header("Location: /login");
-            exit;
+        switch ($tipo) {
+            case 'admin':
+                if (empty($_SESSION['admin_id'])) {
+                    header("Location: /login");
+                    exit;
+                }
+                break;
+
+            case 'empresa':
+                if (empty($_SESSION['empresa_id'])) {
+                    header("Location: /login");
+                    exit;
+                }
+                break;
+
+            case 'profissional':
+                if (empty($_SESSION['profissional_id'])) {
+                    header("Location: /login");
+                    exit;
+                }
+                break;
+
+            default:
+                // Tipo inválido de autenticação
+                header("Location: /login");
+                exit;
         }
 
-        if ($tipo === 'empresa' && empty($_SESSION['empresa_id'])) {
-            header("Location: /login");
-            exit;
-        }
-
-        // Tudo certo — permanece na página
+        // ✅ Autenticado corretamente
         return true;
     }
 
+    /** 🚪 Logout seguro (encerra sessão e redireciona) */
     public static function logout()
     {
         self::startSession();
+
+        // Limpa apenas as variáveis de sessão específicas
+        $_SESSION = [];
+
+        // Destrói a sessão
         session_destroy();
+
         header("Location: /login");
         exit;
     }
