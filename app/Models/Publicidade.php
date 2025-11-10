@@ -104,4 +104,39 @@ class Publicidade
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    
+    public function createPublicidade($data, $file = null)
+    {
+        $nome = trim($data['nome'] ?? '');
+        $site = trim($data['site'] ?? '');
+        $status = $data['status'] ?? 'S';
+        $path = null;
+
+        if (!$file || empty($file['tmp_name'])) {
+            throw new Exception("A imagem da publicidade é obrigatória.");
+        }
+
+        $dir = __DIR__ . '/../../public_html/assets/img/pubs/';
+        if (!is_dir($dir)) mkdir($dir, 0777, true);
+
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $nomeArquivo = 'pub_' . uniqid() . '.' . strtolower($ext);
+        $destino = $dir . $nomeArquivo;
+
+        if (move_uploaded_file($file['tmp_name'], $destino)) {
+            $path = '/assets/img/pubs/' . $nomeArquivo;
+        } else {
+            throw new Exception("Erro ao enviar a imagem.");
+        }
+
+        $sql = "INSERT INTO publicidades (nome, site, path, status, criado_em) 
+                VALUES (:nome, :site, :path, :status, NOW())";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            ':nome' => $nome,
+            ':site' => $site,
+            ':path' => $path,
+            ':status' => $status
+        ]);
+    }
 }

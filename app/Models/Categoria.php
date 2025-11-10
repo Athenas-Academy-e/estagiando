@@ -82,11 +82,39 @@ class Categoria
         }
     }
 
-
     public function getById($id)
     {
         $stmt = $this->pdo->prepare("SELECT nome, imagempath As caminho_da_imagem FROM categorias WHERE id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function createCategoria($data, $file = null)
+    {
+        $nome = trim($data['nome'] ?? '');
+        $status = $data['status'] ?? 'S';
+        $imagemPath = null;
+
+        // Upload da imagem (opcional)
+        if ($file && isset($file['tmp_name']) && !empty($file['tmp_name'])) {
+            $dir = __DIR__ . '/../../public_html/assets/img/areas/';
+            if (!is_dir($dir)) mkdir($dir, 0777, true);
+
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $nomeArquivo = 'cat_' . uniqid() . '.' . strtolower($ext);
+            $destino = $dir . $nomeArquivo;
+
+            if (move_uploaded_file($file['tmp_name'], $destino)) {
+                $imagemPath = '/assets/img/areas/' . $nomeArquivo;
+            }
+        }
+
+        $sql = "INSERT INTO categorias (nome, imagem, status, criado_em) VALUES (:nome, :imagem, :status, NOW())";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            ':nome' => $nome,
+            ':imagem' => $imagemPath,
+            ':status' => $status
+        ]);
     }
 }

@@ -13,7 +13,7 @@ class AdminController
         header("Location: /admin/dashboard");
         exit;
     }
-    
+
     // 🏠 Dashboard principal
     public function dashboard()
     {
@@ -480,5 +480,75 @@ class AdminController
         $job = new Job();
         $stmt = $job->update(['id' => $id, 'status' => 'S', 'data_expiracao' => date('Y-m-d H:i:s', strtotime('+7 days'))]);
         echo json_encode(['success' => true, 'message' => 'Vaga reativada por mais 7 dias']);
+    }
+
+    // 🟢 Criar nova Categoria ou Publicidade
+    public function criarCategoria()
+    {
+        Auth::check('admin');
+        $this->handleCreate('categoria');
+    }
+
+    public function criarPublicidade()
+    {
+        Auth::check('admin');
+        $this->handleCreate('publicidade');
+    }
+
+    /**
+     * 🔁 Função compartilhada para criação de registros
+     * Inclui upload de imagem.
+     */
+    private function handleCreate(string $type)
+    {
+        Auth::check('admin');
+        $success = $error = '';
+
+        // Carrega o model correto
+        switch ($type) {
+            case 'categoria':
+                require_once __DIR__ . '/../Models/Categoria.php';
+                $model = new Categoria();
+                $title = "Nova Categoria";
+                break;
+
+            case 'publicidade':
+                require_once __DIR__ . '/../Models/Publicidade.php';
+                $model = new Publicidade();
+                $title = "Nova Publicidade";
+                break;
+
+            default:
+                die("Tipo inválido");
+        }
+
+        // Se for envio POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $dados = $_POST;
+            $file = $_FILES['imagem'] ?? null;
+
+            try {
+                if ($type === 'categoria') {
+                    $ok = $model->createCategoria($dados, $file);
+                } else {
+                    $ok = $model->createPublicidade($dados, $file);
+                }
+
+                if ($ok) {
+                    $success = "✅ Registro criado com sucesso!";
+                } else {
+                    $error = "⚠️ Erro ao criar registro. Verifique os dados.";
+                }
+            } catch (Throwable $e) {
+                $error = "❌ Erro interno: " . $e->getMessage();
+            }
+        }
+
+        // Renderiza view genérica
+        $currentType = $type;
+        require_once __DIR__ . '/../Views/partials/head.php';
+        require_once __DIR__ . '/../Views/partials/header.php';
+        require_once __DIR__ . '/../Views/admin/criar_registro.php';
+        require_once __DIR__ . '/../Views/partials/footer.php';
     }
 }
