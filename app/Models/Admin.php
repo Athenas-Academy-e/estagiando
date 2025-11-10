@@ -97,5 +97,41 @@ class Admin
             'sucesso'  => $linhas > 0 ? 'Atualização realizada com sucesso!' : null
         ];
     }
+
+    public function gerarTokenRecuperacao($email)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM admins WHERE email = :email AND status = 'S'");
+        $stmt->execute([':email' => $email]);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$admin) return false;
+
+        $token = bin2hex(random_bytes(32));
+        $expira = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+        $stmt = $this->pdo->prepare("UPDATE admins SET reset_token = :token, reset_expira = :expira WHERE id = :id");
+        $stmt->execute([':token' => $token, ':expira' => $expira, ':id' => $admin['id']]);
+
+        return $token;
+    }
+
+    public function redefinirSenha($token, $novaSenha)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM admins WHERE reset_token = :token AND reset_expira > NOW()");
+        $stmt->execute([':token' => $token]);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$admin) return false;
+
+        $hash = password_hash($novaSenha, PASSWORD_DEFAULT);
+        $stmt = $this->pdo->prepare("UPDATE admins SET senha = :senha, reset_token = NULL, reset_expira = NULL WHERE id = :id");
+        return $stmt->execute([':senha' => $hash, ':id' => $admin['id']]);
+    }
     
+    public function existeEmail($email)
+    {
+        $stmt = $this->pdo->prepare("SELECT id FROM admins WHERE email = :email AND status = 'S'");
+        $stmt->execute([':email' => $email]);
+        return $stmt->fetchColumn() !== false;
+    }
 }

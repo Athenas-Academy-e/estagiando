@@ -91,6 +91,19 @@ if (strtolower($segments[0]) === 'pdf') {
     exit;
 }
 
+// 🔐 Recuperação de Senha (empresas, profissionais e admins)
+if (strtolower($segments[0]) === 'esqueci-senha' || strtolower($segments[0]) === 'redefinir-senha') {
+    require_once __DIR__ . '/../app/Controllers/RecuperacaoController.php';
+    $recuperacaoController = new RecuperacaoController();
+
+    if (strtolower($segments[0]) === 'esqueci-senha') {
+        $recuperacaoController->esqueci();
+    } elseif (strtolower($segments[0]) === 'redefinir-senha') {
+        $recuperacaoController->redefinir();
+    }
+    exit;
+}
+
 // =====================================================
 // 🚀 CONTROLLERS PADRÕES
 // =====================================================

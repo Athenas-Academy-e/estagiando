@@ -334,4 +334,10 @@ class Profissional
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
+  public function existeEmail($email)
+  {
+    $stmt = $this->pdo->prepare("SELECT id FROM profissionais WHERE email = :email AND status = 'S'");
+    $stmt->execute([':email' => $email]);
+    return $stmt->fetchColumn() !== false;
+  }
 }

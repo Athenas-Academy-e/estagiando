@@ -501,4 +501,10 @@ class Empresa
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
+  public function existeEmail($email)
+{
+    $stmt = $this->pdo->prepare("SELECT id FROM empresas WHERE email = :email AND status = 'S'");
+    $stmt->execute([':email' => $email]);
+    return $stmt->fetchColumn() !== false;
+}
 }

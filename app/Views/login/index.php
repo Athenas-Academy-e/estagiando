@@ -10,16 +10,24 @@
 
     <form method="POST">
       <input type="hidden" name="redirect" value="<?= htmlspecialchars($_GET['redirect'] ?? '') ?>">
+
       <div class="mb-4">
         <label class="block text-sm text-gray-700 mb-1">E-mail</label>
         <input type="email" name="email" required
                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
       </div>
 
-      <div class="mb-6">
+      <div class="mb-2">
         <label class="block text-sm text-gray-700 mb-1">Senha</label>
         <input type="password" name="senha" required
                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2">
+      </div>
+
+      <!-- 🔹 Link "Esqueci minha senha" -->
+      <div class="text-right mb-6">
+        <a href="/esqueci-senha" class="text-sm text-blue-600 hover:underline">
+          Esqueceu sua senha?
+        </a>
       </div>
 
       <button type="submit"

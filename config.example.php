@@ -36,4 +36,11 @@ define('DB_NAME', '');
 define('DB_USER', '');
 define('DB_PASS', '');
 
+define('SMTP_HOST', '');
+define('SMTP_PORT', 587);
+define('SMTP_USER', '');
+define('SMTP_PASS', '');
+define('SMTP_FROM', '');
+define('SMTP_FROM_NAME', 'Estagiando');
+
 date_default_timezone_set('America/Sao_Paulo');
