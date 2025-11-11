@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 🔹 Título e SEO dinâmicos -->
-  <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | Estagiando' : 'Estagiando — Conectando talentos e oportunidades' ?></title>
+  <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle)  : 'Estagiando — Conectando talentos e oportunidades' ?></title>
   <meta name="description" content="<?= isset($pageDescription)
       ? htmlspecialchars($pageDescription)
       : 'Encontre estágios, vagas e oportunidades em Juiz de Fora e região. O Estagiando conecta estudantes e empresas de forma rápida e gratuita.' ?>">

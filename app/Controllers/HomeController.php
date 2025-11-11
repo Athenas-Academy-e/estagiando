@@ -8,6 +8,7 @@ class HomeController
 {
     public function index()
     {
+        $pageTitle = "Estágiando - Página Inicial";
         $jobModel = new Job();
         $empresaModel = new Empresa();
         $profissionalModel = new Profissional();

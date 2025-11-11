@@ -7,6 +7,7 @@ class ProfissionalController
 {
     public function dashboard()
     {
+        
         Auth::check('profissional');
 
         $jobModel = new Job();

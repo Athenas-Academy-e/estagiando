@@ -7,7 +7,7 @@ class EmpresasController
 {
     public function index()
     {
-
+        $pageTitle = "Estágiando - Empresas Parceiras";
         $empresaModel = new Empresa();
 
         $categorias = $empresaModel->getCategorias();

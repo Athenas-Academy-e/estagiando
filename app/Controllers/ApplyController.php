@@ -6,6 +6,7 @@ class ApplyController
 {
     public function index()
     {
+        $pageTitle = "Estágiando - Aplicar para Vaga";
         session_start();
         $jobId = $_GET['id'] ?? null;
 
