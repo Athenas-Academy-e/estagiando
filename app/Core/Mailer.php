@@ -31,7 +31,7 @@ class Mailer
             $mail->isHTML(true);
             $mail->Subject = 'Recuperação de Senha - Estagiando';
 
-            $link = BASE_URL . "redefinir-senha?token=" . urlencode($token);
+            $link = "https://estagiando.com/redefinir-senha?token=" . urlencode($token);
             $mail->Body = "
                 <h2>Recuperação de Senha</h2>
                 <p>Você solicitou redefinição de senha. Clique no link abaixo:</p>
