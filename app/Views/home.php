@@ -113,55 +113,83 @@
 
   </div>
 </section>
-<!-- Seção Empresas Parceiras -->
+
 <!-- Seção Empresas Parceiras -->
 <section class="bg-[#0a1837] text-white py-16 mt-10">
   <div class="max-w-7xl mx-auto px-6">
-
     <h2 class="text-3xl font-bold text-center mb-10 text-white">Empresas Parceiras</h2>
 
     <?php if (!empty($empresasParceiras)): ?>
       <?php $temMuitas = count($empresasParceiras) > 6; ?>
 
       <div class="relative overflow-hidden">
-        <!-- Grid de Cards -->
-        <div id="empresaGrid"
-          class="<?= $temMuitas ? 'flex flex-nowrap gap-8' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8' ?> transition-transform duration-700 ease-in-out"
-          style="<?= $temMuitas ? 'width: max-content;' : '' ?>">
-          <?php foreach ($empresasParceiras as $e): ?>
-            <div class="bg-[#1d73d3] p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[320px] flex-shrink-0">
-              <div class="flex items-center gap-4">
-                <img src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
-                  alt="<?= htmlspecialchars($e['nome_fantasia']) ?>"
-                  class="w-16 h-16 object-cover rounded-full border border-gray-700">
-                <div>
-                  <h3 class="font-semibold text-lg"><?= htmlspecialchars($e['nome_fantasia']) ?></h3>
-                  <p class="text-gray-200 text-sm"><?= htmlspecialchars($e['categoria_nome'] ?? 'Sem categoria') ?></p>
-                  <p class="text-gray-400 text-xs"><?= htmlspecialchars($e['cidade'] ?? '') ?></p>
-                </div>
-              </div>
-              <?php if (!empty($e['site'])): ?>
-                <?php
-                $siteUrl = $e['site'];
-                if (!preg_match('#^https?://#i', $siteUrl)) {
-                  $siteUrl = 'https://' . $siteUrl;
-                }
-                ?>
-                <a href="<?= htmlspecialchars($siteUrl) ?>" target="_blank"
-                  class="block mt-4 text-[#97dd3a] text-sm hover:text-[#aafc4d] transition">
-                  Visitar site →
-                </a>
-              <?php endif; ?>
-            </div>
-          <?php endforeach; ?>
-        </div>
-      </div>
-    <?php else: ?>
-      <p class="text-center text-gray-400">Nenhuma empresa parceira cadastrada no momento.</p>
-    <?php endif; ?>
+        <!-- Trilho/carrossel quando há muitas -->
+        <div
+          id="empresaTrack"
+          class="<?= $temMuitas ? 'flex flex-nowrap gap-8 will-change-transform' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8' ?>"
+          data-carousel="<?= $temMuitas ? 'true' : 'false' ?>"
+          style="<?= $temMuitas ? 'width:max-content; transform: translateX(0);' : '' ?>">
+          <?php
+          // Função render card para evitar repetição
+          $renderCard = function ($e) {
+            $temSite = !empty($e['site']);
+            $siteUrl = $temSite ? (preg_match('#^https?://#i', $e['site']) ? $e['site'] : 'https://' . $e['site']) : null;
 
+            ob_start(); ?>
+            <?php if ($temSite): ?>
+              <a href="<?= htmlspecialchars($siteUrl) ?>" target="_blank" class="block mt-4 text-right text-[#9fec3b] hover:text-[#97dd3a] text-sm transition">
+              <?php else: ?>
+                <div class="block mt-4 text-right text-[#9fec3b] text-sm opacity-80 cursor-default">
+                <?php endif; ?>
+
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[320px] flex-shrink-0 hover:translate-x-1">
+                  <div class="flex items-center gap-4">
+                    <img
+                      src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
+                      alt="<?= htmlspecialchars($e['nome_fantasia'] ?? 'Empresa') ?>"
+                      class="w-16 h-16 object-cover rounded-full border border-gray-200">
+                    <div class="text-left">
+                      <h3 class="font-bold text-black text-lg">
+                        <?= htmlspecialchars($e['nome_fantasia'] ?? 'Empresa') ?>
+                      </h3>
+                      <p class="text-black/80 font-semibold text-sm">
+                        <?= htmlspecialchars($e['categoria_nome'] ?? 'Sem categoria') ?>
+                      </p>
+                      <p class="text-black/70 font-medium text-xs">
+                        <?= htmlspecialchars($e['cidade'] ?? '') ?>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <?php if ($temSite): ?>
+              </a>
+            <?php else: ?>
+        </div>
+      <?php endif; ?>
+    <?php
+            return ob_get_clean();
+          };
+    ?>
+
+    <?php foreach ($empresasParceiras as $e): ?>
+      <?= $renderCard($e) ?>
+    <?php endforeach; ?>
+
+    <?php if ($temMuitas): ?>
+      <!-- Duplicação para loop contínuo -->
+      <?php foreach ($empresasParceiras as $e): ?>
+        <?= $renderCard($e) ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
+      </div>
   </div>
+<?php else: ?>
+  <p class="text-center text-gray-300">Nenhuma empresa parceira cadastrada no momento.</p>
+<?php endif; ?>
+</div>
 </section>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -285,26 +313,93 @@
   });
 
   /* === Carrossel de Empresas Parceiras === */
-  const empresaGrid = document.getElementById("empresaGrid");
-  if (empresaGrid && empresaGrid.children.length > 6) {
-    let scroll = 0;
-    const speed = 0.6; // velocidade da rotação (px/frame)
-    const pause = 20; // intervalo em milissegundos
-    const maxScroll = empresaGrid.scrollWidth / 2;
+  (function() {
+    const track = document.getElementById('empresaTrack');
+    if (!track) return;
 
-    const rotate = () => {
-      scroll += speed;
-      if (scroll >= maxScroll) scroll = 0;
-      empresaGrid.scrollTo({
-        left: scroll,
-        behavior: "smooth"
-      });
+    const isCarousel = track.getAttribute('data-carousel') === 'true';
+    if (!isCarousel) return; // com ≤6, fica grid estático
+
+    // Configurações
+    let speed = 0.35; // px por frame (~60fps)
+    let pos = 0;
+    let running = true;
+    let trackWidthHalf = 0;
+
+    // Recalcula largura do primeiro bloco (metade do trilho, antes dos clones)
+    const calcHalfWidth = () => {
+      // Metade = soma dos primeiros N filhos (antes da duplicação),
+      // aqui simplificamos: como duplicamos exatamente os mesmos itens,
+      // metade = metade do scrollWidth
+      trackWidthHalf = track.scrollWidth / 2;
     };
 
-    let loop = setInterval(rotate, pause);
+    const step = () => {
+      if (!running) return requestAnimationFrame(step);
 
-    // 🔹 Pausa a rotação quando o mouse passa por cima
-    empresaGrid.addEventListener("mouseenter", () => clearInterval(loop));
-    empresaGrid.addEventListener("mouseleave", () => (loop = setInterval(rotate, pause)));
-  }
+      pos -= speed;
+      // Quando percorre metade do trilho, reseta para 0
+      if (Math.abs(pos) >= trackWidthHalf) pos = 0;
+      track.style.transform = `translateX(${pos}px)`;
+
+      requestAnimationFrame(step);
+    };
+
+    // Pausa no hover
+    track.addEventListener('mouseenter', () => {
+      running = false;
+    });
+    track.addEventListener('mouseleave', () => {
+      if (!running) {
+        running = true;
+        requestAnimationFrame(step);
+      }
+    });
+
+    // Responsivo
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        // Reset e recalcula
+        pos = 0;
+        track.style.transform = 'translateX(0)';
+        calcHalfWidth();
+      }, 120);
+    });
+
+    // Suporte a toque (arrastar para acelerar/direcionar)
+    let isTouching = false,
+      startX = 0,
+      lastX = 0;
+    track.addEventListener('touchstart', (e) => {
+      isTouching = true;
+      running = false;
+      startX = lastX = e.touches[0].clientX;
+    }, {
+      passive: true
+    });
+
+    track.addEventListener('touchmove', (e) => {
+      if (!isTouching) return;
+      const x = e.touches[0].clientX;
+      const delta = x - lastX;
+      lastX = x;
+      pos += delta; // arrasta na direção do dedo
+      track.style.transform = `translateX(${pos}px)`;
+    }, {
+      passive: true
+    });
+
+    track.addEventListener('touchend', () => {
+      isTouching = false;
+      // retoma animação
+      running = true;
+      requestAnimationFrame(step);
+    });
+
+    // Inicializa
+    calcHalfWidth();
+    requestAnimationFrame(step);
+  })();
 </script>
