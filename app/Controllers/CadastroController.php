@@ -7,7 +7,7 @@ class CadastroController
 {
     public function index()
     {   
-        $pageTitle = "Estágiando - Cadastro";
+        $pageTitle = "Estagiando - Cadastro";
         $success = $error = '';
 
         // 🔹 Carrega categorias para o select de empresas

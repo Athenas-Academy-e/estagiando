@@ -101,13 +101,13 @@
 
     <div class="bg-[#004a99] text-white rounded-2xl p-8 text-center shadow-lg hover:scale-[1.02] transition-transform">
       <h2 class="text-2xl font-bold mb-2 text-white">Profissional</h2>
-      <p class="text-sm mb-6">Cadastre seu currículo e concorra a mais de <span class="text-[#aef85f] font-bold"><?= $totalVagas ?></span> vagas</p>
+      <p class="text-sm mb-6">Cadastre seu currículo e concorra a mais de <span class="text-[#aef85f] font-bold"><?= ($totalEmpresas > 30) ? number_format($totalEmpresas, 0, ',', '.') : '30' ?></span> vagas</p>
       <a href="/cadastro" class="inline-block border text-white border-white rounded-full px-6 py-2 hover:bg-white hover:text-[#004a99]">Cadastrar Currículo</a>
     </div>
 
     <div class="bg-[#1d73d3] text-white rounded-2xl p-8 text-center shadow-lg hover:scale-[1.02] transition-transform">
       <h2 class="text-2xl font-bold mb-2 text-white">Empresa</h2>
-      <p class="text-sm mb-6">Anuncie suas vagas e tenha acesso a <span class="text-[#aef85f] font-bold"><?= $totalProfissionais ?></span> currículos</p>
+      <p class="text-sm mb-6">Anuncie suas vagas e tenha acesso a <span class="text-[#aef85f] font-bold"><?= ($totalProfissionais > 200) ? number_format($totalProfissionais, 0, ',', '.') : '200' ?></span> currículos</p>
       <a href="/empresas/publicar" class="inline-block border text-white border-white rounded-full px-6 py-2 hover:bg-white hover:text-[#1d73d3]">Anunciar Vaga</a>
     </div>
 
@@ -139,7 +139,7 @@
             <?php if ($temSite): ?>
               <a href="<?= htmlspecialchars($siteUrl) ?>" target="_blank" class="block mt-4 text-right text-[#9fec3b] hover:text-[#97dd3a] text-sm transition">
               <?php else: ?>
-                <div class="block mt-4 text-right text-[#9fec3b] text-sm opacity-80 cursor-default">
+                <div class="block mt-4 text-right text-[#9fec3b] text-sm cursor-default">
                 <?php endif; ?>
 
                 <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[320px] flex-shrink-0 hover:translate-x-1">

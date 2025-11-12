@@ -7,7 +7,7 @@ class VagasController
 {
     public function index()
     {
-        $pageTitle = "Estágiando - Vagas Disponíveis";
+        $pageTitle = "Estagiando - Vagas Disponíveis";
         $jobModel = new Job();
         $empresaModel = new Empresa();
 
@@ -30,7 +30,7 @@ class VagasController
 
     public function detalhe()
     {   
-        $pageTitle = "Estágiando - Detalhes da Vaga";
+        $pageTitle = "Estagiando - Detalhes da Vaga";
         session_start();
 
         if (!isset($_GET['id'])) {

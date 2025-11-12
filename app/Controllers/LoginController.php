@@ -7,7 +7,7 @@ class LoginController
 {
     public function index()
     {
-        $pageTitle = "Estágiando - Login";
+        $pageTitle = "Estagiando - Login";
         session_start();
         $redirect = $_GET['redirect'] ?? '';
 
