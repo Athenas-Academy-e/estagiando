@@ -4,7 +4,7 @@
 
     <!-- Contêiner das imagens -->
     <div id="carouselPublicidade"
-      class="flex transition-transform duration-700 ease-in-out touch-pan-x"
+      class="flex transition-transform duration-700 ease-in-out touch-pan-x sm:scale-75 md:scale-50 lg:scale-100"
       style="width: <?= count($publicidades) * 100 ?>%;">
 
       <?php foreach ($publicidades as $p): ?>
@@ -13,13 +13,13 @@
           class="w-full flex-shrink-0 block">
           <img src="<?= htmlspecialchars($p['path']) ?>"
             alt="<?= htmlspecialchars($p['nome']) ?>"
-            class="w-full sm:scale-75 md:scale-50 lg:scale-100 object-contain sm:object-cover">
+            class="w-full  object-contain sm:object-cover">
         </a>
       <?php endforeach; ?>
     </div>
 
     <!-- Indicadores -->
-    <div class="absolute flex gap-2 bottom-3 left-1/2 transform -translate-x-1/2 z-10">
+    <div class="absolute gap-2 bottom-3 left-1/2 transform -translate-x-1/2 z-10 lg:flex hidden">
       <?php foreach ($publicidades as $i => $p): ?>
         <button
           class="indicator w-3 h-3 rounded-full bg-white opacity-40 hover:opacity-100 transition"
