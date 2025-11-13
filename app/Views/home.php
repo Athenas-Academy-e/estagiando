@@ -38,7 +38,7 @@
     <div class="md:w-1/2 text-center md:text-left">
       <h1 class="text-4xl md:text-5xl font-extrabold text-[#0a1837] mb-4 leading-tight">Encontre a vaga<br />certa para você!</h1>
       <p class="text-gray-600 text-lg mb-8">
-        Hoje temos <span id="vagaCount" class="font-semibold text-blue-600 text-2xl"><?= $totalVagas ?></span> abertas.
+        Hoje temos <span id="vagaCount" class="font-semibold text-blue-600 text-2xl"><?= ($totalVagas > 30) ? number_format($totalVagas, 0, ',', '.') : '30' ?></span> abertas.
       </p>
 
       <form action="/vagas" method="get" class="flex items-center gap-2 max-w-md mx-auto md:mx-0">
@@ -101,13 +101,13 @@
 
     <div class="bg-[#004a99] text-white rounded-2xl p-8 text-center shadow-lg hover:scale-[1.02] transition-transform">
       <h2 class="text-2xl font-bold mb-2 text-white">Profissional</h2>
-      <p class="text-sm mb-6">Cadastre seu currículo e concorra a mais de <span class="text-[#aef85f] font-bold"><?= ($totalEmpresas > 30) ? number_format($totalEmpresas, 0, ',', '.') : '30' ?></span> vagas</p>
+      <p class="text-sm mb-6">Cadastre seu currículo e concorra a mais de <span id="vagasCount" class="text-[#aef85f] font-bold"><?= ($totalVagas > 30) ? number_format($totalVagas, 0, ',', '.') : '30' ?></span> vagas</p>
       <a href="/cadastro" class="inline-block border text-white border-white rounded-full px-6 py-2 hover:bg-white hover:text-[#004a99]">Cadastrar Currículo</a>
     </div>
 
     <div class="bg-[#1d73d3] text-white rounded-2xl p-8 text-center shadow-lg hover:scale-[1.02] transition-transform">
       <h2 class="text-2xl font-bold mb-2 text-white">Empresa</h2>
-      <p class="text-sm mb-6">Anuncie suas vagas e tenha acesso a <span class="text-[#aef85f] font-bold"><?= ($totalProfissionais > 200) ? number_format($totalProfissionais, 0, ',', '.') : '200' ?></span> currículos</p>
+      <p class="text-sm mb-6">Anuncie suas vagas e tenha acesso a <span id="empresasCount" class="text-[#aef85f] font-bold"><?= ($totalProfissionais > 200) ? number_format($totalProfissionais, 0, ',', '.') : '200' ?></span> currículos</p>
       <a href="/empresas/publicar" class="inline-block border text-white border-white rounded-full px-6 py-2 hover:bg-white hover:text-[#1d73d3]">Anunciar Vaga</a>
     </div>
 
@@ -115,7 +115,7 @@
 </section>
 
 <!-- Seção Empresas Parceiras -->
-<section class="bg-[#0a1837] text-white py-16 mt-10">
+<section class="bg-[#0a1837] text-white py-16 mt-10 items-center flex">
   <div class="max-w-7xl mx-auto px-6">
     <h2 class="text-3xl font-bold text-center mb-10 text-white">Empresas Parceiras</h2>
 
@@ -220,9 +220,9 @@
       }, 10);
     };
 
-    animateCount("vagaCount", <?= $totalVagas ?>);
-    animateCount("vagasCount", <?= $totalVagas ?>);
-    animateCount("empresasCount", <?= $totalEmpresas ?>);
+    animateCount("vagaCount", <?= ($totalVagas > 30) ? $totalVagas : '30' ?>);
+    animateCount("vagasCount", <?= ($totalVagas > 30) ? $totalVagas : '30' ?>);
+    animateCount("empresasCount", <?= ($totalProfissionais > 200) ? $totalProfissionais : '200' ?>);
 
     /* === Carrossel das Áreas === */
     const carAreas = document.getElementById("carouselAreas");
