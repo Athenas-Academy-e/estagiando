@@ -25,14 +25,14 @@
         <label class="block text-sm font-semibold mb-1">Nome da Empresa *</label>
         <input type="text" name="razao_social" required
           value="<?= (!isset($empresa['razao_social']) ? htmlspecialchars($empresa['nome_fantasia']) : htmlspecialchars($empresa['razao_social'])) ?>"
-          class="w-full border border-gray-300 rounded-md px-3 py-2">
+          class="w-full border border-gray-300 rounded-md px-3 py-2" required>
       </div>
       <!-- Nome Fantasia -->
       <div>
         <label class="block text-sm font-semibold mb-1">Nome Fantasia *</label>
         <input type="text" name="nome_fantasia" required
           value="<?= (!isset($empresa['nome_fantasia']) ? htmlspecialchars($empresa['razao_social']) : htmlspecialchars($empresa['nome_fantasia'])) ?>"
-          class="w-full border border-gray-300 rounded-md px-3 py-2">
+          class="w-full border border-gray-300 rounded-md px-3 py-2" required>
       </div>
 
       <!-- CNPJ -->
@@ -40,7 +40,7 @@
         <label class="block text-sm font-semibold mb-1">CNPJ *</label>
         <input type="text" id="cnpj" name="cnpj" required maxlength="18"
           value="<?= htmlspecialchars($empresa['cnpj']) ?>"
-          class="w-full border border-gray-300 rounded-md px-3 py-2">
+          class="w-full border border-gray-300 rounded-md px-3 py-2" required>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -67,26 +67,26 @@
         <div>
           <label class="text-sm font-semibold">CEP</label>
           <input id="cep" type="text" name="cep" value="<?= htmlspecialchars($empresa['cep']) ?>" maxlength="9"
-            class="w-full border-gray-300 rounded-md px-3 py-2">
+            class="w-full border-gray-300 rounded-md px-3 py-2" required>
         </div>
 
         <div>
           <label class="text-sm font-semibold">Número</label>
           <input type="text" name="numero" value="<?= htmlspecialchars($empresa['numero']) ?>"
-            class="w-full border-gray-300 rounded-md px-3 py-2">
+            class="w-full border-gray-300 rounded-md px-3 py-2" required>
         </div>
 
         <div>
           <label class="text-sm font-semibold">Bairro</label>
           <input id="bairro" type="text" name="bairro" value="<?= htmlspecialchars($empresa['bairro']) ?>"
-            class="w-full border-gray-300 rounded-md px-3 py-2">
+            class="w-full border-gray-300 rounded-md px-3 py-2" required>
         </div>
       </div>
 
       <div>
         <label class="text-sm font-semibold">Endereço</label>
         <input id="endereco" type="text" name="endereco" value="<?= htmlspecialchars($empresa['endereco']) ?>"
-          class="w-full border-gray-300 rounded-md px-3 py-2">
+          class="w-full border-gray-300 rounded-md px-3 py-2" required>
       </div>
 
       <!-- Localidade -->

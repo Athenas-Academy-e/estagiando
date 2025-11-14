@@ -139,7 +139,8 @@
               <h4 class="font-semibold text-gray-700">Foto de Perfil</h4>
               <input type="file" name="foto" id="foto" accept="image/*"
                 class="block mx-2 mb-2">
-              <img id="fotoPreview" class="hidden mx-auto rounded-full w-32 h-32 object-cover border-4 border-blue-200 shadow-md">
+              <h4 class="font-semibold text-gray-700 text-sm">Tamanho recomendado: <strong>400 × 400 px</strong></h4>
+              <img id="fotoPreview" class="hidden mx-auto rounded-full w-20 h-20 object-cover border-4 border-blue-200 shadow-md">
             </div>
           </div><!-- /flex layout -->
 
@@ -271,7 +272,8 @@
               <h4 class="font-semibold text-gray-700">Logo da Empresa</h4>
               <input type="file" name="logo" id="logo" accept="image/*"
                 class="block mx-2 mb-2">
-              <img id="logoPreview" class="hidden mx-auto rounded-lg w-32 h-32 object-cover border-4 border-blue-200 shadow-md">
+              <h4 class="font-semibold text-gray-700 text-sm">Tamanho recomendado: <strong>500 × 500 px</strong></h4>
+              <img id="logoPreview" class="hidden mx-auto rounded-lg w-20 h-20 object-cover border-4 border-blue-200 shadow-md">
             </div>
           </div><!-- /flex -->
 

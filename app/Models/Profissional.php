@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/../Core/ImageProcessor.php';
 
 class Profissional
 {
@@ -75,7 +76,7 @@ class Profissional
         ':sexo' => $dados['sexo'] ?? '',
         ':nascimento' => $dados['nascimento'] ?? null,
         ':email' => $dados['email'] ?? '',
-        ':telefone' => $dados['telefone1'] ?? '',
+        ':telefone' => $dados['telefone'] ?? '',
         ':senha' => $dados['senha'] ?? '',
         ':cep' => $dados['cep'] ?? '',
         ':endereco' => $dados['endereco'] ?? '',

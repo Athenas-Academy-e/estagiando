@@ -15,23 +15,28 @@
       <div>
         <label for="nome" class="block font-medium text-gray-700">Nome</label>
         <input type="text" id="nome" name="nome" required
-               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a] focus:outline-none">
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a] focus:outline-none">
       </div>
 
       <!-- Imagem -->
       <div>
         <label for="imagem" class="block font-medium text-gray-700">
-          <?= ($currentType ?? '') === 'publicidade' ? 'Imagem da Publicidade (obrigatória)' : 'Imagem da Categoria (opcional)' ?>
+          <?= ($currentType ?? '') === 'publicidade' ? 'Imagem da Publicidade (obrigatória)' : 'Imagem da Categoria (obrigatória)' ?>
         </label>
         <input type="file" id="imagem" name="imagem" accept="image/*"
-               class="w-full border border-gray-300 rounded-lg px-3 py-2 file:mr-3 file:py-2 file:px-3 file:border-0 file:bg-[#97dd3a] file:text-white file:rounded-lg file:cursor-pointer focus:ring-2 focus:ring-[#97dd3a]">
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 file:mr-3 file:py-2 file:px-3 file:border-0 file:bg-[#97dd3a] file:text-white file:rounded-lg file:cursor-pointer focus:ring-2 focus:ring-[#97dd3a]" required>
+        <?php if (($currentType ?? '') === 'publicidade'): ?>
+          <h4 class="font-semibold text-gray-700 text-sm">Tamanho recomendado: <strong>1200 × 400 px</strong></h4>
+        <?php else: ?>
+          <h4 class="font-semibold text-gray-700 text-sm">Tamanho recomendado: <strong>240 × 300 px</strong></h4>
+        <?php endif; ?>
       </div>
 
       <!-- Status -->
       <div>
         <label for="status" class="block font-medium text-gray-700">Status</label>
         <select name="status" id="status"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
           <option value="S" selected>Ativo</option>
           <option value="N">Inativo</option>
         </select>
@@ -42,7 +47,7 @@
         <div>
           <label for="site" class="block font-medium text-gray-700">URL de redirecionamento</label>
           <input type="url" id="site" name="site" placeholder="https://exemplo.com"
-                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#97dd3a]">
         </div>
       <?php endif; ?>
 

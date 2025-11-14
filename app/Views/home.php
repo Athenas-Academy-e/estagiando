@@ -38,7 +38,7 @@
     <div class="md:w-1/2 text-center md:text-left">
       <h1 class="text-4xl md:text-5xl font-extrabold text-[#0a1837] mb-4 leading-tight">Encontre a vaga<br />certa para você!</h1>
       <p class="text-gray-600 text-lg mb-8">
-        Hoje temos <span id="vagaCount" class="font-semibold text-blue-600 text-2xl"><?= ($totalVagas > 30) ? number_format($totalVagas, 0, ',', '.') : '30' ?></span> abertas.
+        Mais de <span id="vagaCount" class="font-semibold text-blue-600 text-2xl"><?= ($totalVagas > 30) ? number_format($totalVagas, 0, ',', '.') : '30' ?></span> oportunidades esperando por você!
       </p>
 
       <form action="/vagas" method="get" class="flex items-center gap-2 max-w-md mx-auto md:mx-0">
@@ -82,11 +82,11 @@
           <div class="relative w-[240px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
             <img src="/assets/default_areas.jpg" alt="Área padrão"
               class="w-full h-full object-cover grayscale">
-            <div
+            <!-- <div
               class="absolute bottom-4 left-4 bg-[#ffffcc] px-4 py-2 shadow-md transform -rotate-2 rounded-md">
               <span class="block text-sm font-bold text-[#ff6600] leading-none">Sem vagas disponíveis</span>
               <span class="font-bold text-sm text-[#191ba5]">Em breve novas oportunidades</span>
-            </div>
+            </div> -->
           </div>
         <?php endif; ?>
 
@@ -147,7 +147,7 @@
                     <img
                       src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
                       alt="<?= htmlspecialchars($e['nome_fantasia'] ?? 'Empresa') ?>"
-                      class="w-16 h-16 object-cover rounded-full border border-gray-200">
+                      class="w-20 h-20 object-cover rounded-full border border-gray-200">
                     <div class="text-left">
                       <h3 class="font-bold text-black text-lg">
                         <?= htmlspecialchars($e['nome_fantasia'] ?? 'Empresa') ?>

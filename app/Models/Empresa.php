@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/../Core/ImageProcessor.php';
 
 class Empresa
 {
@@ -131,7 +132,7 @@ class Empresa
         ':nome_fantasia' => $dados['nome_fantasia'],
         ':categoria' => $dados['categoria'] ?? null,
         ':cnpj' => $dados['cnpj'],
-        ':telefone' => $dados['telefone'] ?? '',
+        ':telefone' => $dados['telefone1'] ?? '',
         ':celular' => $dados['celular'] ?? '',
         ':email' => $dados['email'],
         ':site' => $dados['site'] ?? '',
@@ -156,19 +157,13 @@ class Empresa
    */
   public function uploadLogo($arquivo)
   {
-    // Verifica validade
     if (!isset($arquivo) || $arquivo['error'] !== UPLOAD_ERR_OK) {
       return false;
     }
 
-    // Pasta de destino
-    $dir = __DIR__ . '/../../public_html/assets/img/logos/';
-    if (!is_dir($dir)) mkdir($dir, 0777, true);
-
-    // Extensões permitidas
+    // Valida extensão/tipo básico
     $extensoes = ['jpg', 'jpeg', 'png', 'webp'];
     $ext = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
-
     if (!in_array($ext, $extensoes)) {
       return false;
     }
@@ -178,17 +173,14 @@ class Empresa
       return false;
     }
 
-    // Nome único
-    $hash = md5(uniqid() . time());
-    $nomeArquivo = $hash . '.' . $ext;
-    $destino = $dir . $nomeArquivo;
-
-    // Move upload
-    if (move_uploaded_file($arquivo['tmp_name'], $destino)) {
-      return '/assets/img/logos/' . $nomeArquivo;
-    }
-
-    return false;
+    // Processa e salva redimensionando
+    return ImageProcessor::processImage(
+      $arquivo,
+      'img/logos',  // dentro de /assets/img/logos
+      500,
+      500,
+      85
+    );
   }
 
   public function updateLogo($empresaId, $logoPath)

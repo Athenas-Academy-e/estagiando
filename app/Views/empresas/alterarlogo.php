@@ -12,8 +12,8 @@
 
     <?php if (!empty($_SESSION['empresa_logo'])): ?>
       <p class="text-gray-600 mb-2">Logo atual:</p>
-      <img src="<?= htmlspecialchars($_SESSION['empresa_logo']) ?>" 
-           class="w-32 h-32 object-cover rounded-full border shadow mb-6">
+      <img src="<?= htmlspecialchars($_SESSION['empresa_logo']) ?>"
+        class="w-20 h-20 object-cover rounded-full border shadow mb-6 scale-125">
     <?php endif; ?>
 
     <form method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -21,6 +21,7 @@
         Escolha uma nova logo:
         <input type="file" name="logo" accept="image/*" required
           class="mt-2 block w-full border border-gray-300 rounded-lg p-2">
+        <h4 class="font-semibold text-gray-700 text-sm">Tamanho recomendado: <strong>500 × 500 px</strong></h4>
       </label>
 
       <button type="submit"
