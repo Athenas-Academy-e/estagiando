@@ -147,7 +147,7 @@
                     <img
                       src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
                       alt="<?= htmlspecialchars($e['nome_fantasia'] ?? 'Empresa') ?>"
-                      class="w-20 h-20 object-cover rounded-full border border-gray-200">
+                      class="w-16 h-16 object-cover rounded-full border border-gray-200">
                     <div class="text-left">
                       <h3 class="font-bold text-black text-lg">
                         <?= htmlspecialchars($e['nome_fantasia'] ?? 'Empresa') ?>
