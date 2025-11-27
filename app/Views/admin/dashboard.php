@@ -108,52 +108,50 @@
     // === Carregar dados da aba ===
     const loadData = (type) => {
 
-  // 🔹 Botões de ação dinâmicos (acima da tabela)
-  if (type === "categoria") {
-    actionButtons.innerHTML = `
+      // 🔹 Botões de ação dinâmicos (acima da tabela)
+      if (type === "categoria") {
+        actionButtons.innerHTML = `
       <a href="/admin/criarcategoria"
          class="bg-[#97dd3a] hover:bg-[#aafc4d] text-white px-4 py-2 rounded-lg shadow transition duration-200">
         ➕ Nova Categoria
       </a>`;
-    actionButtons.classList.remove("hidden");
-  } 
-  else if (type === "publicidade") {
-    actionButtons.innerHTML = `
+        actionButtons.classList.remove("hidden");
+      } else if (type === "publicidade") {
+        actionButtons.innerHTML = `
       <a href="/admin/criarpublicidade"
          class="bg-[#0a1837] hover:bg-[#142b63] text-white px-4 py-2 rounded-lg shadow transition duration-200">
         📢 Nova Publicidade
       </a>`;
-    actionButtons.classList.remove("hidden");
-  } 
-  else {
-    actionButtons.classList.add("hidden");
-    actionButtons.innerHTML = "";
-  }
+        actionButtons.classList.remove("hidden");
+      } else {
+        actionButtons.classList.add("hidden");
+        actionButtons.innerHTML = "";
+      }
 
-  // 🔹 Aba específica de administradores
-  if (type === "admins") {
-    dataContainer.innerHTML = `
+      // 🔹 Aba específica de administradores
+      if (type === "admins") {
+        dataContainer.innerHTML = `
       <div class="text-center py-10">
         <p class="text-gray-600 mb-4">A gestão de administradores é feita em uma página dedicada.</p>
         <a href="/admin/gerenciar" class="bg-[#0a1837] text-white px-5 py-2 rounded-lg shadow hover:bg-[#13245c] transition">
           Ir para Gerenciar Administradores
         </a>
       </div>`;
-    return;
-  }
-
-  // 🔹 Buscar dados via AJAX
-  fetch(`/admin/fetchData?type=${type}`)
-    .then(res => res.json())
-    .then(data => {
-      if (!Array.isArray(data) || data.length === 0) {
-        dataContainer.innerHTML = `<p class="text-center text-gray-500 py-6">Nenhum registro encontrado.</p>`;
         return;
       }
 
-      const headers = Object.keys(data[0]);
+      // 🔹 Buscar dados via AJAX
+      fetch(`/admin/fetchData?type=${type}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!Array.isArray(data) || data.length === 0) {
+              dataContainer.innerHTML = `<p class="text-center text-gray-500 py-6">Nenhum registro encontrado.</p>`;
+              return;
+            }
 
-      let html = `
+            const headers = Object.keys(data[0]);
+
+            let html = `
         <div class="overflow-x-auto">
           <table class="min-w-full border border-gray-200 rounded-lg">
             <thead class="bg-gray-100 text-center">
@@ -171,56 +169,88 @@
                 }).join('');
 
                 // 🧩 Geração dinâmica dos botões de ação
-                let actionBtns = `
-                  <button class="edit-btn bg-blue-600 text-white px-3 py-1 rounded shadow" 
-                          data-id="${row.id}" data-type="${type}">Editar</button>
-                  <button class="delete-btn bg-red-600 text-white px-3 py-1 rounded shadow" 
-                          data-id="${row.id}" data-type="${type}">Excluir</button>
-                `;
+let actionBtns = `
+  <button class="edit-btn bg-blue-600 text-white px-3 py-1 rounded shadow"
+          data-id="${row.id}"
+          data-type="${type}">
+    Editar
+  </button>
+  <button class="delete-btn bg-red-600 text-white px-3 py-1 rounded shadow"
+          data-id="${row.id}"
+          data-type="${type}">
+    Excluir
+  </button>
+`;
 
-                if (type === 'vagas') {
-                  const expiracao = row.data_expiracao ? new Date(row.data_expiracao) : null;
-                  const agora = new Date();
-                  const expirada = expiracao && expiracao < agora;
+/** ============================
+ *  🔵 CASOS COMUNS — status S/N
+ *  Empresas, profissionais, categorias, publicidade
+ * ============================ */
+if (['empresas', 'profissionais', 'categoria', 'publicidade'].includes(type)) {
+    actionBtns += ` <button class = "toggle-btn bg-yellow-500 text-white px-3 py-1 rounded shadow"
+            data-id = "${row.id}"
+            data-type = "${type}" >
+              ${
+                row.status === 'S' ? 'Desativar' : 'Ativar'
+              } 
+                </button>
+            `;
+}
 
-                  if (expirada) {
-                    actionBtns += `
-                      <button class="reactivar-btn bg-gray-600 text-white px-3 py-1 rounded shadow"
-                              data-id="${row.id}" data-type="${type}">
-                        Reativar Vaga
-                      </button>`;
-                  } else {
-                    actionBtns += `
-                      <button class="toggle-btn bg-yellow-500 text-white px-3 py-1 rounded shadow"
-                              data-id="${row.id}" data-type="${type}">
-                        ${row.status === 'S' ? 'Desativar' : 'Ativar'}
-                      </button>`;
-                  }
+/** ============================
+ *  🟢 CASO ESPECIAL — VAGAS
+ * ============================ */
+if (type === 'vagas') {
+    const expiracao = row.data_expiracao ? new Date(row.data_expiracao) : null;
+    const agora = new Date();
+    const expirada = expiracao && expiracao < agora;
 
-                  actionBtns += `
-                    <a href="/admin/candidatos?vaga=${row.id}" 
-                       class="bg-green-600 text-white px-3 py-1 rounded shadow hover:bg-green-700 transition">
-                      Candidatos
-                    </a>`;
-                }
+    // Caso 1 — vaga expirada
+    if (expirada) {
+        actionBtns += ` <button class = "reactivar-btn bg-gray-700 text-white px-3 py-1 rounded shadow"
+            data-id = "${row.id}"
+            data-type = "${type}" >
+              Reativar por + 7 dias 
+              </button>
+            `;
+    }
 
-                return `
+    // Caso 2 — vaga ativa
+    if (!expirada) {
+        actionBtns += ` <button class = "toggle-btn bg-yellow-500 text-white px-3 py-1 rounded shadow"
+            data-id = "${row.id}"
+            data-type = "${type}" >
+              ${
+                row.status === 'S' ? 'Desativar' : 'Ativar'
+              } 
+            </button>
+            `;
+    }
+
+    // Botão candidatos (sempre)
+    actionBtns += ` <a href = "/admin/candidatos?vaga=${row.id}"
+            class = "bg-green-600 text-white px-3 py-1 rounded shadow hover:bg-green-700 transition" >
+            Candidatos
+              </a>`;
+          }
+
+          return `
                   <tr class="border-b hover:bg-gray-50 transition text-center">
                     ${tds}
                     <td class="p-3 flex flex-wrap gap-2 justify-center">${actionBtns}</td>
                   </tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
+        }).join('')
+  } </tbody> 
+   </table>
+    </div>
+  `;
 
       dataContainer.innerHTML = html;
     })
     .catch(() => {
-      dataContainer.innerHTML = `<p class="text-center text-red-500 py-6">Erro ao carregar dados.</p>`;
-    });
-};
+      dataContainer.innerHTML = ` < p class = "text-center text-red-500 py-6" > Erro ao carregar dados. < /p>`;
+  });
+  };
 
   // === Tabs ===
   tabs.forEach(btn => {
@@ -236,7 +266,6 @@
     if (e.target.classList.contains("toggle-btn")) {
       const id = e.target.dataset.id;
       const type = e.target.dataset.type;
-
       try {
         const res = await fetch("/admin/toggleStatus", {
           method: "POST",
