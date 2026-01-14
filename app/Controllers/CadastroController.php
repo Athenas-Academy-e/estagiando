@@ -2,11 +2,13 @@
 require_once __DIR__ . '/../Models/Empresa.php';
 require_once __DIR__ . '/../Models/Profissional.php';
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/../Core/Mailer.php';
+require_once __DIR__ . '/../Emails/EmailTemplate.php';
 
 class CadastroController
 {
     public function index()
-    {   
+    {
         $pageTitle = "Estagiando - Cadastro";
         $success = $error = '';
 
@@ -17,6 +19,9 @@ class CadastroController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tipo = $_POST['tipo'] ?? '';
 
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $link = $protocol . '://' . $_SERVER['HTTP_HOST'] . "/login";
+
             // === Cadastro de Empresa ===
             if ($tipo === 'empresa') {
                 try {
@@ -24,6 +29,18 @@ class CadastroController
                     $resultado = $empresa->cadastrar($_POST, $_FILES['logo'] ?? null);
 
                     if ($resultado) {
+                        $html = EmailTemplate::render('boas_vindas', [
+                            'nome' => $_POST['nome_empresa'] ?? 'Empresa',
+                            'tipo' => 'Empresa',
+                            'link' => $link
+                        ]);
+
+                        Mailer::enviar(
+                            $_POST['email'],
+                            'Bem-vindo ao Estagiando!',
+                            $html
+                        );
+
                         $success = "✅ Empresa cadastrada com sucesso!";
                     } else {
                         $error = "❌ Erro ao cadastrar empresa. Verifique os campos e tente novamente.";
@@ -40,6 +57,18 @@ class CadastroController
                     $resultado = $profissional->cadastrar($_POST, $_FILES['foto'] ?? null);
 
                     if ($resultado) {
+                        $html = EmailTemplate::render('boas_vindas', [
+                            'nome' => $_POST['nome'] ?? 'Profissional',
+                            'tipo' => 'Profissional',
+                            'link' => $link
+                        ]);
+
+                        Mailer::enviar(
+                            $_POST['email'],
+                            'Bem-vindo ao Estagiando!',
+                            $html
+                        );
+
                         $success = "✅ Profissional cadastrado com sucesso!";
                     } else {
                         $error = "❌ Erro ao cadastrar profissional. Verifique os campos e tente novamente.";
