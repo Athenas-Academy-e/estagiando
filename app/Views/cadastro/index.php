@@ -78,6 +78,9 @@
             <input type="text" name="numero" placeholder="Número"
               class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
+            <input type="text" name="complemento" placeholder="Complemento"
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
+
             <input type="text" name="bairro" placeholder="Bairro"
               class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
 
@@ -211,6 +214,9 @@
 
             <input type="text" name="numero" placeholder="Número"
               class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
+
+            <input type="text" name="complemento" placeholder="Complemento"
+              class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400">
 
             <input type="text" name="bairro" placeholder="Bairro"
               class="border border-gray-700 rounded-full px-4 h-12 text-sm text-gray-900 focus:ring-2 focus:ring-blue-600 w-full placeholder-gray-400" required>
