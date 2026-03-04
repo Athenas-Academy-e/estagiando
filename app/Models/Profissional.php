@@ -54,7 +54,10 @@ class Profissional
       // 🖼️ Upload de foto (reutiliza método existente)
       $foto = null;
       if (!empty($arquivoFoto['name'])) {
-        $foto = $this->uploadFoto($arquivoFoto);
+        $upload = $this->uploadFoto($arquivoFoto);
+        if ($upload) {
+          $foto = $upload;
+        }
       }
 
       // 🚦 Garante status padrão “S”
@@ -173,31 +176,31 @@ class Profissional
    */
   public function uploadFoto($arquivo)
   {
-    if (empty($arquivo['name']) || $arquivo['error'] !== UPLOAD_ERR_OK) {
+    if (!isset($arquivo) || $arquivo['error'] !== UPLOAD_ERR_OK) {
       return null;
     }
 
-    $extensao = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
-    $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+    // Valida extensão
+    $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'webp'];
+    $ext = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
 
-    if (!in_array($extensao, $permitidas)) {
+    if (!in_array($ext, $extensoesPermitidas)) {
       return null;
     }
 
-    $pastaDestino = __DIR__ . '/../../public_html/assets/img/fotos/';
-    if (!is_dir($pastaDestino)) {
-      mkdir($pastaDestino, 0777, true);
+    // Limite de tamanho (8MB)
+    if ($arquivo['size'] > 8 * 1024 * 1024) {
+      return null;
     }
 
-    $novoNome = uniqid('foto_') . '.' . $extensao;
-    $caminhoCompleto = $pastaDestino . $novoNome;
-
-    if (move_uploaded_file($arquivo['tmp_name'], $caminhoCompleto)) {
-      // Caminho acessível via web
-      return '/assets/img/fotos/' . $novoNome;
-    }
-
-    return null;
+    // Usa o mesmo processador do Empresa
+    return ImageProcessor::processImage(
+      $arquivo,
+      'img/fotos', // pasta dentro de /assets/img/fotos
+      400,         // largura máxima
+      400,         // altura máxima
+      85           // qualidade
+    );
   }
 
   /**
