@@ -89,6 +89,7 @@ class Empresa
         throw new Exception("E-mail ou CNPJ já cadastrado!");
       }
 
+
       // Upload logo
       $logoPath = null;
       if (!empty($arquivoLogo['name'])) {
@@ -157,6 +158,7 @@ class Empresa
    */
   public function uploadLogo($arquivo)
   {
+
     if (!isset($arquivo) || $arquivo['error'] !== UPLOAD_ERR_OK) {
       return false;
     }
@@ -168,8 +170,8 @@ class Empresa
       return false;
     }
 
-    // Limite de tamanho (3MB)
-    if ($arquivo['size'] > 3 * 1024 * 1024) {
+    // Limite de tamanho (8MB)
+    if ($arquivo['size'] > 8 * 1024 * 1024) {
       return false;
     }
 
@@ -476,7 +478,7 @@ class Empresa
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
-  
+
   public function listarComCategoriaMunicipio()
   {
     $sql = "SELECT 
@@ -494,9 +496,9 @@ class Empresa
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
   public function existeEmail($email)
-{
+  {
     $stmt = $this->pdo->prepare("SELECT id FROM empresas WHERE email = :email AND status = 'S'");
     $stmt->execute([':email' => $email]);
     return $stmt->fetchColumn() !== false;
-}
+  }
 }

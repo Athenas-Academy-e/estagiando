@@ -74,7 +74,6 @@ class LoginController
 
             // 🔹 Login Administrador
             $admin = $adminModel->login($email, $senha);
-            // var_dump($admin); exit;
             if ($admin) {
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_nome'] = $admin['nome'];
