@@ -1,5 +1,5 @@
 <section class="bg-gray-50 min-h-screen py-10">
-  <div class="max-w-7xl mx-auto px-6">
+  <div class="max-w-7xl mx-auto px-6" data-aos="zoom-out">
     <h1 class="text-3xl font-bold text-[#0a1837] mb-8 text-center">Empresas</h1>
 
     <div class="flex flex-col md:flex-row gap-10">

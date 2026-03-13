@@ -1,39 +1,40 @@
 <!-- Carrossel Publicidades -->
 <?php if (!empty($publicidades)): ?>
-  <div class="relative w-full max-w-7xl mx-auto mt-4 rounded-xl overflow-hidden shadow-lg">
 
-    <!-- Contêiner das imagens -->
-    <div id="carouselPublicidade"
-      class="flex transition-transform duration-700 ease-in-out touch-pan-x sm:scale-75 md:scale-50 lg:scale-100"
-      style="width: <?= count($publicidades) * 100 ?>%;">
+<div class="relative w-full max-w-7xl mx-auto mt-4 rounded-xl overflow-hidden shadow-lg"
+     data-aos="fade-in">
 
-      <?php foreach ($publicidades as $p): ?>
-        <a href="/redirect/<?= htmlspecialchars($p['site']) ?>"
-          target="_blank"
-          class="w-full flex-shrink-0 block">
-          <img src="<?= htmlspecialchars($p['path']) ?>"
-            alt="<?= htmlspecialchars($p['nome']) ?>"
-            class="w-full  object-contain sm:object-cover">
-        </a>
-      <?php endforeach; ?>
-    </div>
+  <div id="carouselPublicidade"
+       class="flex transition-transform duration-700 ease-in-out"
+       style="width: <?= count($publicidades) * 100 ?>%">
 
-    <!-- Indicadores -->
-    <div class="absolute gap-2 bottom-3 left-1/2 transform -translate-x-1/2 z-10 lg:flex hidden">
-      <?php foreach ($publicidades as $i => $p): ?>
-        <button
-          class="indicator w-3 h-3 rounded-full bg-white opacity-40 hover:opacity-100 transition"
-          onclick="goToSlide(<?= $i ?>)"></button>
-      <?php endforeach; ?>
-    </div>
+    <?php foreach ($publicidades as $p): ?>
+
+      <a href="/redirect/<?= htmlspecialchars($p['site']) ?>"
+         target="_blank"
+         class="w-full flex-shrink-0">
+
+        <img
+          src="<?= htmlspecialchars($p['path']) ?>"
+          alt="<?= htmlspecialchars($p['nome']) ?>"
+          class="w-full h-[220px] object-cover
+                 transition duration-700
+                 hover:scale-105 hover:brightness-110">
+
+      </a>
+
+    <?php endforeach; ?>
 
   </div>
+
+</div>
+
 <?php endif; ?>
 
 
 <!-- Seção principal -->
 <section class="bg-gray-50 py-16">
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-10">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-10" data-aos="fade-right">
     <!-- Texto e busca -->
     <div class="md:w-1/2 text-center md:text-left">
       <h1 class="text-4xl md:text-5xl font-extrabold text-[#0a1837] mb-4 leading-tight">Encontre a vaga<br />certa para você!</h1>
@@ -79,7 +80,8 @@
           <?php endforeach; ?>
         <?php else: ?>
           <!-- 🔹 Imagem padrão quando não há áreas -->
-          <div class="relative w-[240px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
+          <!-- <div class="relative w-[540px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg"> -->
+          <div class="relative lg:w-[540px] md:w-[540px] w-[320px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
             <img src="/assets/default_areas.jpg" alt="Área padrão"
               class="w-full h-full object-cover grayscale">
             <!-- <div
@@ -97,7 +99,7 @@
 
 <!-- Cards inferiores -->
 <section class="bg-gray-50 py-16">
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-6">
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-6" data-aos="fade-up">
 
     <div class="bg-[#004a99] text-white rounded-2xl p-8 text-center shadow-lg hover:scale-[1.02] transition-transform">
       <h2 class="text-2xl font-bold mb-2 text-white">Profissional</h2>
@@ -116,7 +118,7 @@
 
 <!-- Seção Empresas Parceiras -->
 <section class="bg-[#0a1837] text-white py-16 mt-10 items-center flex">
-  <div class="max-w-7xl mx-auto px-6">
+  <div class="max-w-7xl mx-auto px-6" data-aos="fade-in">
     <h2 class="text-3xl font-bold text-center mb-10 text-white">Empresas Parceiras</h2>
 
     <?php if (!empty($empresasParceiras)): ?>
@@ -142,7 +144,7 @@
                 <div class="block mt-4 text-right text-[#9fec3b] text-sm cursor-default">
                 <?php endif; ?>
 
-                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[320px] flex-shrink-0 hover:translate-x-1">
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[360px] h-32 flex-shrink-0 hover:scale-[1.2] mx-2" data-aos="zoom-in">
                   <div class="flex items-center gap-4">
                     <img
                       src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
