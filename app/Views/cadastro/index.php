@@ -724,6 +724,43 @@
     animation: girar 0.8s linear infinite;
   }
 
+  .step-anim-enter {
+    opacity: 0;
+    transform: translateX(60px) scale(0.98);
+  }
+
+  .step-anim-enter-active {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-anim-exit {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  .step-anim-exit-active {
+    opacity: 0;
+    transform: translateX(-60px) scale(0.96);
+    transition: all 0.35s ease;
+  }
+
+  .steps {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step {
+    width: 100%;
+  }
+
+  .step-absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
   @keyframes girar {
     from {
       transform: rotate(0deg);
@@ -784,7 +821,59 @@
       }
 
       function show(i) {
-        steps.forEach((s, idx) => s.classList.toggle('hidden', idx !== i));
+        const container = form.querySelector('.steps');
+        const alturaAtual = container.offsetHeight;
+
+        // trava altura antes da animação
+        container.style.height = alturaAtual + 'px';
+
+        steps.forEach((step, idx) => {
+
+          if (idx === i) {
+            step.classList.remove('hidden');
+            step.classList.add('step-absolute', 'step-anim-enter');
+
+            requestAnimationFrame(() => {
+              step.classList.add('step-anim-enter-active');
+            });
+
+          } else if (!step.classList.contains('hidden')) {
+
+            step.classList.add('step-absolute', 'step-anim-exit');
+
+            requestAnimationFrame(() => {
+              step.classList.add('step-anim-exit-active');
+            });
+
+            setTimeout(() => {
+              step.classList.add('hidden');
+              step.classList.remove(
+                'step-absolute',
+                'step-anim-exit',
+                'step-anim-exit-active'
+              );
+            }, 350);
+          }
+
+        });
+
+        // 🔥 pega altura da nova etapa
+        setTimeout(() => {
+          const novaAltura = steps[i].offsetHeight;
+
+          container.style.height = novaAltura + 'px';
+        }, 50);
+
+        // 🔥 libera altura depois da animação
+        setTimeout(() => {
+          container.style.height = 'auto';
+
+          steps[i].classList.remove(
+            'step-absolute',
+            'step-anim-enter',
+            'step-anim-enter-active'
+          );
+        }, 450);
       }
       form.querySelectorAll('.next').forEach(btn => btn.onclick = () => {
         if (current < steps.length - 1) {

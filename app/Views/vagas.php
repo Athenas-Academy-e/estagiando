@@ -1,7 +1,7 @@
 <?php // Lista de vagas ?>
 
 <main class="bg-gray-50 min-h-screen py-12">
-  <div class="max-w-7xl mx-auto px-6">
+  <div class="max-w-7xl mx-auto px-6" data-aos="zoom-out">
 
     <div class="mb-10 text-center">
       <h1 class="text-3xl font-bold text-gray-800 mb-2">Vagas de Estágio</h1>
