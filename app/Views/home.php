@@ -1,34 +1,33 @@
 <!-- Carrossel Publicidades -->
 <?php if (!empty($publicidades)): ?>
+  <div class="relative w-full max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8 rounded-xl overflow-hidden shadow-lg">
 
-<div class="relative w-full max-w-7xl mx-auto mt-4 rounded-xl overflow-hidden shadow-lg"
-     data-aos="fade-in">
+    <!-- Contêiner das imagens -->
+    <div id="carouselPublicidade"
+      class="flex transition-transform duration-700 ease-in-out touch-pan-x sm:scale-75 md:scale-50 lg:scale-100"
+      style="width: <?= count($publicidades) * 100 ?>%;">
 
-  <div id="carouselPublicidade"
-       class="flex transition-transform duration-700 ease-in-out"
-       style="width: <?= count($publicidades) * 100 ?>%">
+      <?php foreach ($publicidades as $p): ?>
+        <a href="/redirect/<?= htmlspecialchars($p['site']) ?>"
+          target="_blank"
+          class="w-full flex-shrink-0 block">
+          <img src="<?= htmlspecialchars($p['path']) ?>"
+            alt="<?= htmlspecialchars($p['nome']) ?>"
+            class="w-full h-[160px] sm:h-[180px] md:h-[200px] lg:h-[220px] object-cover">
+        </a>
+      <?php endforeach; ?>
+    </div>
 
-    <?php foreach ($publicidades as $p): ?>
-
-      <a href="/redirect/<?= htmlspecialchars($p['site']) ?>"
-         target="_blank"
-         class="w-full flex-shrink-0">
-
-        <img
-          src="<?= htmlspecialchars($p['path']) ?>"
-          alt="<?= htmlspecialchars($p['nome']) ?>"
-          class="w-full h-[220px] object-cover
-                 transition duration-700
-                 hover:scale-105 hover:brightness-110">
-
-      </a>
-
-    <?php endforeach; ?>
+    <!-- Indicadores -->
+    <div class="absolute gap-2 bottom-3 left-1/2 transform -translate-x-1/2 z-10 lg:flex hidden">
+      <?php foreach ($publicidades as $i => $p): ?>
+        <button
+          class="indicator w-3 h-3 rounded-full bg-white opacity-40 hover:opacity-100 transition"
+          onclick="goToSlide(<?= $i ?>)"></button>
+      <?php endforeach; ?>
+    </div>
 
   </div>
-
-</div>
-
 <?php endif; ?>
 
 
@@ -242,6 +241,7 @@
       setInterval(nextSlide3, 5000);
     }
 
+    /* === Carrossel Publicidades Responsivo + Touch === */
     /* === Carrossel Publicidades Responsivo + Touch === */
     const carPublicidade = document.getElementById("carouselPublicidade");
 
