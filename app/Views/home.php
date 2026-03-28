@@ -79,9 +79,8 @@
           <?php endforeach; ?>
         <?php else: ?>
           <!-- 🔹 Imagem padrão quando não há áreas -->
-          <!-- <div class="relative w-[540px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg"> -->
-          <div class="relative lg:w-[540px] md:w-[540px] w-[320px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
-            <img src="/assets/default_areas.jpg" alt="Área padrão"
+          <div class="relative lg:w-[540px] md:w-[540px] w-[320px] h-[350px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
+            <img src="/assets/default_areas.webp" alt="Área padrão"
               class="w-full h-full object-cover grayscale">
             <!-- <div
               class="absolute bottom-4 left-4 bg-[#ffffcc] px-4 py-2 shadow-md transform -rotate-2 rounded-md">
