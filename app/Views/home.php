@@ -120,7 +120,7 @@
     <h2 class="text-3xl font-bold text-center mb-10 text-white">Empresas Parceiras</h2>
 
     <?php if (!empty($empresasParceiras)): ?>
-      <?php $temMuitas = count($empresasParceiras) > 6; ?>
+      <?php $temMuitas = $totalEmpresas > 6; ?>
 
       <div class="relative overflow-hidden">
         <!-- Trilho/carrossel quando há muitas -->
@@ -142,7 +142,7 @@
                 <div class="block mt-4 text-right text-[#9fec3b] text-sm cursor-default">
                 <?php endif; ?>
 
-                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[360px] h-32 flex-shrink-0 hover:scale-[1.2] mx-2" data-aos="zoom-in">
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[360px] h-36 flex-shrink-0 hover:scale-[1.2] mx-2" data-aos="zoom-in">
                   <div class="flex items-center gap-4">
                     <img
                       src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
@@ -317,12 +317,12 @@
   (function() {
     const track = document.getElementById('empresaTrack');
     if (!track) return;
-
+    console.log('Track encontrado:', track);
     const isCarousel = track.getAttribute('data-carousel') === 'true';
     if (!isCarousel) return; // com ≤6, fica grid estático
 
     // Configurações
-    let speed = 0.35; // px por frame (~60fps)
+    let speed = 0.29; // px por frame (~60fps)
     let pos = 0;
     let running = true;
     let trackWidthHalf = 0;
