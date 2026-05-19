@@ -1,7 +1,7 @@
 <?php include_once(__DIR__ . '/head.php'); ?>
 <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 
-<body class="bg-gray-50 font-sans min-h-screen">
+<body class="bg-gray-50 font-sans min-h-screen" data-aos="fade-down">
   <header class="bg-[#0a1837] w-full py-5 shadow-lg relative z-50">
     <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
 

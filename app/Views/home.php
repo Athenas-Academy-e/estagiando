@@ -1,6 +1,6 @@
 <!-- Carrossel Publicidades -->
 <?php if (!empty($publicidades)): ?>
-  <div class="relative w-full max-w-7xl mx-auto mt-4 rounded-xl overflow-hidden shadow-lg">
+  <div class="relative w-full max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8 rounded-xl overflow-hidden shadow-lg">
 
     <!-- Contêiner das imagens -->
     <div id="carouselPublicidade"
@@ -13,7 +13,7 @@
           class="w-full flex-shrink-0 block">
           <img src="<?= htmlspecialchars($p['path']) ?>"
             alt="<?= htmlspecialchars($p['nome']) ?>"
-            class="w-full  object-contain sm:object-cover">
+            class="w-full h-[160px] sm:h-[180px] md:h-[200px] lg:h-[220px] object-cover">
         </a>
       <?php endforeach; ?>
     </div>
@@ -33,7 +33,7 @@
 
 <!-- Seção principal -->
 <section class="bg-gray-50 py-16">
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-10">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-10" data-aos="fade-right">
     <!-- Texto e busca -->
     <div class="md:w-1/2 text-center md:text-left">
       <h1 class="text-4xl md:text-5xl font-extrabold text-[#0a1837] mb-4 leading-tight">Encontre a vaga<br />certa para você!</h1>
@@ -79,8 +79,8 @@
           <?php endforeach; ?>
         <?php else: ?>
           <!-- 🔹 Imagem padrão quando não há áreas -->
-          <div class="relative w-[240px] h-[300px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
-            <img src="/assets/default_areas.jpg" alt="Área padrão"
+          <div class="relative lg:w-[540px] md:w-[540px] w-[320px] h-[350px] flex-shrink-0 overflow-hidden rotate-[1deg] shadow-lg">
+            <img src="/assets/default_areas.webp" alt="Área padrão"
               class="w-full h-full object-cover grayscale">
             <!-- <div
               class="absolute bottom-4 left-4 bg-[#ffffcc] px-4 py-2 shadow-md transform -rotate-2 rounded-md">
@@ -97,7 +97,7 @@
 
 <!-- Cards inferiores -->
 <section class="bg-gray-50 py-16">
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-6">
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-6" data-aos="fade-up">
 
     <div class="bg-[#004a99] text-white rounded-2xl p-8 text-center shadow-lg hover:scale-[1.02] transition-transform">
       <h2 class="text-2xl font-bold mb-2 text-white">Profissional</h2>
@@ -116,11 +116,11 @@
 
 <!-- Seção Empresas Parceiras -->
 <section class="bg-[#0a1837] text-white py-16 mt-10 items-center flex">
-  <div class="max-w-7xl mx-auto px-6">
+  <div class="max-w-7xl mx-auto px-6" data-aos="fade-in">
     <h2 class="text-3xl font-bold text-center mb-10 text-white">Empresas Parceiras</h2>
 
     <?php if (!empty($empresasParceiras)): ?>
-      <?php $temMuitas = count($empresasParceiras) > 6; ?>
+      <?php $temMuitas = $totalEmpresas > 6; ?>
 
       <div class="relative overflow-hidden">
         <!-- Trilho/carrossel quando há muitas -->
@@ -142,7 +142,7 @@
                 <div class="block mt-4 text-right text-[#9fec3b] text-sm cursor-default">
                 <?php endif; ?>
 
-                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[320px] flex-shrink-0 hover:translate-x-1">
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition duration-300 w-[360px] h-36 flex-shrink-0 hover:scale-[1.2] mx-2" data-aos="zoom-in">
                   <div class="flex items-center gap-4">
                     <img
                       src="<?= htmlspecialchars($e['logo'] ?? '/assets/default-company.png') ?>"
@@ -241,6 +241,7 @@
     }
 
     /* === Carrossel Publicidades Responsivo + Touch === */
+    /* === Carrossel Publicidades Responsivo + Touch === */
     const carPublicidade = document.getElementById("carouselPublicidade");
 
     if (carPublicidade) {
@@ -316,12 +317,12 @@
   (function() {
     const track = document.getElementById('empresaTrack');
     if (!track) return;
-
+    console.log('Track encontrado:', track);
     const isCarousel = track.getAttribute('data-carousel') === 'true';
     if (!isCarousel) return; // com ≤6, fica grid estático
 
     // Configurações
-    let speed = 0.35; // px por frame (~60fps)
+    let speed = 0.29; // px por frame (~60fps)
     let pos = 0;
     let running = true;
     let trackWidthHalf = 0;
