@@ -31,6 +31,12 @@
 
       </div>
 
+    <?php elseif (!empty($error)): ?>
+
+      <div class="bg-red-100 text-red-700 border border-red-400 rounded-lg py-3 px-5 mb-6">
+        <?= htmlspecialchars($error) ?>
+      </div>
+
     <?php endif; ?>
 
     <!-- Switch Tipo -->
@@ -410,6 +416,19 @@
                 type="text"
                 value="<?= htmlspecialchars($_POST['telefone1'] ?? '') ?>"
                 class="h-12 px-4 rounded-full border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition <?= isset($errors['telefone1']) ? 'input-error' : '' ?>"
+                required>
+            </div>
+            <!-- Telefone celular -->
+            <div class="flex flex-col">
+              <label for="telefoneEmp" class="text-sm font-semibold text-gray-600 mb-1">
+                Celular Comercial (opcional)
+              </label>
+              <input
+                id="telefoneEmp"
+                name="celular"
+                type="text"
+                value="<?= htmlspecialchars($_POST['celular'] ?? '') ?>"
+                class="h-12 px-4 rounded-full border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition <?= isset($errors['celular']) ? 'input-error' : '' ?>"
                 required>
             </div>
 

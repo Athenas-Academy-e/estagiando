@@ -31,73 +31,75 @@ class Profissional
    */
   public function cadastrar($dados, $arquivoFoto)
   {
-    try {
-      // 🔐 Criptografa senha
-      if (!empty($dados['senha'])) {
-        $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
-      }
-
-      // 🧠 Busca o município
-      $municipioId = null;
-      if (!empty($dados['municipio_id'])) {
-        $municipioId = (int)$dados['municipio_id'];
-      } else {
-        $stmt = $this->pdo->prepare("SELECT id FROM municipios WHERE nome = :nome AND estado = :estado LIMIT 1");
-        $stmt->execute([
-          ':nome' => $dados['cidade'] ?? '',
-          ':estado' => $dados['estado'] ?? ''
-        ]);
-        $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
-        $municipioId = $municipio['id'] ?? null;
-      }
-
-      // 🖼️ Upload de foto (reutiliza método existente)
-      $foto = null;
-      if (!empty($arquivoFoto['name'])) {
-        $upload = $this->uploadFoto($arquivoFoto);
-        if ($upload) {
-          $foto = $upload;
-        }
-      }
-
-      // 🚦 Garante status padrão “S”
-      $status = !empty($dados['status']) ? $dados['status'] : 'S';
-
-      // 💾 Inserção
-      $sql = "INSERT INTO profissionais (
-              nome, cpf, sexo, nascimento, email, telefone, senha, cep, endereco,
-              numero, bairro, cidade, estado, municipio_id, foto, status, data_cadastro
-            ) VALUES (
-              :nome, :cpf, :sexo, :nascimento, :email, :telefone, :senha, :cep, :endereco,
-              :numero, :bairro, :cidade, :estado, :municipio_id, :foto, :status, NOW()
-            )";
-
-      $stmt = $this->pdo->prepare($sql);
-      $stmt->execute([
-        ':nome' => $dados['nome'] ?? '',
-        ':cpf' => $dados['cpf'] ?? '',
-        ':sexo' => $dados['sexo'] ?? '',
-        ':nascimento' => $dados['nascimento'] ?? null,
-        ':email' => $dados['email'] ?? '',
-        ':telefone' => $dados['telefone'] ?? '',
-        ':senha' => $dados['senha'] ?? '',
-        ':cep' => $dados['cep'] ?? '',
-        ':endereco' => $dados['endereco'] ?? '',
-        ':numero' => $dados['numero'] ?? '',
-        ':bairro' => $dados['bairro'] ?? '',
-        ':cidade' => $dados['cidade'] ?? '',
-        ':estado' => $dados['estado'] ?? '',
-        ':municipio_id' => $municipioId,
-        ':foto' => $foto,
-        ':status' => $status
-      ]);
-
-      // 🔁 Retorna ID do novo cadastro
-      return $this->pdo->lastInsertId();
-    } catch (PDOException $e) {
-      error_log("Erro ao cadastrar profissional: " . $e->getMessage());
-      return false;
+    // 🚫 Verifica duplicidade de email ou CPF
+    $check = $this->pdo->prepare("SELECT id FROM profissionais WHERE email = :email OR cpf = :cpf LIMIT 1");
+    $check->execute([':email' => $dados['email'] ?? '', ':cpf' => $dados['cpf'] ?? '']);
+    if ($check->fetch(PDO::FETCH_ASSOC)) {
+      throw new Exception("E-mail ou CPF já cadastrado!");
     }
+
+    // 🔐 Criptografa senha
+    if (!empty($dados['senha'])) {
+      $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
+    }
+
+    // 🧠 Busca o município
+    $municipioId = null;
+    if (!empty($dados['municipio_id'])) {
+      $municipioId = (int)$dados['municipio_id'];
+    } else {
+      $stmt = $this->pdo->prepare("SELECT id FROM municipios WHERE nome = :nome AND estado = :estado LIMIT 1");
+      $stmt->execute([
+        ':nome' => $dados['cidade'] ?? '',
+        ':estado' => $dados['estado'] ?? ''
+      ]);
+      $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
+      $municipioId = $municipio['id'] ?? null;
+    }
+
+    // 🖼️ Upload de foto (reutiliza método existente)
+    $foto = null;
+    if (!empty($arquivoFoto['name'])) {
+      $upload = $this->uploadFoto($arquivoFoto);
+      if ($upload) {
+        $foto = $upload;
+      }
+    }
+
+    // 🚦 Garante status padrão “S”
+    $status = !empty($dados['status']) ? $dados['status'] : 'S';
+
+    // 💾 Inserção
+    $sql = "INSERT INTO profissionais (
+            nome, cpf, sexo, nascimento, email, telefone, senha, cep, endereco,
+            numero, bairro, cidade, estado, municipio_id, foto, status, data_cadastro
+          ) VALUES (
+            :nome, :cpf, :sexo, :nascimento, :email, :telefone, :senha, :cep, :endereco,
+            :numero, :bairro, :cidade, :estado, :municipio_id, :foto, :status, NOW()
+          )";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([
+      ':nome' => $dados['nome'] ?? '',
+      ':cpf' => $dados['cpf'] ?? '',
+      ':sexo' => $dados['sexo'] ?? '',
+      ':nascimento' => $dados['nascimento'] ?? null,
+      ':email' => $dados['email'] ?? '',
+      ':telefone' => $dados['telefone'] ?? '',
+      ':senha' => $dados['senha'] ?? '',
+      ':cep' => $dados['cep'] ?? '',
+      ':endereco' => $dados['endereco'] ?? '',
+      ':numero' => $dados['numero'] ?? '',
+      ':bairro' => $dados['bairro'] ?? '',
+      ':cidade' => $dados['cidade'] ?? '',
+      ':estado' => $dados['estado'] ?? '',
+      ':municipio_id' => $municipioId,
+      ':foto' => $foto,
+      ':status' => $status
+    ]);
+
+    // 🔁 Retorna ID do novo cadastro
+    return $this->pdo->lastInsertId();
   }
 
   /**

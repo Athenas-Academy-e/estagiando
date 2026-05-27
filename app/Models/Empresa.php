@@ -76,81 +76,76 @@ class Empresa
    */
   public function cadastrar($dados, $arquivoLogo)
   {
-    try {
-      // Valida CNPJ
-      if (!$this->validarCNPJ($dados['cnpj'])) {
-        throw new Exception("CNPJ inválido!");
-      }
-
-      // Verifica duplicidade de email ou CNPJ
-      $check = $this->pdo->prepare("SELECT id FROM empresas WHERE email = :email OR cnpj = :cnpj LIMIT 1");
-      $check->execute([':email' => $dados['email'], ':cnpj' => $dados['cnpj']]);
-      if ($check->fetch(PDO::FETCH_ASSOC)) {
-        throw new Exception("E-mail ou CNPJ já cadastrado!");
-      }
-
-
-      // Upload logo
-      $logoPath = null;
-      if (!empty($arquivoLogo['name'])) {
-        $upload = $this->uploadLogo($arquivoLogo);
-        if ($upload) $logoPath = $upload;
-      }
-
-      // Busca ou cria município
-      $stmt = $this->pdo->prepare("SELECT id FROM municipios WHERE nome = :nome AND estado = :estado LIMIT 1");
-      $stmt->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
-      $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
-
-      $municipioId = $municipio ? $municipio['id'] : null;
-
-      if (!$municipio) {
-        $insert = $this->pdo->prepare("INSERT INTO municipios (nome, estado) VALUES (:nome, :estado)");
-        $insert->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
-        $municipioId = $this->pdo->lastInsertId();
-      }
-
-      // Hash senha
-      $senhaCripto = password_hash($dados['senha'], PASSWORD_DEFAULT);
-
-      // Insere registro
-      $sql = "INSERT INTO empresas (
-                razao_social, nome_fantasia, categoria_id, cnpj,
-                telefone, celular, email, site, senha,
-                cep, endereco, numero, bairro, estado, cidade,
-                municipio_id, logo, status, data_criacao
-            ) VALUES (
-                :razao_social, :nome_fantasia, :categoria, :cnpj,
-                :telefone, :celular, :email, :site, :senha,
-                :cep, :endereco, :numero, :bairro, :estado, :cidade,
-                :municipio_id, :logo, 'S', NOW()
-            )";
-
-      $stmt = $this->pdo->prepare($sql);
-
-      return $stmt->execute([
-        ':razao_social' => $dados['razao_social'],
-        ':nome_fantasia' => $dados['nome_fantasia'],
-        ':categoria' => $dados['categoria'] ?? null,
-        ':cnpj' => $dados['cnpj'],
-        ':telefone' => $dados['telefone1'] ?? '',
-        ':celular' => $dados['celular'] ?? '',
-        ':email' => $dados['email'],
-        ':site' => $dados['site'] ?? '',
-        ':senha' => $senhaCripto,
-        ':cep' => $dados['cep'],
-        ':endereco' => $dados['endereco'],
-        ':numero' => $dados['numero'],
-        ':bairro' => $dados['bairro'],
-        ':estado' => $dados['estado'],
-        ':cidade' => $dados['cidade'],
-        ':municipio_id' => $municipioId,
-        ':logo' => $logoPath
-      ]);
-    } catch (Exception $e) {
-      error_log("Erro cadastro empresa: " . $e->getMessage());
-      return false;
+    // Valida CNPJ
+    if (!$this->validarCNPJ($dados['cnpj'])) {
+      throw new Exception("CNPJ inválido!");
     }
+
+    // Verifica duplicidade de email ou CNPJ
+    $check = $this->pdo->prepare("SELECT id FROM empresas WHERE email = :email OR cnpj = :cnpj LIMIT 1");
+    $check->execute([':email' => $dados['email'], ':cnpj' => $dados['cnpj']]);
+    if ($check->fetch(PDO::FETCH_ASSOC)) {
+      throw new Exception("E-mail ou CNPJ já cadastrado!");
+    }
+
+
+    // Upload logo
+    $logoPath = null;
+    if (!empty($arquivoLogo['name'])) {
+      $upload = $this->uploadLogo($arquivoLogo);
+      if ($upload) $logoPath = $upload;
+    }
+
+    // Busca ou cria município
+    $stmt = $this->pdo->prepare("SELECT id FROM municipios WHERE nome = :nome AND estado = :estado LIMIT 1");
+    $stmt->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
+    $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $municipioId = $municipio ? $municipio['id'] : null;
+
+    if (!$municipio) {
+      $insert = $this->pdo->prepare("INSERT INTO municipios (nome, estado) VALUES (:nome, :estado)");
+      $insert->execute([':nome' => $dados['cidade'], ':estado' => $dados['estado']]);
+      $municipioId = $this->pdo->lastInsertId();
+    }
+
+    // Hash senha
+    $senhaCripto = password_hash($dados['senha'], PASSWORD_DEFAULT);
+
+    // Insere registro
+    $sql = "INSERT INTO empresas (
+              razao_social, nome_fantasia, categoria_id, cnpj,
+              telefone, celular, email, site, senha,
+              cep, endereco, numero, bairro, estado, cidade,
+              municipio_id, logo, status, data_criacao
+          ) VALUES (
+              :razao_social, :nome_fantasia, :categoria, :cnpj,
+              :telefone, :celular, :email, :site, :senha,
+              :cep, :endereco, :numero, :bairro, :estado, :cidade,
+              :municipio_id, :logo, 'S', NOW()
+          )";
+
+    $stmt = $this->pdo->prepare($sql);
+
+    return $stmt->execute([
+      ':razao_social' => $dados['razao_social'],
+      ':nome_fantasia' => $dados['nome_fantasia'],
+      ':categoria' => $dados['categoria'] ?? null,
+      ':cnpj' => $dados['cnpj'],
+      ':telefone' => $dados['telefone1'] ?? '',
+      ':celular' => $dados['celular'] ?? '',
+      ':email' => $dados['email'],
+      ':site' => $dados['site'] ?? '',
+      ':senha' => $senhaCripto,
+      ':cep' => $dados['cep'],
+      ':endereco' => $dados['endereco'],
+      ':numero' => $dados['numero'],
+      ':bairro' => $dados['bairro'],
+      ':estado' => $dados['estado'],
+      ':cidade' => $dados['cidade'],
+      ':municipio_id' => $municipioId,
+      ':logo' => $logoPath
+    ]);
   }
 
   /**

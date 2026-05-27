@@ -46,7 +46,7 @@ class CadastroController
                     $etapa3 = ['senha', 'senha_confirm'];
                 } elseif ($tipo === 'empresa') {
 
-                    $etapa1 = ['razao_social', 'nome_fantasia', 'cnpj', 'email', 'telefone1', 'categoria', 'site'];
+                    $etapa1 = ['razao_social', 'nome_fantasia', 'cnpj', 'email', 'telefone1', 'celular', 'categoria', 'site'];
                     $etapa2 = ['cep', 'endereco', 'numero', 'bairro', 'cidade', 'estado'];
                     $etapa3 = ['senha', 'senha_confirm'];
                 }
